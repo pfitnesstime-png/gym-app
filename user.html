@@ -3,22 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym App - User</title>
+<title>Gym App – User</title>
 
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#111827">
 
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9}
+body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:70px}
 header{background:#111827;color:#fff;text-align:center;padding:14px}
+
 .container{padding:15px}
-.card{background:#fff;padding:15px;border-radius:10px;
+.card{background:#fff;padding:15px;border-radius:12px;
 box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:15px}
-input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:1px solid #ccc}
+
+input,button{
+  width:100%;padding:12px;margin-top:10px;
+  border-radius:8px;border:1px solid #ccc;font-size:15px
+}
 button{background:#2563eb;color:#fff;border:none;font-weight:bold}
+
 .hidden{display:none}
 .active{color:green;font-weight:bold}
 .expired{color:red;font-weight:bold}
+
+.nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;display:flex;
+  box-shadow:0 -2px 8px rgba(0,0,0,.1)
+}
+.nav button{
+  flex:1;border:none;background:none;
+  padding:12px;font-size:14px
+}
 </style>
 </head>
 
@@ -28,6 +44,7 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 
 <div class="container">
 
+<!-- LOGIN -->
 <div class="card" id="loginBox">
   <h3>User Login</h3>
   <input id="name" placeholder="Your Name">
@@ -35,15 +52,35 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <button onclick="login()">Login</button>
 </div>
 
-<div class="card hidden" id="dashboard">
+<!-- HOME -->
+<div class="card hidden" id="home">
   <h3 id="welcome"></h3>
-  <p>Plan Status: <span id="planStatus" class="expired">Expired</span></p>
-  <button onclick="goScan()">📷 Scan Gym QR</button>
+  <p>Status: <span id="status"></span></p>
+  <p>Remaining Days: <b id="days"></b></p>
+  <p>Last Visit: <span id="lastVisit">-</span></p>
+
+  <button onclick="markAttendance()">✅ Today Attendance</button>
+</div>
+
+<!-- SETTINGS -->
+<div class="card hidden" id="settings">
+  <h3>⚙️ Settings</h3>
+  <p><b>Name:</b> <span id="sName"></span></p>
+  <p><b>Phone:</b> <span id="sPhone"></span></p>
+  <p><b>Plan Expiry:</b> <span id="sExp"></span></p>
+  <button style="background:#dc2626" onclick="logout()">Logout</button>
 </div>
 
 </div>
 
-<!-- Firebase -->
+<!-- BOTTOM NAV -->
+<div class="nav hidden" id="nav">
+  <button onclick="showHome()">🏠 Home</button>
+  <button onclick="goScan()">📷 Scan</button>
+  <button onclick="showSettings()">⚙️ Settings</button>
+</div>
+
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -58,35 +95,127 @@ const db = firebase.firestore();
 
 let user = JSON.parse(localStorage.getItem("gymUser")) || {};
 
+const loginBox = document.getElementById("loginBox");
+const home = document.getElementById("home");
+const settings = document.getElementById("settings");
+const nav = document.getElementById("nav");
+
 function login(){
-  let name=nameInput.value=document.getElementById("name").value;
-  let phone=document.getElementById("phone").value;
-  if(!name||!phone){alert("Enter details");return;}
+  let name = document.getElementById("name").value.trim();
+  let phone = document.getElementById("phone").value.trim();
+  if(!name || !phone){ alert("Enter details"); return; }
 
-  let exp=new Date(); exp.setDate(exp.getDate()+30);
-  user={name,phone,planExpiry:exp};
-  localStorage.setItem("gymUser",JSON.stringify(user));
+  let exp = new Date();
+  exp.setDate(exp.getDate() + 30);
 
+  user = {
+    name,
+    phone,
+    planExpiry: exp.toISOString(),
+    lastVisit: ""
+  };
+
+  localStorage.setItem("gymUser", JSON.stringify(user));
   db.collection("users").doc(phone).set(user);
-  showDashboard();
+  showHome();
 }
 
-function showDashboard(){
+function getRemainingDays(){
+  let today = new Date();
+  let exp = new Date(user.planExpiry);
+  return Math.ceil((exp - today) / (1000*60*60*24));
+}
+
+function showHome(){
   loginBox.classList.add("hidden");
-  dashboard.classList.remove("hidden");
-  welcome.innerText="Welcome, "+user.name;
+  settings.classList.add("hidden");
+  home.classList.remove("hidden");
+  nav.classList.remove("hidden");
 
-  if(new Date()<new Date(user.planExpiry)){
-    planStatus.innerText="Active"; planStatus.className="active";
+  document.getElementById("welcome").innerText = "Welcome, " + user.name;
+
+  let rem = getRemainingDays();
+  let status = document.getElementById("status");
+  let days = document.getElementById("days");
+
+  if(rem > 0){
+    status.innerText = "ACTIVE";
+    status.className = "active";
+    days.innerText = rem + " Days";
   }else{
-    planStatus.innerText="Expired"; planStatus.className="expired";
+    status.innerText = "EXPIRED";
+    status.className = "expired";
+    days.innerText = "Expired";
   }
-}
-function goScan(){location.href="scan.html";}
-if(user.name) showDashboard();
-</script>
 
-<script>
+  document.getElementById("lastVisit").innerText = user.lastVisit || "Not yet";
+}
+
+function showSettings(){
+  home.classList.add("hidden");
+  settings.classList.remove("hidden");
+
+  document.getElementById("sName").innerText = user.name;
+  document.getElementById("sPhone").innerText = user.phone;
+  document.getElementById("sExp").innerText =
+    new Date(user.planExpiry).toDateString();
+}
+
+function markAttendance(){
+  if(getRemainingDays() <= 0){
+    alert("❌ Plan Expired");
+    return;
+  }
+
+  let today = new Date();
+  let dateStr = today.toISOString().split("T")[0];
+  let docId = user.phone + "_" + dateStr;
+
+  db.collection("attendance").doc(docId).get().then(doc=>{
+    if(doc.exists){
+      alert("⚠️ Already marked today");
+    }else{
+      db.collection("attendance").doc(docId).set({
+        phone: user.phone,
+        name: user.name,
+        date: dateStr,
+        time: today.toLocaleTimeString()
+      });
+
+      user.lastVisit = dateStr;
+      localStorage.setItem("gymUser", JSON.stringify(user));
+
+      db.collection("users").doc(user.phone).update({
+        lastVisit: dateStr
+      });
+
+      showHome();
+      alert("✅ Attendance Saved");
+    }
+  });
+}
+
+function logout(){
+  localStorage.removeItem("gymUser");
+  location.reload();
+}
+
+function goScan(){
+  location.href = "scan.html";
+}
+
+// AUTO LOGIN
+if(user.phone){
+  db.collection("users").doc(user.phone).get().then(doc=>{
+    if(doc.exists){
+      user = doc.data();
+      localStorage.setItem("gymUser", JSON.stringify(user));
+      showHome();
+    }
+  });
+}
+
+// SERVICE WORKER
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js");
 }
