@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gym App - User</title>
+
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#111827">
+
+<style>
+body{margin:0;font-family:Arial;background:#f1f5f9}
+header{background:#111827;color:#fff;text-align:center;padding:14px}
+.container{padding:15px}
+.card{background:#fff;padding:15px;border-radius:10px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);margin-bottom:15px}
+input,button{width:100%;padding:10px;margin-top:8px;border-radius:6px;border:1px solid #ccc}
+button{background:#2563eb;color:#fff;border:none;font-weight:bold}
+.hidden{display:none}
+.active{color:green;font-weight:bold}
+.expired{color:red;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<header><h2>🏋️ Gym App</h2></header>
+
+<div class="container">
+
+<div class="card" id="loginBox">
+  <h3>User Login</h3>
+  <input id="name" placeholder="Your Name">
+  <input id="phone" placeholder="Phone Number">
+  <button onclick="login()">Login</button>
+</div>
+
+<div class="card hidden" id="dashboard">
+  <h3 id="welcome"></h3>
+  <p>Plan Status: <span id="planStatus" class="expired">Expired</span></p>
+  <button onclick="goScan()">📷 Scan Gym QR</button>
+</div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+let user = JSON.parse(localStorage.getItem("gymUser")) || {};
+
+function login(){
+  let name=nameInput.value=document.getElementById("name").value;
+  let phone=document.getElementById("phone").value;
+  if(!name||!phone){alert("Enter details");return;}
+
+  let exp=new Date(); exp.setDate(exp.getDate()+30);
+  user={name,phone,planExpiry:exp};
+  localStorage.setItem("gymUser",JSON.stringify(user));
+
+  db.collection("users").doc(phone).set(user);
+  showDashboard();
+}
+
+function showDashboard(){
+  loginBox.classList.add("hidden");
+  dashboard.classList.remove("hidden");
+  welcome.innerText="Welcome, "+user.name;
+
+  if(new Date()<new Date(user.planExpiry)){
+    planStatus.innerText="Active"; planStatus.className="active";
+  }else{
+    planStatus.innerText="Expired"; planStatus.className="expired";
+  }
+}
+function goScan(){location.href="scan.html";}
+if(user.name) showDashboard();
+</script>
+
+<script>
+if("serviceWorker" in navigator){
+  navigator.serviceWorker.register("service-worker.js");
+}
+</script>
+
+</body>
+</html>

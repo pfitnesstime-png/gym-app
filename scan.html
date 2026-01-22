@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Scan Gym QR</title>
+
+<style>
+body{font-family:Arial;background:#f1f5f9;padding:20px}
+.card{background:#fff;padding:20px;border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,.1);text-align:center}
+input{width:100%;padding:10px;margin-top:10px}
+button{margin-top:12px;padding:10px 20px;background:#16a34a;
+color:#fff;border:none;border-radius:8px}
+.success{color:green;font-weight:bold}
+.error{color:red;font-weight:bold}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+  <h2>📷 Gym Attendance</h2>
+  <input id="qr" placeholder="Enter GYM_ATTENDANCE">
+  <button onclick="mark()">Mark Attendance</button>
+  <p id="msg"></p>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+});
+const db=firebase.firestore();
+
+function mark(){
+  let user=JSON.parse(localStorage.getItem("gymUser"));
+  if(!user){msg.innerText="❌ Login first";msg.className="error";return;}
+  if(qr.value!=="GYM_ATTENDANCE"){msg.innerText="❌ Invalid QR";msg.className="error";return;}
+  if(new Date()>new Date(user.planExpiry)){msg.innerText="❌ Plan expired";msg.className="error";return;}
+
+  db.collection("attendance").add({
+    name:user.name,phone:user.phone,
+    date:new Date().toLocaleDateString(),
+    time:new Date().toLocaleTimeString(),
+    timestamp:new Date()
+  }).then(()=>{
+    msg.innerText="✅ Attendance marked";msg.className="success";qr.value="";
+  });
+}
+</script>
+
+</body>
+</html>
