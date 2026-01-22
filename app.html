@@ -6,31 +6,18 @@
 <title>Gym App</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:70px}
+body{margin:0;font-family:Arial;background:#f1f5f9}
 header{background:#111827;color:#fff;text-align:center;padding:14px}
-.card{
-  background:#fff;margin:15px;padding:15px;border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1)
-}
-.hidden{display:none}
-.active{color:green;font-weight:bold}
-.expired{color:red;font-weight:bold}
-
+.card{background:#fff;margin:15px;padding:15px;border-radius:12px;
+box-shadow:0 4px 10px rgba(0,0,0,.1)}
 button{
   width:100%;padding:12px;margin-top:10px;
   border-radius:8px;border:none;
   background:#2563eb;color:#fff;font-weight:bold
 }
-
-.nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#fff;display:flex;
-  box-shadow:0 -2px 8px rgba(0,0,0,.15)
-}
-.nav button{
-  flex:1;background:none;border:none;
-  padding:10px;font-size:13px
-}
+.active{color:green;font-weight:bold}
+.expired{color:red;font-weight:bold}
+#reader{width:100%}
 </style>
 </head>
 
@@ -39,143 +26,142 @@ button{
 <header><h2>🏋️ Gym App</h2></header>
 
 <!-- HOME -->
-<div class="card" id="homeTab">
-  <h3 id="userName">Welcome</h3>
-  <p>Plan: <b id="planName">Not Selected</b></p>
-  <p>Status: <span id="planStatus" class="expired">Expired</span></p>
-  <p>Remaining Days: <b id="remainingDays">0</b></p>
-</div>
-
-<!-- ATTENDANCE -->
-<div class="card hidden" id="attendanceTab">
-  <h3>Attendance</h3>
-  <div id="attendanceList">No records</div>
+<div class="card">
+  <h3 id="welcome">Welcome</h3>
+  <p>Plan: <b id="planName">-</b></p>
+  <p>Status: <span id="planStatus" class="expired">-</span></p>
+  <p>Remaining Days: <b id="days">0</b></p>
 </div>
 
 <!-- SCAN -->
-<div class="card hidden" id="scanTab">
-  <h3>Scan at Gym</h3>
-  <button onclick="markAttendance()">📷 Scan & Mark Attendance</button>
+<div class="card">
+  <h3>Scan Gym QR</h3>
+  <div id="reader"></div>
+  <p style="font-size:13px;color:#555">
+    Scan the QR placed inside gym to mark attendance
+  </p>
 </div>
 
-<!-- PLANS -->
-<div class="card hidden" id="plansTab">
-  <h3>Plans</h3>
-  <button onclick="selectPlan('Monthly',30)">Monthly – 30 Days</button>
-  <button onclick="selectPlan('3 Months',90)">3 Months – 90 Days</button>
+<!-- ATTENDANCE HISTORY -->
+<div class="card">
+  <h3>Attendance History</h3>
+  <div id="attList">Loading...</div>
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="nav">
-  <button onclick="showTab('home')">🏠 Home</button>
-  <button onclick="showTab('attendance')">📅 Attendance</button>
-  <button onclick="showTab('scan')">📷 Scan</button>
-  <button onclick="showTab('plans')">💳 Plans</button>
-</div>
-
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
+<!-- QR Scanner -->
+<script src="https://unpkg.com/html5-qrcode"></script>
+
 <script>
-/* 🔥 Firebase Config */
-const firebaseConfig = {
-  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain: "gym-app-79bec.firebaseapp.com",
-  projectId: "gym-app-79bec"
-};
-firebase.initializeApp(firebaseConfig);
+/* 🔥 Firebase init */
+if(!firebase.apps.length){
+  firebase.initializeApp({
+    apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+    authDomain: "gym-app-79bec.firebaseapp.com",
+    projectId: "gym-app-79bec"
+  });
+}
 const db = firebase.firestore();
 
-/* ⚠️ TEMP: phone number (later index.html-il ninn pass cheyyam) */
-const phone = new URLSearchParams(window.location.search).get("phone") || "test";
-
-/* TAB SWITCH */
-function showTab(tab){
-  homeTab.classList.add("hidden");
-  attendanceTab.classList.add("hidden");
-  scanTab.classList.add("hidden");
-  plansTab.classList.add("hidden");
-
-  if(tab==="home") homeTab.classList.remove("hidden");
-  if(tab==="attendance"){ attendanceTab.classList.remove("hidden"); loadAttendance(); }
-  if(tab==="scan") scanTab.classList.remove("hidden");
-  if(tab==="plans") plansTab.classList.remove("hidden");
+/* USER PHONE FROM URL */
+const phone = new URLSearchParams(window.location.search).get("phone");
+if(!phone){
+  alert("Invalid access");
 }
 
-/* LOAD USER HOME DATA */
+/* LOAD USER HOME */
 function loadHome(){
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists) return;
-
     let u = doc.data();
-    userName.innerText = "Welcome, " + u.name;
+
+    welcome.innerText = "Welcome, " + u.name;
     planName.innerText = u.currentPlan || "Not Selected";
 
-    if(u.planExpiry){
-      let rem = Math.ceil((new Date(u.planExpiry) - new Date())/(1000*60*60*24));
-      remainingDays.innerText = rem>0 ? rem : 0;
-      planStatus.innerText = rem>0 ? "ACTIVE" : "EXPIRED";
-      planStatus.className = rem>0 ? "active" : "expired";
-    }
-  });
-}
-
-/* SELECT PLAN */
-function selectPlan(name,days){
-  let exp = new Date();
-  exp.setDate(exp.getDate()+days);
-
-  db.collection("users").doc(phone).update({
-    currentPlan: name,
-    planExpiry: exp.toISOString()
-  }).then(()=>{
-    alert("Plan Selected ✅");
-    loadHome();
-    showTab('home');
-  });
-}
-
-/* MARK ATTENDANCE (SCAN) */
-function markAttendance(){
-  let today = new Date().toISOString().split("T")[0];
-  let docId = phone+"_"+today;
-
-  db.collection("attendance").doc(docId).get().then(d=>{
-    if(d.exists){
-      alert("Already marked today");
+    if(u.planStatus === "active"){
+      let rem = Math.ceil((new Date(u.planExpiry) - new Date()) / (1000*60*60*24));
+      days.innerText = rem > 0 ? rem : 0;
+      planStatus.innerText = rem > 0 ? "ACTIVE" : "EXPIRED";
+      planStatus.className = rem > 0 ? "active" : "expired";
     }else{
-      db.collection("attendance").doc(docId).set({
-        phone: phone,
-        date: today,
-        status: "present"
-      }).then(()=>{
-        alert("Attendance marked ✅");
-      });
+      planStatus.innerText = u.planStatus || "INACTIVE";
+      planStatus.className = "expired";
     }
   });
 }
 
 /* LOAD ATTENDANCE */
 function loadAttendance(){
-  attendanceList.innerHTML = "Loading...";
+  attList.innerHTML = "Loading...";
   db.collection("attendance")
     .where("phone","==",phone)
     .get().then(snap=>{
       if(snap.empty){
-        attendanceList.innerHTML = "No records";
+        attList.innerHTML = "No attendance yet";
         return;
       }
       let html="";
       snap.forEach(d=>{
-        html+=`<p>${d.data().date} ✅</p>`;
+        html += `<p>${d.data().date} ✅</p>`;
       });
-      attendanceList.innerHTML = html;
+      attList.innerHTML = html;
     });
 }
 
+/* QR SCAN LOGIC */
+function onScanSuccess(decodedText){
+  if(decodedText !== "GYM_ATTENDANCE"){
+    alert("Invalid QR ❌");
+    return;
+  }
+
+  db.collection("users").doc(phone).get().then(userDoc=>{
+    if(!userDoc.exists) return;
+
+    let u = userDoc.data();
+    if(u.planStatus !== "active"){
+      alert("Plan not active ❌");
+      return;
+    }
+
+    let today = new Date().toISOString().split("T")[0];
+    let docId = phone + "_" + today;
+
+    db.collection("attendance").doc(docId).get().then(att=>{
+      if(att.exists){
+        alert("Already marked today");
+      }else{
+        db.collection("attendance").doc(docId).set({
+          phone: phone,
+          date: today,
+          method: "qr_scan"
+        }).then(()=>{
+          alert("Attendance marked ✅");
+          loadAttendance();
+        });
+      }
+    });
+  });
+}
+
+/* START QR CAMERA */
+const html5QrCode = new Html5Qrcode("reader");
+Html5Qrcode.getCameras().then(devices=>{
+  if(devices && devices.length){
+    html5QrCode.start(
+      devices[0].id,
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    );
+  }
+});
+
 /* INIT */
 loadHome();
+loadAttendance();
 </script>
 
 </body>
