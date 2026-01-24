@@ -281,16 +281,39 @@ function addPlan(){
 
 /* ATTENDANCE */
 function loadAttendance(){
-  let selDate=filterDate.value;
-  let q=db.collection("attendance");
-  if(selDate) q=q.where("date","==",selDate);
-  q.get().then(s=>{
+  let selDate = filterDate.value;
+  attendanceList.innerHTML = "Loading...";
+
+  let q = db.collection("attendance");
+  if(selDate){
+    q = q.where("date","==",selDate);
+  }
+
+  q.get().then(async snap=>{
+    if(snap.empty){
+      attendanceList.innerHTML = "No attendance found";
+      return;
+    }
+
     let h="";
-    s.forEach(d=>{
-      let a=d.data();
-      h+=`<p>📞 ${a.phone}<br>📅 ${a.date}</p><hr>`;
-    });
-    attendanceList.innerHTML=h||"No attendance";
+
+    for(const d of snap.docs){
+      let a = d.data();
+
+      // 🔍 GET USER NAME USING PHONE
+      let userSnap = await db.collection("users").doc(a.phone).get();
+      let uname = userSnap.exists ? userSnap.data().name : "Unknown";
+
+      h += `
+        <div style="border-bottom:1px solid #eee;padding:8px 0">
+          👤 <b>${uname}</b><br>
+          📞 ${a.phone}<br>
+          📅 ${a.date}
+        </div>
+      `;
+    }
+
+    attendanceList.innerHTML = h;
   });
 }
 
@@ -304,4 +327,5 @@ loadAttendance();
 
 </body>
 </html>
+
 
