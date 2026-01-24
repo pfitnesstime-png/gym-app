@@ -1,103 +1,100 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym App – Register / Login</title>
+<title>Gym App – Login</title>
 
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9}
-header{background:#111827;color:#fff;text-align:center;padding:15px}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f1f5f9;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  min-height:100vh;
+}
 .card{
-  background:#fff;margin:20px;padding:20px;border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1)
+  background:#fff;
+  width:320px;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 4px 12px rgba(0,0,0,.15);
 }
+h2{text-align:center;margin-top:0}
 input,button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:8px;border:1px solid #ccc
+  width:100%;
+  padding:10px;
+  margin-top:10px;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
-button{background:#2563eb;color:#fff;border:none;font-weight:bold}
-.link{margin-top:15px;text-align:center;color:#2563eb;cursor:pointer}
+button{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  font-weight:bold;
+}
 .hidden{display:none}
+.link{
+  text-align:center;
+  margin-top:10px;
+  color:#2563eb;
+  cursor:pointer;
+}
 </style>
 </head>
 
 <body>
 
-<header><h2>🏋️ Gym App</h2></header>
+<div class="card">
 
-<!-- REGISTER -->
-<div class="card" id="registerBox">
-  <h3>Register</h3>
-  <input id="r_name" placeholder="Name">
-  <input id="r_phone" placeholder="Phone">
-  <input id="r_email" placeholder="Email">
-  <input id="r_age" type="number" placeholder="Age">
-  <input id="r_weight" type="number" placeholder="Weight (kg)">
-  <input id="r_height" type="number" placeholder="Height (cm)">
-  <button onclick="register()">Register</button>
-  <div class="link" onclick="showLogin()">Already registered? Login</div>
+  <!-- LOGIN -->
+  <div id="loginBox">
+    <h2>Gym Login</h2>
+    <input id="l_phone" placeholder="Phone number">
+    <button onclick="login()">Login</button>
+    <div class="link" onclick="showRegister()">New user? Register</div>
+  </div>
+
+  <!-- REGISTER -->
+  <div id="registerBox" class="hidden">
+    <h2>Register</h2>
+    <input id="r_name" placeholder="Name">
+    <input id="r_phone" placeholder="Phone number">
+    <button onclick="register()">Register</button>
+    <div class="link" onclick="showLogin()">Back to login</div>
+  </div>
+
 </div>
 
-<!-- LOGIN -->
-<div class="card hidden" id="loginBox">
-  <h3>Login</h3>
-  <input id="l_phone" placeholder="Phone">
-  <button onclick="login()">Login</button>
-  <div class="link" onclick="showRegister()">New user? Register</div>
-</div>
-
-<!-- FIREBASE -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain: "gym-app-79bec.firebaseapp.com",
-  projectId: "gym-app-79bec"
-};
-firebase.initializeApp(firebaseConfig);
+/* FIREBASE INIT */
+firebase.initializeApp({
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+});
 const db = firebase.firestore();
 
-/* TOGGLE */
-function showLogin(){
-  registerBox.classList.add("hidden");
-  loginBox.classList.remove("hidden");
+/* AUTO LOGIN IF ALREADY LOGGED */
+if(localStorage.getItem("gymPhone")){
+  location.href="app.html";
 }
+
+/* TOGGLE UI */
 function showRegister(){
   loginBox.classList.add("hidden");
   registerBox.classList.remove("hidden");
 }
-
-/* REGISTER */
-function register(){
-  let phone = r_phone.value.trim();
-  if(!r_name.value || !phone){
-    alert("Name & Phone required");
-    return;
-  }
-
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      alert("User already exists. Login please.");
-      showLogin();
-    }else{
-      db.collection("users").doc(phone).set({
-        name: r_name.value,
-        phone: phone,
-        email: r_email.value,
-        age: r_age.value,
-        weight: r_weight.value,
-        height: r_height.value,
-        currentPlan: "",
-        planExpiry: ""
-      }).then(()=>{
-        // 👉 DIRECT TO APP
-        location.href = "app.html?phone=" + phone;
-      });
-    }
-  });
+function showLogin(){
+  registerBox.classList.add("hidden");
+  loginBox.classList.remove("hidden");
 }
 
 /* LOGIN */
@@ -110,12 +107,38 @@ function login(){
 
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
-      // 👉 DIRECT TO APP
-      location.href = "app.html?phone=" + phone;
+      // ✅ SAVE SESSION
+      localStorage.setItem("gymPhone", phone);
+
+      // ✅ GO TO APP
+      location.href = "app.html";
     }else{
-      alert("User not found. Please register.");
-      showRegister();
+      alert("User not found. Please register or contact admin.");
     }
+  });
+}
+
+/* REGISTER */
+function register(){
+  let name = r_name.value.trim();
+  let phone = r_phone.value.trim();
+
+  if(!name || !phone){
+    alert("Enter all details");
+    return;
+  }
+
+  db.collection("users").doc(phone).set({
+    name:name,
+    phone:phone,
+    planStatus:"inactive",
+    currentPlan:"",
+    planExpiry:"",
+    paymentStatus:""
+  }).then(()=>{
+    // ✅ AUTO LOGIN AFTER REGISTER
+    localStorage.setItem("gymPhone", phone);
+    location.href="app.html";
   });
 }
 </script>
