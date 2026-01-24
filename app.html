@@ -289,11 +289,28 @@ function onScanSuccess(txt){
 }
 
 /* START CAMERA */
-const qr=new Html5Qrcode("reader");
-Html5Qrcode.getCameras().then(c=>{
-  if(c.length){
-    qr.start(c[0].id,{fps:10,qrbox:250},onScanSuccess);
+const qr = new Html5Qrcode("reader");
+
+Html5Qrcode.getCameras().then(devices => {
+  if (!devices || devices.length === 0) {
+    alert("No camera found");
+    return;
   }
+
+  // Try to find back camera
+  let backCamera = devices.find(d =>
+    d.label.toLowerCase().includes("back") ||
+    d.label.toLowerCase().includes("rear")
+  );
+
+  // If not found, use last camera
+  let cameraId = backCamera ? backCamera.id : devices[devices.length - 1].id;
+
+  qr.start(
+    cameraId,
+    { fps: 10, qrbox: 250 },
+    onScanSuccess
+  );
 });
 
 /* INIT */
@@ -304,3 +321,4 @@ loadPlans();
 
 </body>
 </html>
+
