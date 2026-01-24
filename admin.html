@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App – Admin</title>
 
-<link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
 body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:70px}
@@ -67,6 +66,7 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 <!-- USERS -->
 <div class="card hidden" id="users">
   <h3>All Users</h3>
+  <input id="searchUser" placeholder="Search name or phone" onkeyup="loadUsers()">
   <div id="usersList">Loading...</div>
 </div>
 
@@ -84,7 +84,7 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 <!-- ATTENDANCE -->
 <div class="card hidden" id="attendance">
   <h3>All Attendance</h3>
-  <input id="filterDate" type="date" onchange="loadAttendance()">
+  <input type="month" id="filterMonth" onchange="loadAttendance()">
   <div id="attendanceList">Loading...</div>
 </div>
 
@@ -127,45 +127,24 @@ firebase.initializeApp({
   projectId:"gym-app-79bec"
 });
 const db=firebase.firestore();
-  function deleteUser(phone){
-  if(!confirm("Delete this user permanently?")) return;
-
-  // 1️⃣ Delete user document
-  db.collection("users").doc(phone).delete().then(()=>{
-
-    // 2️⃣ OPTIONAL: delete attendance of this user
-    db.collection("attendance")
-      .where("phone","==",phone)
-      .get()
-      .then(snap=>{
-        snap.forEach(d=>{
-          db.collection("attendance").doc(d.id).delete();
-        });
-      });
-
-    alert("User deleted successfully ❌");
-  });
-}
-
 
 /* TAB */
 function showTab(id,btn){
   ["addUser","requests","users","plans","attendance","qr"].forEach(x=>{
-    let el=document.getElementById(x);
-    if(el) el.classList.add("hidden");
+    document.getElementById(x).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
 
-/* LOAD PLAN OPTIONS */
+/* PLAN OPTIONS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
     let h='<option value="">Select Plan</option>';
     s.forEach(d=>{
       let p=d.data();
-      h+=`<option value="${p.name}|${p.days}|${p.price}">
+      h+=`<option value="${p.name}|${p.days}">
         ${p.name} (${p.days} days – ₹${p.price})
       </option>`;
     });
@@ -173,7 +152,7 @@ function loadPlanOptions(){
   });
 }
 
-/* ADD USER WITH PLAN */
+/* ADD USER */
 function addUserWithPlan(){
   let name=uname.value.trim();
   let phone=uphone.value.trim();
@@ -190,35 +169,39 @@ function addUserWithPlan(){
     paymentStatus:"paid",
     planExpiry:exp.toISOString()
   }).then(()=>{
-    alert("User added with plan ✅");
+    alert("User added");
     uname.value=uphone.value=uplan.value="";
   });
 }
 
-/* USERS LIST */
+/* USERS */
 function loadUsers(){
+  let key=searchUser.value.toLowerCase();
   db.collection("users").onSnapshot(s=>{
     let h="";
     s.forEach(d=>{
       let u=d.data();
+      if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key)) return;
       h+=`
         <div style="border-bottom:1px solid #eee;padding:8px 0">
           <b>${u.name}</b><br>
           📞 ${u.phone}<br>
-          Plan: ${u.currentPlan||"-"}<br>
-          Status: ${u.planStatus||"inactive"}
-
-          <button class="del"
-            onclick="deleteUser('${u.phone}')">
-            Delete User
-          </button>
+          Plan: ${u.currentPlan||"-"}
+          <button class="del" onclick="deleteUser('${u.phone}')">Delete</button>
         </div>
       `;
     });
-    usersList.innerHTML = h || "No users";
+    usersList.innerHTML=h||"No users";
   });
 }
 
+function deleteUser(phone){
+  if(!confirm("Delete user?")) return;
+  db.collection("users").doc(phone).delete();
+  db.collection("attendance").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+  });
+}
 
 /* REQUESTS */
 function loadRequests(){
@@ -232,8 +215,7 @@ function loadRequests(){
             <b>${u.name}</b><br>
             Plan: ${u.requestedPlan}<br>
             ₹${u.requestedPrice}
-            <button class="ok"
-              onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays})">
+            <button class="ok" onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays})">
               Approve
             </button>
           </p><hr>`;
@@ -243,10 +225,8 @@ function loadRequests(){
   });
 }
 
-/* APPROVE PLAN */
 function approvePlan(phone,plan,days){
-  let exp=new Date();
-  exp.setDate(exp.getDate()+Number(days));
+  let exp=new Date(); exp.setDate(exp.getDate()+Number(days));
   db.collection("users").doc(phone).update({
     currentPlan:plan,
     planStatus:"active",
@@ -255,7 +235,7 @@ function approvePlan(phone,plan,days){
     requestedPlan:"",
     requestedDays:"",
     requestedPrice:""
-  }).then(()=>alert("Plan activated ✅"));
+  });
 }
 
 /* PLANS */
@@ -264,7 +244,7 @@ function loadPlans(){
     let h="";
     s.forEach(d=>{
       let p=d.data();
-      h+=`<p>${p.name} – ${p.days} days – ₹${p.price}</p>
+      h+=`${p.name} – ${p.days} days – ₹${p.price}
       <button class="del" onclick="db.collection('plans').doc('${d.id}').delete()">Delete</button><hr>`;
     });
     plansList.innerHTML=h||"No plans";
@@ -279,41 +259,28 @@ function addPlan(){
   pname.value=pdays.value=pprice.value="";
 }
 
-/* ATTENDANCE */
+/* ATTENDANCE (WITH NAME) */
 function loadAttendance(){
-  let selDate = filterDate.value;
-  attendanceList.innerHTML = "Loading...";
-
-  let q = db.collection("attendance");
-  if(selDate){
-    q = q.where("date","==",selDate);
-  }
-
-  q.get().then(async snap=>{
-    if(snap.empty){
-      attendanceList.innerHTML = "No attendance found";
-      return;
-    }
-
+  let month=filterMonth.value;
+  attendanceList.innerHTML="Loading...";
+  db.collection("attendance").get().then(async snap=>{
     let h="";
-
     for(const d of snap.docs){
-      let a = d.data();
+      let a=d.data();
+      if(month && !a.date.startsWith(month)) continue;
 
-      // 🔍 GET USER NAME USING PHONE
-      let userSnap = await db.collection("users").doc(a.phone).get();
-      let uname = userSnap.exists ? userSnap.data().name : "Unknown";
+      let u=await db.collection("users").doc(a.phone).get();
+      let name=u.exists?u.data().name:"Unknown";
 
-      h += `
+      h+=`
         <div style="border-bottom:1px solid #eee;padding:8px 0">
-          👤 <b>${uname}</b><br>
+          👤 <b>${name}</b><br>
           📞 ${a.phone}<br>
           📅 ${a.date}
         </div>
       `;
     }
-
-    attendanceList.innerHTML = h;
+    attendanceList.innerHTML=h||"No attendance";
   });
 }
 
@@ -327,5 +294,3 @@ loadAttendance();
 
 </body>
 </html>
-
-
