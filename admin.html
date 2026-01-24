@@ -49,21 +49,17 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <i class="fa fa-sign-out-alt" onclick="location.href='index.html'"></i>
 </header>
 
-<!-- ADD USER WITH PLAN -->
+<!-- ADD USER -->
 <div class="card" id="addUser">
   <h3>Add User + Assign Plan</h3>
   <input id="uname" placeholder="User name">
   <input id="uphone" placeholder="Phone number">
-
-  <select id="uplan">
-    <option value="">Select Plan</option>
-  </select>
-
+  <select id="uplan"><option value="">Select Plan</option></select>
   <button onclick="addUserWithPlan()">Add User</button>
 </div>
 
-<!-- PLAN REQUESTS -->
-<div class="card" id="requests">
+<!-- REQUESTS -->
+<div class="card hidden" id="requests">
   <h3>Plan Requests</h3>
   <div id="reqList">Loading...</div>
 </div>
@@ -85,10 +81,18 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <div id="plansList">Loading...</div>
 </div>
 
+<!-- ATTENDANCE -->
+<div class="card hidden" id="attendance">
+  <h3>All Attendance</h3>
+  <input id="filterDate" type="date" onchange="loadAttendance()">
+  <div id="attendanceList">Loading...</div>
+</div>
+
 <!-- QR -->
 <div class="card hidden" id="qr">
   <h3>Gym QR</h3>
   <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
+  <button onclick="window.print()">Print QR</button>
 </div>
 
 <!-- NAV -->
@@ -105,6 +109,12 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <button onclick="showTab('plans',this)">
     <i class="fa fa-list"></i>Plans
   </button>
+  <button onclick="showTab('attendance',this)">
+    <i class="fa fa-calendar-check"></i>Attendance
+  </button>
+  <button onclick="showTab('qr',this)">
+    <i class="fa fa-qrcode"></i>QR
+  </button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -120,7 +130,7 @@ const db=firebase.firestore();
 
 /* TAB */
 function showTab(id,btn){
-  ["addUser","requests","users","plans","qr"].forEach(x=>{
+  ["addUser","requests","users","plans","attendance","qr"].forEach(x=>{
     let el=document.getElementById(x);
     if(el) el.classList.add("hidden");
   });
@@ -129,15 +139,15 @@ function showTab(id,btn){
   btn.classList.add("active");
 }
 
-/* LOAD PLANS TO DROPDOWN */
+/* LOAD PLAN OPTIONS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
     let h='<option value="">Select Plan</option>';
     s.forEach(d=>{
       let p=d.data();
       h+=`<option value="${p.name}|${p.days}|${p.price}">
-            ${p.name} (${p.days} days – ₹${p.price})
-          </option>`;
+        ${p.name} (${p.days} days – ₹${p.price})
+      </option>`;
     });
     uplan.innerHTML=h;
   });
@@ -148,25 +158,20 @@ function addUserWithPlan(){
   let name=uname.value.trim();
   let phone=uphone.value.trim();
   let plan=uplan.value;
+  if(!name||!phone||!plan){alert("Fill all fields");return;}
 
-  if(!name||!phone||!plan){
-    alert("Fill all fields");
-    return;
-  }
-
-  let [planName,days,price]=plan.split("|");
-  let exp=new Date();
-  exp.setDate(exp.getDate()+Number(days));
+  let [planName,days]=plan.split("|");
+  let exp=new Date(); exp.setDate(exp.getDate()+Number(days));
 
   db.collection("users").doc(phone).set({
-    name, phone,
+    name,phone,
     currentPlan:planName,
     planStatus:"active",
     paymentStatus:"paid",
     planExpiry:exp.toISOString()
   }).then(()=>{
     alert("User added with plan ✅");
-    uname.value=""; uphone.value=""; uplan.value="";
+    uname.value=uphone.value=uplan.value="";
   });
 }
 
@@ -176,20 +181,14 @@ function loadUsers(){
     let h="";
     s.forEach(d=>{
       let u=d.data();
-      h+=`
-        <p>
-          <b>${u.name}</b><br>
-          📞 ${u.phone}<br>
-          Plan: ${u.currentPlan||"-"}<br>
-          Status: ${u.planStatus||"inactive"}
-        </p><hr>
-      `;
+      h+=`<p><b>${u.name}</b><br>📞 ${u.phone}<br>
+      Plan: ${u.currentPlan||"-"}<br>Status: ${u.planStatus}</p><hr>`;
     });
     usersList.innerHTML=h||"No users";
   });
 }
 
-/* PLAN REQUESTS */
+/* REQUESTS */
 function loadRequests(){
   db.collection("users").onSnapshot(s=>{
     let h="";
@@ -198,26 +197,43 @@ function loadRequests(){
       if(u.planStatus==="pending"){
         h+=`
           <p>
-            <b>${u.name}</b> – ${u.requestedPlan}<br>
+            <b>${u.name}</b><br>
+            Plan: ${u.requestedPlan}<br>
             ₹${u.requestedPrice}
-          </p><hr>
-        `;
+            <button class="ok"
+              onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays})">
+              Approve
+            </button>
+          </p><hr>`;
       }
     });
     reqList.innerHTML=h||"No requests";
   });
 }
 
-/* PLANS CRUD */
+/* APPROVE PLAN */
+function approvePlan(phone,plan,days){
+  let exp=new Date();
+  exp.setDate(exp.getDate()+Number(days));
+  db.collection("users").doc(phone).update({
+    currentPlan:plan,
+    planStatus:"active",
+    paymentStatus:"paid",
+    planExpiry:exp.toISOString(),
+    requestedPlan:"",
+    requestedDays:"",
+    requestedPrice:""
+  }).then(()=>alert("Plan activated ✅"));
+}
+
+/* PLANS */
 function loadPlans(){
   db.collection("plans").onSnapshot(s=>{
     let h="";
     s.forEach(d=>{
       let p=d.data();
-      h+=`
-        <p>${p.name} – ${p.days} days – ₹${p.price}</p>
-        <button class="del" onclick="delPlan('${d.id}')">Delete</button><hr>
-      `;
+      h+=`<p>${p.name} – ${p.days} days – ₹${p.price}</p>
+      <button class="del" onclick="db.collection('plans').doc('${d.id}').delete()">Delete</button><hr>`;
     });
     plansList.innerHTML=h||"No plans";
   });
@@ -230,15 +246,28 @@ function addPlan(){
   });
   pname.value=pdays.value=pprice.value="";
 }
-function delPlan(id){
-  if(confirm("Delete plan?")) db.collection("plans").doc(id).delete();
+
+/* ATTENDANCE */
+function loadAttendance(){
+  let selDate=filterDate.value;
+  let q=db.collection("attendance");
+  if(selDate) q=q.where("date","==",selDate);
+  q.get().then(s=>{
+    let h="";
+    s.forEach(d=>{
+      let a=d.data();
+      h+=`<p>📞 ${a.phone}<br>📅 ${a.date}</p><hr>`;
+    });
+    attendanceList.innerHTML=h||"No attendance";
+  });
 }
 
 /* INIT */
-loadPlans();
 loadPlanOptions();
 loadUsers();
 loadRequests();
+loadPlans();
+loadAttendance();
 </script>
 
 </body>
