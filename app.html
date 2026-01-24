@@ -138,9 +138,9 @@ button{
   <button id="navAttendance" onclick="showTab('attendance')">
     <i class="fa fa-calendar-check"></i>Attendance
   </button>
-  <button id="navPlans" onclick="showTab('plans')">
-    <i class="fa fa-list"></i>Plans
-  </button>
+  <button onclick="requestPlan('${p.name}',${p.days},${p.price})">
+  Request – ₹${p.price}
+</button>
 </div>
 
 <!-- Firebase -->
@@ -246,13 +246,15 @@ function loadPlans(){
 }
 
 /* REQUEST PLAN */
-function requestPlan(name,days){
+function requestPlan(name,days,price){
   db.collection("users").doc(phone).update({
     requestedPlan:name,
     requestedDays:days,
-    planStatus:"pending"
+    requestedPrice:price,
+    planStatus:"pending",
+    paymentStatus:"pending"
   }).then(()=>{
-    alert("Plan request sent to admin ⏳");
+    alert("Plan requested. Please pay ₹"+price+" at gym");
     loadHome();
     showTab('home');
   });
@@ -321,4 +323,5 @@ loadPlans();
 
 </body>
 </html>
+
 
