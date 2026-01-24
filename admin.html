@@ -127,6 +127,26 @@ firebase.initializeApp({
   projectId:"gym-app-79bec"
 });
 const db=firebase.firestore();
+  function deleteUser(phone){
+  if(!confirm("Delete this user permanently?")) return;
+
+  // 1️⃣ Delete user document
+  db.collection("users").doc(phone).delete().then(()=>{
+
+    // 2️⃣ OPTIONAL: delete attendance of this user
+    db.collection("attendance")
+      .where("phone","==",phone)
+      .get()
+      .then(snap=>{
+        snap.forEach(d=>{
+          db.collection("attendance").doc(d.id).delete();
+        });
+      });
+
+    alert("User deleted successfully ❌");
+  });
+}
+
 
 /* TAB */
 function showTab(id,btn){
@@ -181,12 +201,24 @@ function loadUsers(){
     let h="";
     s.forEach(d=>{
       let u=d.data();
-      h+=`<p><b>${u.name}</b><br>📞 ${u.phone}<br>
-      Plan: ${u.currentPlan||"-"}<br>Status: ${u.planStatus}</p><hr>`;
+      h+=`
+        <div style="border-bottom:1px solid #eee;padding:8px 0">
+          <b>${u.name}</b><br>
+          📞 ${u.phone}<br>
+          Plan: ${u.currentPlan||"-"}<br>
+          Status: ${u.planStatus||"inactive"}
+
+          <button class="del"
+            onclick="deleteUser('${u.phone}')">
+            Delete User
+          </button>
+        </div>
+      `;
     });
-    usersList.innerHTML=h||"No users";
+    usersList.innerHTML = h || "No users";
   });
 }
+
 
 /* REQUESTS */
 function loadRequests(){
@@ -272,3 +304,4 @@ loadAttendance();
 
 </body>
 </html>
+
