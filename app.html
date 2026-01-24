@@ -105,33 +105,37 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 
-const phone=new URLSearchParams(location.search).get("phone");
+/* LOGIN SESSION */
+const phone = localStorage.getItem("gymPhone");
 if(!phone) location.href="index.html";
 
-function showTab(t){
-  ["home","scan","attendance","plans"].forEach(x=>{
-    document.getElementById(x).classList.add("hidden");
-    document.getElementById("nav"+x.charAt(0).toUpperCase()+x.slice(1))
+/* TABS */
+function showTab(tab){
+  ["home","scan","attendance","plans"].forEach(t=>{
+    document.getElementById(t).classList.add("hidden");
+    document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
       .classList.remove("activeNav");
   });
-  document.getElementById(t).classList.remove("hidden");
-  document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
+
+  document.getElementById(tab).classList.remove("hidden");
+  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
     .classList.add("activeNav");
+
+  if(tab==="scan") startCamera();
 }
 
-function logout(){ location.href="index.html"; }
+/* LOGOUT */
+function logout(){
+  localStorage.removeItem("gymPhone");
+  location.href="index.html";
+}
 
+/* HOME */
 function loadHome(){
   db.collection("users").doc(phone).get().then(d=>{
     let u=d.data();
     welcome.innerText="Welcome, "+u.name;
     planName.innerText=u.currentPlan||"-";
-
-    if(u.paymentStatus==="pending"){
-      planStatus.innerText="PAYMENT PENDING";
-      planStatus.className="expired";
-      return;
-    }
 
     if(u.planStatus==="active"){
       let r=Math.ceil((new Date(u.planExpiry)-new Date())/86400000);
@@ -145,6 +149,7 @@ function loadHome(){
   });
 }
 
+/* ATTENDANCE */
 function loadAttendance(){
   db.collection("attendance").where("phone","==",phone).get().then(s=>{
     let h="";
@@ -153,6 +158,7 @@ function loadAttendance(){
   });
 }
 
+/* PLANS */
 function loadPlans(){
   db.collection("plans").get().then(s=>{
     let h="";
@@ -174,40 +180,52 @@ function requestPlan(name,days,price){
     requestedPlan:name,
     requestedDays:days,
     requestedPrice:price,
-    planStatus:"pending",
-    paymentStatus:"pending"
+    planStatus:"pending"
   });
   alert("Please pay ₹"+price+" at gym");
-  loadHome();
   showTab("home");
 }
 
-/* BACK CAMERA */
-const qr=new Html5Qrcode("reader");
-Html5Qrcode.getCameras().then(d=>{
-  let cam=d.find(x=>x.label.toLowerCase().includes("back"))||d[d.length-1];
-  qr.start(cam.id,{fps:10,qrbox:250},onScanSuccess);
-});
+/* CAMERA + SCAN */
+let qr;
+function startCamera(){
+  if(qr) return;
 
-function onScanSuccess(t){
-  if(t!=="GYM_ATTENDANCE") return alert("Invalid QR");
-  let d=new Date().toISOString().split("T")[0];
-  let id=phone+"_"+d;
+  qr = new Html5Qrcode("reader");
+  Html5Qrcode.getCameras().then(devices=>{
+    let cam = devices.find(d=>d.label.toLowerCase().includes("back")) || devices[0];
+    qr.start(cam.id,{fps:10,qrbox:250},onScanSuccess);
+  });
+}
 
-  db.collection("users").doc(phone).get().then(u=>{
-    if(u.data().planStatus!=="active") return alert("Plan inactive");
-    db.collection("attendance").doc(id).get().then(a=>{
-      if(a.exists) return alert("Already marked");
-      db.collection("attendance").doc(id).set({phone,date:d});
-      alert("Attendance marked");
+function onScanSuccess(text){
+  if(text!=="GYM_ATTENDANCE"){
+    alert("Invalid QR");
+    return;
+  }
+
+  let today=new Date().toISOString().split("T")[0];
+  let id=phone+"_"+today;
+
+  db.collection("attendance").doc(id).get().then(d=>{
+    if(d.exists){ alert("Already marked"); return; }
+
+    db.collection("attendance").doc(id).set({
+      phone:phone,
+      date:today
+    }).then(()=>{
+      alert("Attendance marked ✅");
       loadAttendance();
+      showTab("home");
     });
   });
 }
 
+/* INIT */
 loadHome();
 loadAttendance();
 loadPlans();
 </script>
+
 </body>
 </html>
