@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,41 +9,83 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:80px}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f1f5f9;
+  padding-bottom:80px;
+}
+
+/* HEADER */
 header{
-  background:#111827;color:#fff;
-  display:flex;align-items:center;justify-content:space-between;
-  padding:14px
+  background:#111827;
+  color:#fff;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:14px;
 }
 header h2{margin:0}
-.logout{color:#fff;font-size:18px;cursor:pointer}
+.logout{
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+}
 
+/* CARD */
 .card{
-  background:#fff;margin:15px;padding:15px;
-  border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)
+  background:#fff;
+  margin:15px;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 4px 10px rgba(0,0,0,.1);
 }
 .hidden{display:none}
 .active{color:green;font-weight:bold}
 .expired{color:red;font-weight:bold}
 
+/* BUTTON */
 button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:8px;border:none;
-  background:#2563eb;color:#fff;font-weight:bold
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border-radius:8px;
+  border:none;
+  background:#2563eb;
+  color:#fff;
+  font-weight:bold;
 }
 
-/* bottom nav */
+/* BOTTOM NAV */
 .nav{
-  position:fixed;bottom:0;left:0;right:0;
-  background:#fff;display:flex;
-  box-shadow:0 -2px 8px rgba(0,0,0,.2)
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  height:60px;
+  background:#ffffff;
+  display:flex;
+  border-top:1px solid #ddd;
+  z-index:999;
 }
 .nav button{
-  flex:1;border:none;background:#fff;
-  padding:10px;font-size:12px
+  flex:1;
+  background:none;
+  border:none;
+  color:#6b7280;
+  font-size:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
 }
-.nav i{display:block;font-size:18px;margin-bottom:3px}
-.activeNav{color:#2563eb}
+.nav button i{
+  font-size:20px;
+  margin-bottom:4px;
+}
+.nav button.activeNav{
+  color:#2563eb;
+}
 
 #reader{width:100%}
 </style>
@@ -104,6 +146,8 @@ button{
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<!-- QR Scanner -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
@@ -115,38 +159,40 @@ if(!firebase.apps.length){
     projectId:"gym-app-79bec"
   });
 }
-const db=firebase.firestore();
+const db = firebase.firestore();
 
-/* user */
-const phone=new URLSearchParams(location.search).get("phone");
-if(!phone){location.href="index.html";}
+/* USER */
+const phone = new URLSearchParams(location.search).get("phone");
+if(!phone){
+  location.href="index.html";
+}
 
-/* tabs */
-function showTab(t){
-  ["home","scan","attendance","plans"].forEach(x=>{
-    document.getElementById(x).classList.add("hidden");
-    document.getElementById("nav"+x.charAt(0).toUpperCase()+x.slice(1))
+/* TAB SWITCH */
+function showTab(tab){
+  ["home","scan","attendance","plans"].forEach(t=>{
+    document.getElementById(t).classList.add("hidden");
+    document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
       .classList.remove("activeNav");
   });
-  document.getElementById(t).classList.remove("hidden");
-  document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
+  document.getElementById(tab).classList.remove("hidden");
+  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
     .classList.add("activeNav");
 }
 
-/* logout */
+/* LOGOUT */
 function logout(){
   if(confirm("Logout?")){
     location.href="index.html";
   }
 }
 
-/* load home */
+/* LOAD HOME */
 function loadHome(){
   db.collection("users").doc(phone).get().then(d=>{
-    if(!d.exists)return;
+    if(!d.exists) return;
     let u=d.data();
     welcome.innerText="Welcome, "+u.name;
-    planName.innerText=u.currentPlan||"-";
+    planName.innerText=u.currentPlan || "-";
 
     if(u.planStatus==="active"){
       let r=Math.ceil((new Date(u.planExpiry)-new Date())/86400000);
@@ -154,28 +200,36 @@ function loadHome(){
       planStatus.innerText=r>0?"ACTIVE":"EXPIRED";
       planStatus.className=r>0?"active":"expired";
     }else{
-      planStatus.innerText=u.planStatus||"INACTIVE";
+      planStatus.innerText=u.planStatus || "INACTIVE";
       planStatus.className="expired";
     }
   });
 }
 
-/* attendance */
+/* ATTENDANCE */
 function loadAttendance(){
   attList.innerHTML="Loading...";
   db.collection("attendance").where("phone","==",phone).get().then(s=>{
-    if(s.empty){attList.innerHTML="No attendance";return;}
+    if(s.empty){
+      attList.innerHTML="No attendance";
+      return;
+    }
     let h="";
-    s.forEach(d=>h+=`<p>${d.data().date} ✅</p>`);
+    s.forEach(d=>{
+      h+=`<p>${d.data().date} ✅</p>`;
+    });
     attList.innerHTML=h;
   });
 }
 
-/* plans list */
+/* LOAD PLANS */
 function loadPlans(){
   plansList.innerHTML="Loading...";
   db.collection("plans").get().then(s=>{
-    if(s.empty){plansList.innerHTML="No plans";return;}
+    if(s.empty){
+      plansList.innerHTML="No plans";
+      return;
+    }
     let h="";
     s.forEach(d=>{
       let p=d.data();
@@ -183,9 +237,7 @@ function loadPlans(){
         <div style="border-bottom:1px solid #eee;padding:8px 0">
           <b>${p.name}</b><br>
           ${p.days} days – ₹${p.price}
-          <button onclick="requestPlan('${p.name}',${p.days})">
-            Request
-          </button>
+          <button onclick="requestPlan('${p.name}',${p.days})">Request</button>
         </div>
       `;
     });
@@ -193,7 +245,7 @@ function loadPlans(){
   });
 }
 
-/* request plan (admin approval needed) */
+/* REQUEST PLAN */
 function requestPlan(name,days){
   db.collection("users").doc(phone).update({
     requestedPlan:name,
@@ -206,34 +258,45 @@ function requestPlan(name,days){
   });
 }
 
-/* QR scan */
+/* QR SCAN */
 function onScanSuccess(txt){
-  if(txt!=="GYM_ATTENDANCE"){alert("Invalid QR");return;}
+  if(txt!=="GYM_ATTENDANCE"){
+    alert("Invalid QR");
+    return;
+  }
   let today=new Date().toISOString().split("T")[0];
   let id=phone+"_"+today;
 
   db.collection("users").doc(phone).get().then(u=>{
     if(u.data().planStatus!=="active"){
-      alert("Plan not active");return;
+      alert("Plan not active");
+      return;
     }
     db.collection("attendance").doc(id).get().then(a=>{
-      if(a.exists){alert("Already marked");return;}
+      if(a.exists){
+        alert("Already marked today");
+        return;
+      }
       db.collection("attendance").doc(id).set({
-        phone:phone,date:today
+        phone:phone,
+        date:today
       }).then(()=>{
-        alert("Attendance marked");
+        alert("Attendance marked ✅");
         loadAttendance();
       });
     });
   });
 }
 
+/* START CAMERA */
 const qr=new Html5Qrcode("reader");
 Html5Qrcode.getCameras().then(c=>{
-  if(c.length) qr.start(c[0].id,{fps:10,qrbox:250},onScanSuccess);
+  if(c.length){
+    qr.start(c[0].id,{fps:10,qrbox:250},onScanSuccess);
+  }
 });
 
-/* init */
+/* INIT */
 loadHome();
 loadAttendance();
 loadPlans();
