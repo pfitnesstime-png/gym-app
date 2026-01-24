@@ -5,28 +5,61 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App</title>
 
+<!-- Icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9}
-header{background:#111827;color:#fff;text-align:center;padding:14px}
-.card{background:#fff;margin:15px;padding:15px;border-radius:12px;
-box-shadow:0 4px 10px rgba(0,0,0,.1)}
+body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:80px}
+header{
+  background:#111827;color:#fff;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px
+}
+header h2{margin:0}
+.logout{color:#fff;font-size:18px;cursor:pointer}
+
+.card{
+  background:#fff;margin:15px;padding:15px;
+  border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)
+}
+.hidden{display:none}
+.active{color:green;font-weight:bold}
+.expired{color:red;font-weight:bold}
+
 button{
   width:100%;padding:12px;margin-top:10px;
   border-radius:8px;border:none;
   background:#2563eb;color:#fff;font-weight:bold
 }
-.active{color:green;font-weight:bold}
-.expired{color:red;font-weight:bold}
+
+/* bottom nav */
+.nav{
+  position:fixed;bottom:0;left:0;right:0;
+  background:#fff;display:flex;
+  box-shadow:0 -2px 8px rgba(0,0,0,.2)
+}
+.nav button{
+  flex:1;border:none;background:#fff;
+  padding:10px;font-size:12px
+}
+.nav i{display:block;font-size:18px;margin-bottom:3px}
+.activeNav{color:#2563eb}
+
 #reader{width:100%}
 </style>
 </head>
 
 <body>
 
-<header><h2>🏋️ Gym App</h2></header>
+<header>
+  <h2>🏋️ Gym App</h2>
+  <div class="logout" onclick="logout()">
+    <i class="fa fa-sign-out-alt"></i>
+  </div>
+</header>
 
 <!-- HOME -->
-<div class="card">
+<div class="card" id="home">
   <h3 id="welcome">Welcome</h3>
   <p>Plan: <b id="planName">-</b></p>
   <p>Status: <span id="planStatus" class="expired">-</span></p>
@@ -34,134 +67,176 @@ button{
 </div>
 
 <!-- SCAN -->
-<div class="card">
+<div class="card hidden" id="scan">
   <h3>Scan Gym QR</h3>
   <div id="reader"></div>
-  <p style="font-size:13px;color:#555">
-    Scan the QR placed inside gym to mark attendance
-  </p>
+  <p style="font-size:13px;color:#555">Scan QR inside gym</p>
 </div>
 
-<!-- ATTENDANCE HISTORY -->
-<div class="card">
+<!-- ATTENDANCE -->
+<div class="card hidden" id="attendance">
   <h3>Attendance History</h3>
   <div id="attList">Loading...</div>
+</div>
+
+<!-- PLANS -->
+<div class="card hidden" id="plans">
+  <h3>Available Plans</h3>
+  <div id="plansList">Loading...</div>
+</div>
+
+<!-- BOTTOM NAV -->
+<div class="nav">
+  <button id="navHome" class="activeNav" onclick="showTab('home')">
+    <i class="fa fa-house"></i>Home
+  </button>
+  <button id="navScan" onclick="showTab('scan')">
+    <i class="fa fa-camera"></i>Scan
+  </button>
+  <button id="navAttendance" onclick="showTab('attendance')">
+    <i class="fa fa-calendar-check"></i>Attendance
+  </button>
+  <button id="navPlans" onclick="showTab('plans')">
+    <i class="fa fa-list"></i>Plans
+  </button>
 </div>
 
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<!-- QR Scanner -->
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
-/* 🔥 Firebase init */
+/* Firebase init */
 if(!firebase.apps.length){
   firebase.initializeApp({
-    apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-    authDomain: "gym-app-79bec.firebaseapp.com",
-    projectId: "gym-app-79bec"
+    apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+    authDomain:"gym-app-79bec.firebaseapp.com",
+    projectId:"gym-app-79bec"
   });
 }
-const db = firebase.firestore();
+const db=firebase.firestore();
 
-/* USER PHONE FROM URL */
-const phone = new URLSearchParams(window.location.search).get("phone");
-if(!phone){
-  alert("Invalid access");
+/* user */
+const phone=new URLSearchParams(location.search).get("phone");
+if(!phone){location.href="index.html";}
+
+/* tabs */
+function showTab(t){
+  ["home","scan","attendance","plans"].forEach(x=>{
+    document.getElementById(x).classList.add("hidden");
+    document.getElementById("nav"+x.charAt(0).toUpperCase()+x.slice(1))
+      .classList.remove("activeNav");
+  });
+  document.getElementById(t).classList.remove("hidden");
+  document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
+    .classList.add("activeNav");
 }
 
-/* LOAD USER HOME */
+/* logout */
+function logout(){
+  if(confirm("Logout?")){
+    location.href="index.html";
+  }
+}
+
+/* load home */
 function loadHome(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(!doc.exists) return;
-    let u = doc.data();
+  db.collection("users").doc(phone).get().then(d=>{
+    if(!d.exists)return;
+    let u=d.data();
+    welcome.innerText="Welcome, "+u.name;
+    planName.innerText=u.currentPlan||"-";
 
-    welcome.innerText = "Welcome, " + u.name;
-    planName.innerText = u.currentPlan || "Not Selected";
-
-    if(u.planStatus === "active"){
-      let rem = Math.ceil((new Date(u.planExpiry) - new Date()) / (1000*60*60*24));
-      days.innerText = rem > 0 ? rem : 0;
-      planStatus.innerText = rem > 0 ? "ACTIVE" : "EXPIRED";
-      planStatus.className = rem > 0 ? "active" : "expired";
+    if(u.planStatus==="active"){
+      let r=Math.ceil((new Date(u.planExpiry)-new Date())/86400000);
+      days.innerText=r>0?r:0;
+      planStatus.innerText=r>0?"ACTIVE":"EXPIRED";
+      planStatus.className=r>0?"active":"expired";
     }else{
-      planStatus.innerText = u.planStatus || "INACTIVE";
-      planStatus.className = "expired";
+      planStatus.innerText=u.planStatus||"INACTIVE";
+      planStatus.className="expired";
     }
   });
 }
 
-/* LOAD ATTENDANCE */
+/* attendance */
 function loadAttendance(){
-  attList.innerHTML = "Loading...";
-  db.collection("attendance")
-    .where("phone","==",phone)
-    .get().then(snap=>{
-      if(snap.empty){
-        attList.innerHTML = "No attendance yet";
-        return;
-      }
-      let html="";
-      snap.forEach(d=>{
-        html += `<p>${d.data().date} ✅</p>`;
-      });
-      attList.innerHTML = html;
-    });
+  attList.innerHTML="Loading...";
+  db.collection("attendance").where("phone","==",phone).get().then(s=>{
+    if(s.empty){attList.innerHTML="No attendance";return;}
+    let h="";
+    s.forEach(d=>h+=`<p>${d.data().date} ✅</p>`);
+    attList.innerHTML=h;
+  });
 }
 
-/* QR SCAN LOGIC */
-function onScanSuccess(decodedText){
-  if(decodedText !== "GYM_ATTENDANCE"){
-    alert("Invalid QR ❌");
-    return;
-  }
+/* plans list */
+function loadPlans(){
+  plansList.innerHTML="Loading...";
+  db.collection("plans").get().then(s=>{
+    if(s.empty){plansList.innerHTML="No plans";return;}
+    let h="";
+    s.forEach(d=>{
+      let p=d.data();
+      h+=`
+        <div style="border-bottom:1px solid #eee;padding:8px 0">
+          <b>${p.name}</b><br>
+          ${p.days} days – ₹${p.price}
+          <button onclick="requestPlan('${p.name}',${p.days})">
+            Request
+          </button>
+        </div>
+      `;
+    });
+    plansList.innerHTML=h;
+  });
+}
 
-  db.collection("users").doc(phone).get().then(userDoc=>{
-    if(!userDoc.exists) return;
+/* request plan (admin approval needed) */
+function requestPlan(name,days){
+  db.collection("users").doc(phone).update({
+    requestedPlan:name,
+    requestedDays:days,
+    planStatus:"pending"
+  }).then(()=>{
+    alert("Plan request sent to admin ⏳");
+    loadHome();
+    showTab('home');
+  });
+}
 
-    let u = userDoc.data();
-    if(u.planStatus !== "active"){
-      alert("Plan not active ❌");
-      return;
+/* QR scan */
+function onScanSuccess(txt){
+  if(txt!=="GYM_ATTENDANCE"){alert("Invalid QR");return;}
+  let today=new Date().toISOString().split("T")[0];
+  let id=phone+"_"+today;
+
+  db.collection("users").doc(phone).get().then(u=>{
+    if(u.data().planStatus!=="active"){
+      alert("Plan not active");return;
     }
-
-    let today = new Date().toISOString().split("T")[0];
-    let docId = phone + "_" + today;
-
-    db.collection("attendance").doc(docId).get().then(att=>{
-      if(att.exists){
-        alert("Already marked today");
-      }else{
-        db.collection("attendance").doc(docId).set({
-          phone: phone,
-          date: today,
-          method: "qr_scan"
-        }).then(()=>{
-          alert("Attendance marked ✅");
-          loadAttendance();
-        });
-      }
+    db.collection("attendance").doc(id).get().then(a=>{
+      if(a.exists){alert("Already marked");return;}
+      db.collection("attendance").doc(id).set({
+        phone:phone,date:today
+      }).then(()=>{
+        alert("Attendance marked");
+        loadAttendance();
+      });
     });
   });
 }
 
-/* START QR CAMERA */
-const html5QrCode = new Html5Qrcode("reader");
-Html5Qrcode.getCameras().then(devices=>{
-  if(devices && devices.length){
-    html5QrCode.start(
-      devices[0].id,
-      { fps: 10, qrbox: 250 },
-      onScanSuccess
-    );
-  }
+const qr=new Html5Qrcode("reader");
+Html5Qrcode.getCameras().then(c=>{
+  if(c.length) qr.start(c[0].id,{fps:10,qrbox:250},onScanSuccess);
 });
 
-/* INIT */
+/* init */
 loadHome();
 loadAttendance();
+loadPlans();
 </script>
 
 </body>
