@@ -9,63 +9,33 @@
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f1f5f9;
-  padding-bottom:70px;
-}
+body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:70px}
 header{
-  background:#111827;
-  color:#fff;
-  padding:14px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
+  background:#111827;color:#fff;padding:14px;
+  display:flex;justify-content:space-between;align-items:center
 }
 .card{
-  background:#fff;
-  margin:15px;
-  padding:15px;
-  border-radius:12px;
+  background:#fff;margin:15px;padding:15px;border-radius:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.1)
 }
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-  border-radius:6px;
-  border:1px solid #ccc
+input,select,button{
+  width:100%;padding:10px;margin-top:8px;
+  border-radius:6px;border:1px solid #ccc
 }
-button{
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  font-weight:bold
-}
+button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 .ok{background:#16a34a}
 .del{background:#dc2626}
 .hidden{display:none}
 
 /* bottom nav */
 .nav{
-  position:fixed;
-  bottom:0;left:0;right:0;
-  height:60px;
-  background:#fff;
-  border-top:1px solid #ddd;
-  display:flex;
+  position:fixed;bottom:0;left:0;right:0;height:60px;
+  background:#fff;border-top:1px solid #ddd;display:flex
 }
 .nav button{
-  flex:1;
-  background:none;
-  border:none;
-  color:#6b7280;
-  font-size:12px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+  flex:1;background:none;border:none;color:#6b7280;
+  font-size:12px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center
 }
 .nav button i{font-size:18px}
 .nav button.active{color:#2563eb}
@@ -76,10 +46,21 @@ button{
 
 <header>
   <h3>🛠️ Admin Panel</h3>
-  <i class="fa fa-sign-out-alt"
-     style="cursor:pointer"
-     onclick="location.href='index.html'"></i>
+  <i class="fa fa-sign-out-alt" onclick="location.href='index.html'"></i>
 </header>
+
+<!-- ADD USER WITH PLAN -->
+<div class="card" id="addUser">
+  <h3>Add User + Assign Plan</h3>
+  <input id="uname" placeholder="User name">
+  <input id="uphone" placeholder="Phone number">
+
+  <select id="uplan">
+    <option value="">Select Plan</option>
+  </select>
+
+  <button onclick="addUserWithPlan()">Add User</button>
+</div>
 
 <!-- PLAN REQUESTS -->
 <div class="card" id="requests">
@@ -89,12 +70,6 @@ button{
 
 <!-- USERS -->
 <div class="card hidden" id="users">
-  <h3>Add New User</h3>
-  <input id="uname" placeholder="User name">
-  <input id="uphone" placeholder="Phone number">
-  <button onclick="addUser()">Add User</button>
-  <hr>
-
   <h3>All Users</h3>
   <div id="usersList">Loading...</div>
 </div>
@@ -113,13 +88,15 @@ button{
 <!-- QR -->
 <div class="card hidden" id="qr">
   <h3>Gym QR</h3>
-  <p>Print & keep inside gym</p>
   <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
 </div>
 
 <!-- NAV -->
 <div class="nav">
-  <button class="active" onclick="showTab('requests',this)">
+  <button class="active" onclick="showTab('addUser',this)">
+    <i class="fa fa-user-plus"></i>Add
+  </button>
+  <button onclick="showTab('requests',this)">
     <i class="fa fa-clock"></i>Requests
   </button>
   <button onclick="showTab('users',this)">
@@ -128,12 +105,8 @@ button{
   <button onclick="showTab('plans',this)">
     <i class="fa fa-list"></i>Plans
   </button>
-  <button onclick="showTab('qr',this)">
-    <i class="fa fa-qrcode"></i>QR
-  </button>
 </div>
 
-<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
@@ -143,39 +116,61 @@ firebase.initializeApp({
   authDomain:"gym-app-79bec.firebaseapp.com",
   projectId:"gym-app-79bec"
 });
-const db = firebase.firestore();
+const db=firebase.firestore();
 
-/* Tabs */
+/* TAB */
 function showTab(id,btn){
-  ["requests","users","plans","qr"].forEach(x=>{
-    document.getElementById(x).classList.add("hidden");
+  ["addUser","requests","users","plans","qr"].forEach(x=>{
+    let el=document.getElementById(x);
+    if(el) el.classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
   document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
 
-/* ADD USER */
-function addUser(){
-  let name = uname.value.trim();
-  let phone = uphone.value.trim();
-  if(!name || !phone){
-    alert("Enter name & phone");
-    return;
-  }
-  db.collection("users").doc(phone).set({
-    name, phone,
-    planStatus:"inactive",
-    paymentStatus:"",
-    currentPlan:"",
-    planExpiry:""
-  }).then(()=>{
-    alert("User added ✅");
-    uname.value=""; uphone.value="";
+/* LOAD PLANS TO DROPDOWN */
+function loadPlanOptions(){
+  db.collection("plans").get().then(s=>{
+    let h='<option value="">Select Plan</option>';
+    s.forEach(d=>{
+      let p=d.data();
+      h+=`<option value="${p.name}|${p.days}|${p.price}">
+            ${p.name} (${p.days} days – ₹${p.price})
+          </option>`;
+    });
+    uplan.innerHTML=h;
   });
 }
 
-/* LOAD USERS */
+/* ADD USER WITH PLAN */
+function addUserWithPlan(){
+  let name=uname.value.trim();
+  let phone=uphone.value.trim();
+  let plan=uplan.value;
+
+  if(!name||!phone||!plan){
+    alert("Fill all fields");
+    return;
+  }
+
+  let [planName,days,price]=plan.split("|");
+  let exp=new Date();
+  exp.setDate(exp.getDate()+Number(days));
+
+  db.collection("users").doc(phone).set({
+    name, phone,
+    currentPlan:planName,
+    planStatus:"active",
+    paymentStatus:"paid",
+    planExpiry:exp.toISOString()
+  }).then(()=>{
+    alert("User added with plan ✅");
+    uname.value=""; uphone.value=""; uplan.value="";
+  });
+}
+
+/* USERS LIST */
 function loadUsers(){
   db.collection("users").onSnapshot(s=>{
     let h="";
@@ -185,6 +180,7 @@ function loadUsers(){
         <p>
           <b>${u.name}</b><br>
           📞 ${u.phone}<br>
+          Plan: ${u.currentPlan||"-"}<br>
           Status: ${u.planStatus||"inactive"}
         </p><hr>
       `;
@@ -193,7 +189,7 @@ function loadUsers(){
   });
 }
 
-/* REQUESTS */
+/* PLAN REQUESTS */
 function loadRequests(){
   db.collection("users").onSnapshot(s=>{
     let h="";
@@ -201,20 +197,10 @@ function loadRequests(){
       let u=d.data();
       if(u.planStatus==="pending"){
         h+=`
-          <div style="border:1px solid #eee;padding:10px;margin-bottom:10px">
-            <b>${u.name}</b><br>
-            📞 ${u.phone}<br>
-            Plan: ${u.requestedPlan}<br>
-            Days: ${u.requestedDays}<br>
-            Amount: ₹${u.requestedPrice}<br>
-            <button class="ok"
-              onclick="approve('${d.id}',${u.requestedDays},'${u.requestedPlan}')">
-              Confirm & Activate
-            </button>
-            <button class="del" onclick="reject('${d.id}')">
-              Reject
-            </button>
-          </div>
+          <p>
+            <b>${u.name}</b> – ${u.requestedPlan}<br>
+            ₹${u.requestedPrice}
+          </p><hr>
         `;
       }
     });
@@ -222,32 +208,7 @@ function loadRequests(){
   });
 }
 
-function approve(id,days,plan){
-  let exp=new Date();
-  exp.setDate(exp.getDate()+days);
-  db.collection("users").doc(id).update({
-    planStatus:"active",
-    paymentStatus:"paid",
-    currentPlan:plan,
-    planExpiry:exp.toISOString(),
-    requestedPlan:"",
-    requestedDays:"",
-    requestedPrice:""
-  });
-  alert("Plan activated ✅");
-}
-
-function reject(id){
-  db.collection("users").doc(id).update({
-    planStatus:"inactive",
-    requestedPlan:"",
-    requestedDays:"",
-    requestedPrice:"",
-    paymentStatus:""
-  });
-}
-
-/* PLANS */
+/* PLANS CRUD */
 function loadPlans(){
   db.collection("plans").onSnapshot(s=>{
     let h="";
@@ -255,8 +216,7 @@ function loadPlans(){
       let p=d.data();
       h+=`
         <p>${p.name} – ${p.days} days – ₹${p.price}</p>
-        <button class="del" onclick="delPlan('${d.id}')">Delete</button>
-        <hr>
+        <button class="del" onclick="delPlan('${d.id}')">Delete</button><hr>
       `;
     });
     plansList.innerHTML=h||"No plans";
@@ -271,14 +231,14 @@ function addPlan(){
   pname.value=pdays.value=pprice.value="";
 }
 function delPlan(id){
-  if(confirm("Delete plan?"))
-    db.collection("plans").doc(id).delete();
+  if(confirm("Delete plan?")) db.collection("plans").doc(id).delete();
 }
 
 /* INIT */
+loadPlans();
+loadPlanOptions();
 loadUsers();
 loadRequests();
-loadPlans();
 </script>
 
 </body>
