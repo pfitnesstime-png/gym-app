@@ -5,157 +5,266 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App – Admin</title>
 
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9}
-header{background:#111827;color:#fff;text-align:center;padding:14px}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f1f5f9;
+  padding-bottom:70px;
+}
+
+header{
+  background:#111827;
+  color:#fff;
+  padding:14px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+}
+
 .card{
-  background:#fff;margin:15px;padding:15px;border-radius:12px;
+  background:#fff;
+  margin:15px;
+  padding:15px;
+  border-radius:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.1)
 }
-input,button,select{
-  width:100%;padding:10px;margin-top:8px;
-  border-radius:6px;border:1px solid #ccc
+
+input,button{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+  border-radius:6px;
+  border:1px solid #ccc
 }
-button{background:#2563eb;color:#fff;border:none;font-weight:bold}
-.small{font-size:13px;color:#555}
-hr{border:none;border-top:1px solid #eee;margin:15px 0}
+
+button{
+  background:#2563eb;
+  color:#fff;
+  border:none;
+  font-weight:bold
+}
+
+.del{
+  background:#dc2626;
+}
+
+.ok{
+  background:#16a34a;
+}
+
+.hidden{display:none}
+
+/* bottom nav */
+.nav{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  height:60px;
+  background:#fff;
+  border-top:1px solid #ddd;
+  display:flex;
+}
+
+.nav button{
+  flex:1;
+  background:none;
+  border:none;
+  font-size:12px;
+  color:#6b7280;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
+
+.nav button i{font-size:18px}
+.nav .active{color:#2563eb}
 </style>
 </head>
 
 <body>
 
-<header><h2>🛠️ Admin Panel</h2></header>
+<header>
+  <h3>🛠️ Admin Panel</h3>
+  <i class="fa fa-sign-out-alt"
+     style="cursor:pointer"
+     onclick="location.href='index.html'"></i>
+</header>
 
-<!-- ADD PLAN -->
-<div class="card">
-  <h3>Add Plan</h3>
-  <input id="p_name" placeholder="Plan Name">
-  <input id="p_days" type="number" placeholder="Days">
-  <input id="p_price" type="number" placeholder="Price">
-  <button onclick="addPlan()">Add Plan</button>
+<!-- PLAN REQUESTS -->
+<div class="card" id="requests">
+  <h3>Plan Requests</h3>
+  <div id="reqList">Loading...</div>
 </div>
 
-<!-- PLANS LIST -->
-<div class="card">
-  <h3>Plans</h3>
+<!-- PLANS -->
+<div class="card hidden" id="plans">
+  <h3>Add Plan</h3>
+  <input id="pname" placeholder="Plan name">
+  <input id="pdays" placeholder="Days">
+  <input id="pprice" placeholder="Price">
+  <button onclick="addPlan()">Add Plan</button>
+
+  <h3 style="margin-top:20px">Plans</h3>
   <div id="plansList">Loading...</div>
 </div>
 
 <!-- USERS -->
-<div class="card">
-  <h3>Users</h3>
+<div class="card hidden" id="users">
+  <h3>All Users</h3>
   <div id="usersList">Loading...</div>
 </div>
 
-<!-- FIREBASE -->
+<!-- QR -->
+<div class="card hidden" id="scan">
+  <h3>Gym QR</h3>
+  <p>Print & keep inside gym</p>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
+</div>
+
+<!-- NAV -->
+<div class="nav">
+  <button class="active" onclick="showTab('requests',this)">
+    <i class="fa fa-clock"></i>Requests
+  </button>
+  <button onclick="showTab('plans',this)">
+    <i class="fa fa-list"></i>Plans
+  </button>
+  <button onclick="showTab('users',this)">
+    <i class="fa fa-users"></i>Users
+  </button>
+  <button onclick="showTab('scan',this)">
+    <i class="fa fa-qrcode"></i>QR
+  </button>
+</div>
+
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-/* Firebase Init */
-if(!firebase.apps.length){
-  firebase.initializeApp({
-    apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-    authDomain: "gym-app-79bec.firebaseapp.com",
-    projectId: "gym-app-79bec"
-  });
-}
-const db = firebase.firestore();
+firebase.initializeApp({
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+});
+const db=firebase.firestore();
 
-/* ADD PLAN */
-function addPlan(){
-  if(!p_name.value || !p_days.value){
-    alert("Enter plan details"); return;
-  }
-
-  db.collection("plans").add({
-    name: p_name.value,
-    days: Number(p_days.value),
-    price: Number(p_price.value)
-  }).then(()=>{
-    alert("Plan added ✅");
-    p_name.value = p_days.value = p_price.value = "";
-    loadPlans();
+function showTab(id,btn){
+  ["requests","plans","users","scan"].forEach(x=>{
+    document.getElementById(x).classList.add("hidden");
   });
+  document.getElementById(id).classList.remove("hidden");
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
 }
 
-/* LOAD PLANS */
+/* PLAN REQUESTS */
+function loadRequests(){
+  db.collection("users").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let u=d.data();
+      if(u.planStatus==="pending"){
+        h+=`
+          <div style="border:1px solid #eee;padding:10px;margin-bottom:10px">
+            <b>${u.name}</b><br>
+            📞 ${u.phone}<br>
+            Requested: <b>${u.requestedPlan}</b>
+            (${u.requestedDays} days)
+            <br><br>
+            <button class="ok"
+              onclick="approve('${d.id}',${u.requestedDays},'${u.requestedPlan}')">
+              ✅ Approve
+            </button>
+            <button class="del"
+              onclick="reject('${d.id}')">
+              ❌ Reject
+            </button>
+          </div>
+        `;
+      }
+    });
+    reqList.innerHTML = h || "No plan requests";
+  });
+}
+
+function approve(id,days,plan){
+  let exp=new Date();
+  exp.setDate(exp.getDate()+days);
+
+  db.collection("users").doc(id).update({
+    planStatus:"active",
+    currentPlan:plan,
+    planExpiry:exp.toISOString(),
+    requestedPlan:"",
+    requestedDays:""
+  });
+  alert("Plan approved ✅");
+}
+
+function reject(id){
+  db.collection("users").doc(id).update({
+    planStatus:"inactive",
+    requestedPlan:"",
+    requestedDays:""
+  });
+  alert("Plan rejected ❌");
+}
+
+/* PLANS */
 function loadPlans(){
-  plansList.innerHTML = "Loading...";
-  db.collection("plans").get().then(snap=>{
-    if(snap.empty){
-      plansList.innerHTML = "No plans";
-      return;
-    }
-    let html="";
-    snap.forEach(doc=>{
-      let p = doc.data();
-      html += `
-        <div class="small">
-          <b>${p.name}</b> – ${p.days} days – ₹${p.price}
-          <button onclick="deletePlan('${doc.id}')"
-            style="background:#dc2626;margin-top:5px">Delete</button>
-          <hr>
-        </div>
+  db.collection("plans").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let p=d.data();
+      h+=`
+        <p><b>${p.name}</b> – ${p.days} days – ₹${p.price}</p>
+        <button class="del" onclick="delPlan('${d.id}')">Delete</button>
       `;
     });
-    plansList.innerHTML = html;
+    plansList.innerHTML=h||"No plans";
   });
 }
 
-/* DELETE PLAN */
-function deletePlan(id){
-  if(!confirm("Delete this plan?")) return;
-  db.collection("plans").doc(id).delete().then(loadPlans);
+function addPlan(){
+  db.collection("plans").add({
+    name:pname.value,
+    days:+pdays.value,
+    price:+pprice.value
+  });
+  pname.value=pdays.value=pprice.value="";
 }
 
-/* LOAD USERS */
+function delPlan(id){
+  if(confirm("Delete plan?"))
+    db.collection("plans").doc(id).delete();
+}
+
+/* USERS */
 function loadUsers(){
-  usersList.innerHTML = "Loading...";
-  db.collection("users").get().then(snap=>{
-    if(snap.empty){
-      usersList.innerHTML = "No users";
-      return;
-    }
-    let html="";
-    snap.forEach(doc=>{
-      let u = doc.data();
-      html += `
-        <div class="small">
-          <b>${u.name}</b><br>
-          Phone: ${u.phone}<br>
-          Plan: ${u.currentPlan || "None"}<br>
-          <button onclick="assignPlan('${u.phone}')">
-            Assign Plan
-          </button>
-          <hr>
-        </div>
+  db.collection("users").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let u=d.data();
+      h+=`
+        <p><b>${u.name}</b><br>
+        📞 ${u.phone}<br>
+        Plan: ${u.currentPlan||"-"}<br>
+        Status: ${u.planStatus||"inactive"}</p>
+        <hr>
       `;
     });
-    usersList.innerHTML = html;
+    usersList.innerHTML=h||"No users";
   });
 }
 
-/* ASSIGN PLAN TO USER */
-function assignPlan(phone){
-  let plan = prompt("Enter plan name exactly");
-  let days = prompt("Enter days");
-
-  if(!plan || !days) return;
-
-  let exp = new Date();
-  exp.setDate(exp.getDate() + Number(days));
-
-  db.collection("users").doc(phone).update({
-    currentPlan: plan,
-    planExpiry: exp.toISOString()
-  }).then(()=>{
-    alert("Plan assigned ✅");
-    loadUsers();
-  });
-}
-
-/* INIT */
+loadRequests();
 loadPlans();
 loadUsers();
 </script>
