@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,7 +15,6 @@ body{
   background:#f1f5f9;
   padding-bottom:70px;
 }
-
 header{
   background:#111827;
   color:#fff;
@@ -24,7 +23,6 @@ header{
   justify-content:space-between;
   align-items:center;
 }
-
 .card{
   background:#fff;
   margin:15px;
@@ -32,7 +30,6 @@ header{
   border-radius:12px;
   box-shadow:0 4px 10px rgba(0,0,0,.1)
 }
-
 input,button{
   width:100%;
   padding:10px;
@@ -40,22 +37,14 @@ input,button{
   border-radius:6px;
   border:1px solid #ccc
 }
-
 button{
   background:#2563eb;
   color:#fff;
   border:none;
   font-weight:bold
 }
-
-.del{
-  background:#dc2626;
-}
-
-.ok{
-  background:#16a34a;
-}
-
+.ok{background:#16a34a}
+.del{background:#dc2626}
 .hidden{display:none}
 
 /* bottom nav */
@@ -67,21 +56,19 @@ button{
   border-top:1px solid #ddd;
   display:flex;
 }
-
 .nav button{
   flex:1;
   background:none;
   border:none;
-  font-size:12px;
   color:#6b7280;
+  font-size:12px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
 }
-
 .nav button i{font-size:18px}
-.nav .active{color:#2563eb}
+.nav button.active{color:#2563eb}
 </style>
 </head>
 
@@ -100,26 +87,31 @@ button{
   <div id="reqList">Loading...</div>
 </div>
 
-<!-- PLANS -->
-<div class="card hidden" id="plans">
-  <h3>Add Plan</h3>
-  <input id="pname" placeholder="Plan name">
-  <input id="pdays" placeholder="Days">
-  <input id="pprice" placeholder="Price">
-  <button onclick="addPlan()">Add Plan</button>
-
-  <h3 style="margin-top:20px">Plans</h3>
-  <div id="plansList">Loading...</div>
-</div>
-
 <!-- USERS -->
 <div class="card hidden" id="users">
+  <h3>Add New User</h3>
+  <input id="uname" placeholder="User name">
+  <input id="uphone" placeholder="Phone number">
+  <button onclick="addUser()">Add User</button>
+  <hr>
+
   <h3>All Users</h3>
   <div id="usersList">Loading...</div>
 </div>
 
+<!-- PLANS -->
+<div class="card hidden" id="plans">
+  <h3>Add Plan</h3>
+  <input id="pname" placeholder="Plan name">
+  <input id="pdays" type="number" placeholder="Days">
+  <input id="pprice" type="number" placeholder="Price">
+  <button onclick="addPlan()">Add Plan</button>
+  <hr>
+  <div id="plansList">Loading...</div>
+</div>
+
 <!-- QR -->
-<div class="card hidden" id="scan">
+<div class="card hidden" id="qr">
   <h3>Gym QR</h3>
   <p>Print & keep inside gym</p>
   <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
@@ -130,13 +122,13 @@ button{
   <button class="active" onclick="showTab('requests',this)">
     <i class="fa fa-clock"></i>Requests
   </button>
-  <button onclick="showTab('plans',this)">
-    <i class="fa fa-list"></i>Plans
-  </button>
   <button onclick="showTab('users',this)">
     <i class="fa fa-users"></i>Users
   </button>
-  <button onclick="showTab('scan',this)">
+  <button onclick="showTab('plans',this)">
+    <i class="fa fa-list"></i>Plans
+  </button>
+  <button onclick="showTab('qr',this)">
     <i class="fa fa-qrcode"></i>QR
   </button>
 </div>
@@ -151,20 +143,57 @@ firebase.initializeApp({
   authDomain:"gym-app-79bec.firebaseapp.com",
   projectId:"gym-app-79bec"
 });
-const db=firebase.firestore();
+const db = firebase.firestore();
 
+/* Tabs */
 function showTab(id,btn){
-  ["requests","plans","users","scan"].forEach(x=>{
+  ["requests","users","plans","qr"].forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
   document.getElementById(id).classList.remove("hidden");
-
-  document.querySelectorAll(".nav button")
-    .forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 }
 
-/* PLAN REQUESTS */
+/* ADD USER */
+function addUser(){
+  let name = uname.value.trim();
+  let phone = uphone.value.trim();
+  if(!name || !phone){
+    alert("Enter name & phone");
+    return;
+  }
+  db.collection("users").doc(phone).set({
+    name, phone,
+    planStatus:"inactive",
+    paymentStatus:"",
+    currentPlan:"",
+    planExpiry:""
+  }).then(()=>{
+    alert("User added ✅");
+    uname.value=""; uphone.value="";
+  });
+}
+
+/* LOAD USERS */
+function loadUsers(){
+  db.collection("users").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let u=d.data();
+      h+=`
+        <p>
+          <b>${u.name}</b><br>
+          📞 ${u.phone}<br>
+          Status: ${u.planStatus||"inactive"}
+        </p><hr>
+      `;
+    });
+    usersList.innerHTML=h||"No users";
+  });
+}
+
+/* REQUESTS */
 function loadRequests(){
   db.collection("users").onSnapshot(s=>{
     let h="";
@@ -175,46 +204,47 @@ function loadRequests(){
           <div style="border:1px solid #eee;padding:10px;margin-bottom:10px">
             <b>${u.name}</b><br>
             📞 ${u.phone}<br>
-            Requested: <b>${u.requestedPlan}</b>
-            (${u.requestedDays} days)
-            <br><br>
+            Plan: ${u.requestedPlan}<br>
+            Days: ${u.requestedDays}<br>
+            Amount: ₹${u.requestedPrice}<br>
             <button class="ok"
               onclick="approve('${d.id}',${u.requestedDays},'${u.requestedPlan}')">
-              ✅ Approve
+              Confirm & Activate
             </button>
-            <button class="del"
-              onclick="reject('${d.id}')">
-              ❌ Reject
+            <button class="del" onclick="reject('${d.id}')">
+              Reject
             </button>
           </div>
         `;
       }
     });
-    reqList.innerHTML = h || "No plan requests";
+    reqList.innerHTML=h||"No requests";
   });
 }
 
 function approve(id,days,plan){
   let exp=new Date();
   exp.setDate(exp.getDate()+days);
-
   db.collection("users").doc(id).update({
     planStatus:"active",
+    paymentStatus:"paid",
     currentPlan:plan,
     planExpiry:exp.toISOString(),
     requestedPlan:"",
-    requestedDays:""
+    requestedDays:"",
+    requestedPrice:""
   });
-  alert("Plan approved ✅");
+  alert("Plan activated ✅");
 }
 
 function reject(id){
   db.collection("users").doc(id).update({
     planStatus:"inactive",
     requestedPlan:"",
-    requestedDays:""
+    requestedDays:"",
+    requestedPrice:"",
+    paymentStatus:""
   });
-  alert("Plan rejected ❌");
 }
 
 /* PLANS */
@@ -224,14 +254,14 @@ function loadPlans(){
     s.forEach(d=>{
       let p=d.data();
       h+=`
-        <p><b>${p.name}</b> – ${p.days} days – ₹${p.price}</p>
+        <p>${p.name} – ${p.days} days – ₹${p.price}</p>
         <button class="del" onclick="delPlan('${d.id}')">Delete</button>
+        <hr>
       `;
     });
     plansList.innerHTML=h||"No plans";
   });
 }
-
 function addPlan(){
   db.collection("plans").add({
     name:pname.value,
@@ -240,33 +270,15 @@ function addPlan(){
   });
   pname.value=pdays.value=pprice.value="";
 }
-
 function delPlan(id){
   if(confirm("Delete plan?"))
     db.collection("plans").doc(id).delete();
 }
 
-/* USERS */
-function loadUsers(){
-  db.collection("users").onSnapshot(s=>{
-    let h="";
-    s.forEach(d=>{
-      let u=d.data();
-      h+=`
-        <p><b>${u.name}</b><br>
-        📞 ${u.phone}<br>
-        Plan: ${u.currentPlan||"-"}<br>
-        Status: ${u.planStatus||"inactive"}</p>
-        <hr>
-      `;
-    });
-    usersList.innerHTML=h||"No users";
-  });
-}
-
+/* INIT */
+loadUsers();
 loadRequests();
 loadPlans();
-loadUsers();
 </script>
 
 </body>
