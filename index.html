@@ -47,18 +47,21 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <div class="link" onclick="showRegister()">New user? Register</div>
 </div>
 
-<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain: "gym-app-79bec.firebaseapp.com",
-  projectId: "gym-app-79bec"
-};
-firebase.initializeApp(firebaseConfig);
+firebase.initializeApp({
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+});
 const db = firebase.firestore();
+
+/* 🔐 AUTO LOGIN */
+if(localStorage.getItem("gymPhone")){
+  window.location.replace("app.html");
+}
 
 /* TOGGLE */
 function showLogin(){
@@ -73,7 +76,9 @@ function showRegister(){
 /* REGISTER */
 function register(){
   let phone = r_phone.value.trim();
-  if(!r_name.value || !phone){
+  let name  = r_name.value.trim();
+
+  if(!name || !phone){
     alert("Name & Phone required");
     return;
   }
@@ -84,17 +89,21 @@ function register(){
       showLogin();
     }else{
       db.collection("users").doc(phone).set({
-        name: r_name.value,
-        phone: phone,
-        email: r_email.value,
-        age: r_age.value,
-        weight: r_weight.value,
-        height: r_height.value,
-        currentPlan: "",
-        planExpiry: ""
+        name:name,
+        phone:phone,
+        email:r_email.value,
+        age:r_age.value,
+        weight:r_weight.value,
+        height:r_height.value,
+        planStatus:"inactive",
+        currentPlan:"",
+        planExpiry:""
       }).then(()=>{
-        // 👉 DIRECT TO APP
-        location.href = "app.html?phone=" + phone;
+        // ✅ SAVE SESSION
+        localStorage.setItem("gymPhone", phone);
+
+        // ✅ GO TO APP
+        window.location.replace("app.html");
       });
     }
   });
@@ -110,11 +119,10 @@ function login(){
 
   db.collection("users").doc(phone).get().then(doc=>{
     if(doc.exists){
-      // 👉 DIRECT TO APP
-      location.href = "app.html?phone=" + phone;
+      localStorage.setItem("gymPhone", phone);
+      window.location.replace("app.html");
     }else{
-      alert("User not found. Please register.");
-      showRegister();
+      alert("User not found. Contact admin.");
     }
   });
 }
