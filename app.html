@@ -199,27 +199,56 @@ function startCamera(){
 }
 
 function onScanSuccess(text){
-  if(text!=="GYM_ATTENDANCE"){
+  if(text !== "GYM_ATTENDANCE"){
     alert("Invalid QR");
     return;
   }
 
-  let today=new Date().toISOString().split("T")[0];
-  let id=phone+"_"+today;
+  // 🔎 Get user data first
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists){
+      alert("User not found");
+      return;
+    }
 
-  db.collection("attendance").doc(id).get().then(d=>{
-    if(d.exists){ alert("Already marked"); return; }
+    let u = doc.data();
+    let today = new Date();
+    let todayStr = today.toISOString().split("T")[0];
 
-    db.collection("attendance").doc(id).set({
-      phone:phone,
-      date:today
-    }).then(()=>{
-      alert("Attendance marked ✅");
-      loadAttendance();
-      showTab("home");
+    // ❌ PLAN NOT ACTIVE
+    if(u.planStatus !== "active"){
+      alert("❌ Plan inactive. Please contact admin.");
+      return;
+    }
+
+    // ❌ PLAN EXPIRED
+    let exp = new Date(u.planExpiry);
+    if(exp < today){
+      alert("❌ Plan expired. Please renew your plan.");
+      return;
+    }
+
+    // ✅ PLAN OK → MARK ATTENDANCE
+    let attId = phone + "_" + todayStr;
+
+    db.collection("attendance").doc(attId).get().then(a=>{
+      if(a.exists){
+        alert("⚠️ Attendance already marked today");
+        return;
+      }
+
+      db.collection("attendance").doc(attId).set({
+        phone: phone,
+        date: todayStr
+      }).then(()=>{
+        alert("✅ Attendance marked successfully");
+        loadAttendance();
+        showTab("home");
+      });
     });
   });
 }
+
 
 /* INIT */
 loadHome();
@@ -229,3 +258,4 @@ loadPlans();
 
 </body>
 </html>
+
