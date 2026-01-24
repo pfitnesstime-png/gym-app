@@ -83,9 +83,12 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 
 <!-- ATTENDANCE -->
 <div class="card hidden" id="attendance">
-  <h3>All Attendance</h3>
-  <input type="month" id="filterMonth" onchange="loadAttendance()">
-  <div id="attendanceList">Loading...</div>
+  <h3>Attendance Sheet</h3>
+  <input type="month" id="filterMonth" onchange="loadAttendanceSheet()">
+  <div style="overflow-x:auto">
+    <table border="1" width="100%" id="attTable" style="border-collapse:collapse;text-align:center">
+    </table>
+  </div>
 </div>
 
 <!-- QR -->
@@ -260,37 +263,58 @@ function addPlan(){
 }
 
 /* ATTENDANCE (WITH NAME) */
-function loadAttendance(){
-  let month=filterMonth.value;
-  attendanceList.innerHTML="Loading...";
-  db.collection("attendance").get().then(async snap=>{
-    let h="";
-    for(const d of snap.docs){
-      let a=d.data();
-      if(month && !a.date.startsWith(month)) continue;
+async function loadAttendanceSheet(){
+  const monthInput = filterMonth.value; // 2026-01
+  if(!monthInput) return;
 
-      let u=await db.collection("users").doc(a.phone).get();
-      let name=u.exists?u.data().name:"Unknown";
+  const [year, month] = monthInput.split("-");
+  const daysInMonth = new Date(year, month, 0).getDate();
 
-      h+=`
-        <div style="border-bottom:1px solid #eee;padding:8px 0">
-          👤 <b>${name}</b><br>
-          📞 ${a.phone}<br>
-          📅 ${a.date}
-        </div>
-      `;
-    }
-    attendanceList.innerHTML=h||"No attendance";
+  let table = `<tr>
+    <th>Member</th>
+    <th>Phone</th>`;
+
+  for(let d=1; d<=daysInMonth; d++){
+    table += `<th>${d}</th>`;
+  }
+  table += `</tr>`;
+
+  const usersSnap = await db.collection("users").get();
+  const attSnap = await db.collection("attendance").get();
+
+  let attendanceMap = {};
+  attSnap.forEach(a=>{
+    let data = a.data();
+    attendanceMap[data.phone+"_"+data.date] = true;
   });
+
+  usersSnap.forEach(u=>{
+    let user = u.data();
+    table += `<tr>
+      <td>${user.name}</td>
+      <td>${user.phone}</td>`;
+
+    for(let d=1; d<=daysInMonth; d++){
+      let day = String(d).padStart(2,"0");
+      let date = `${year}-${month}-${day}`;
+      let key = user.phone+"_"+date;
+      table += `<td>${attendanceMap[key] ? "✅" : ""}</td>`;
+    }
+    table += `</tr>`;
+  });
+
+  document.getElementById("attTable").innerHTML = table;
 }
+</script>
 
 /* INIT */
 loadPlanOptions();
 loadUsers();
 loadRequests();
 loadPlans();
-loadAttendance();
+loadAttendancesheet();
 </script>
 
 </body>
 </html>
+
