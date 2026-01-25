@@ -458,9 +458,12 @@ function loadWhatsAppList(){
   });
 }
 function sendBulkWhatsApp(){
-  if(!confirm("Open WhatsApp for all expired / pending users?")) return;
+  if(!confirm("Send WhatsApp to ALL expired / pending members?")) return;
 
   db.collection("users").get().then(snap=>{
+    let delay = 0;
+    let count = 0;
+
     snap.forEach(d=>{
       let u = d.data();
 
@@ -470,11 +473,28 @@ function sendBulkWhatsApp(){
       }
 
       if(expired || u.paymentStatus === "pending"){
-        let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
+        count++;
+
+        let msg =
+`Hi ${u.name},
+Your gym plan is expired or payment pending.
+Please renew to continue attendance.`;
+
         let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
-        window.open(url, "_blank");
+
+        setTimeout(()=>{
+          window.open(url, "_blank");
+        }, delay);
+
+        delay += 1200; // 🔥 1.2 second gap
       }
     });
+
+    if(count === 0){
+      alert("🎉 No expired members");
+    }else{
+      alert("WhatsApp will open one by one.\nPlease DO NOT close tabs.");
+    }
   });
 }
 
@@ -489,6 +509,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
