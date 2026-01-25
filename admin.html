@@ -69,6 +69,24 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <input id="searchUser" placeholder="Search name or phone" onkeyup="loadUsers()">
   <div id="usersList">Loading...</div>
 </div>
+  <!-- EDIT USER SECTION -->
+<div class="card hidden" id="editUser">
+  <h3>✏️ Edit User</h3>
+
+  <input type="hidden" id="e_old_phone">
+
+  <input id="e_name" placeholder="User Name">
+  <input id="e_phone" placeholder="Phone Number">
+
+  <select id="e_plan">
+    <option value="">Select Plan</option>
+  </select>
+
+  <button class="ok" onclick="updateUser()">Save Changes</button>
+  <button onclick="showTab('users',document.querySelector('.nav button:nth-child(3)'))">
+    Cancel
+  </button>
+</div>
 
 <!-- PLANS -->
 <div class="card hidden" id="plans">
@@ -145,7 +163,7 @@ const db=firebase.firestore();
 
 /* TAB */
 function showTab(id,btn){
-  ["addUser","requests","users","plans","attendance","qr","whatsapp"].forEach(x=>{
+  ["addUser","requests","users","editUser","plans","attendance","qr","whatsapp"].forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
 
@@ -173,6 +191,18 @@ function loadPlanOptions(){
     uplan.innerHTML=h;
   });
 }
+function loadEditPlans(){
+  db.collection("plans").get().then(s=>{
+    let h = '<option value="">Select Plan</option>';
+    s.forEach(d=>{
+      let p = d.data();
+      h += `<option value="${p.name}|${p.days}">
+        ${p.name} (${p.days} days)
+      </option>`;
+    });
+    e_plan.innerHTML = h;
+  });
+}
 
 /* ADD USER */
 function addUserWithPlan(){
@@ -198,23 +228,48 @@ function addUserWithPlan(){
 
 /* USERS */
 function loadUsers(){
-  let key=searchUser.value.toLowerCase();
+  let key = searchUser.value.toLowerCase();
+
   db.collection("users").onSnapshot(s=>{
-    let h="";
+    let h = "";
+
     s.forEach(d=>{
-      let u=d.data();
-      if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key)) return;
-      h+=`
+      let u = d.data();
+
+      if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key))
+        return;
+
+      h += `
         <div style="border-bottom:1px solid #eee;padding:8px 0">
           <b>${u.name}</b><br>
           📞 ${u.phone}<br>
-          Plan: ${u.currentPlan||"-"}
-          <button class="del" onclick="deleteUser('${u.phone}')">Delete</button>
+          Plan: ${u.currentPlan || "-"}
+
+          <button class="ok"
+            onclick="openEditUser('${u.phone}','${u.name}','${u.currentPlan || ""}')">
+            Edit
+          </button>
+
+          <button class="del"
+            onclick="deleteUser('${u.phone}')">
+            Delete
+          </button>
         </div>
       `;
     });
-    usersList.innerHTML=h||"No users";
+
+    usersList.innerHTML = h || "No users";
   });
+}
+
+function openEditUser(phone,name,plan){
+  showTab("editUser", document.querySelector(".nav button:nth-child(3)"));
+
+  e_old_phone.value = phone;
+  e_name.value = name;
+  e_phone.value = phone;
+
+  loadEditPlans();
 }
 
 function deleteUser(phone){
@@ -279,6 +334,50 @@ function addPlan(){
     price:+pprice.value
   });
   pname.value=pdays.value=pprice.value="";
+}
+function updateUser(){
+  let oldPhone = e_old_phone.value;
+  let newPhone = e_phone.value.trim();
+  let name = e_name.value.trim();
+  let planVal = e_plan.value;
+
+  if(!name || !newPhone){
+    alert("Name & Phone required");
+    return;
+  }
+
+  let data = { name, phone:newPhone };
+
+  if(planVal){
+    let [planName, days] = planVal.split("|");
+    let exp = new Date();
+    exp.setDate(exp.getDate() + Number(days));
+
+    data.currentPlan = planName;
+    data.planStatus = "active";
+    data.paymentStatus = "paid";
+    data.planExpiry = exp.toISOString();
+  }
+
+  // same phone
+  if(oldPhone === newPhone){
+    db.collection("users").doc(oldPhone).update(data).then(()=>{
+      alert("User updated ✅");
+      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+    });
+    return;
+  }
+
+  // phone changed
+  db.collection("users").doc(oldPhone).get().then(doc=>{
+    if(!doc.exists) return;
+
+    db.collection("users").doc(newPhone).set(data).then(()=>{
+      db.collection("users").doc(oldPhone).delete();
+      alert("User updated (phone changed) ✅");
+      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+    });
+  });
 }
 
 /* ATTENDANCE (WITH NAME) */
@@ -390,6 +489,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
