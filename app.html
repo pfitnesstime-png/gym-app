@@ -117,12 +117,18 @@ function showTab(tab){
       .classList.remove("activeNav");
   });
 
+  // 🛑 scan tab വിട്ടാൽ camera stop
+  if(tab !== "scan"){
+    stopScanner();
+  }
+
   document.getElementById(tab).classList.remove("hidden");
   document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
     .classList.add("activeNav");
 
-  if(tab==="scan") startCamera();
+  if(tab === "scan") startCamera();
 }
+
 
 /* LOGOUT */
 function logout(){
@@ -187,65 +193,93 @@ function requestPlan(name,days,price){
 }
 
 /* CAMERA + SCAN */
-let qr;
+let qr = null;
+
+/* START CAMERA */
 function startCamera(){
   if(qr) return;
 
   qr = new Html5Qrcode("reader");
+
   Html5Qrcode.getCameras().then(devices=>{
-    let cam = devices.find(d=>d.label.toLowerCase().includes("back")) || devices[0];
-    qr.start(cam.id,{fps:10,qrbox:250},onScanSuccess);
+    if(devices.length === 0){
+      alert("Camera not found");
+      return;
+    }
+
+    let camera =
+      devices.find(d => d.label.toLowerCase().includes("back")) || devices[0];
+
+    qr.start(
+      camera.id,
+      { fps: 10, qrbox: 250 },
+      onScanSuccess
+    );
   });
 }
 
-function onScanSuccess(text){
-  if(text !== "GYM_ATTENDANCE"){
-    alert("Invalid QR");
+/* STOP CAMERA */
+function stopScanner(){
+  if(qr){
+    qr.stop().then(()=>{
+      qr.clear();
+      qr = null;
+    });
+  }
+}
+
+/* QR SCAN SUCCESS */
+function onScanSuccess(decodedText){
+  if(decodedText !== "GYM_ATTENDANCE"){
+    alert("❌ Invalid QR Code");
+    stopScanner();
     return;
   }
 
-  // 🔎 Get user data first
+  const today = new Date().toISOString().slice(0,10);
+
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists){
       alert("User not found");
+      stopScanner();
       return;
     }
 
-    let u = doc.data();
-    let today = new Date();
-    let todayStr = today.toISOString().split("T")[0];
+    const user = doc.data();
 
-    // ❌ PLAN NOT ACTIVE
-    if(u.planStatus !== "active"){
-      alert("❌ Plan inactive. Please contact admin.");
+    // ❌ plan / payment check
+    if(
+      user.paymentStatus === "pending" ||
+      !user.planExpiry ||
+      new Date(user.planExpiry) < new Date()
+    ){
+      alert("❌ Your plan is expired or payment pending");
+      stopScanner();
       return;
     }
 
-    // ❌ PLAN EXPIRED
-    let exp = new Date(u.planExpiry);
-    if(exp < today){
-      alert("❌ Plan expired. Please renew your plan.");
-      return;
-    }
+    // 🔁 already submitted today?
+    db.collection("attendance")
+      .where("phone","==",phone)
+      .where("date","==",today)
+      .get()
+      .then(snap=>{
+        if(!snap.empty){
+          alert("ℹ️ Attendance already submitted today");
+          stopScanner();
+          return;
+        }
 
-    // ✅ PLAN OK → MARK ATTENDANCE
-    let attId = phone + "_" + todayStr;
-
-    db.collection("attendance").doc(attId).get().then(a=>{
-      if(a.exists){
-        alert("⚠️ Attendance already marked today");
-        return;
-      }
-
-      db.collection("attendance").doc(attId).set({
-        phone: phone,
-        date: todayStr
-      }).then(()=>{
-        alert("✅ Attendance marked successfully");
-        loadAttendance();
-        showTab("home");
+        // ✅ save attendance
+        db.collection("attendance").add({
+          phone: phone,
+          date: today,
+          time: new Date().toLocaleTimeString()
+        }).then(()=>{
+          alert("✅ Your attendance submitted successfully");
+          stopScanner();
+        });
       });
-    });
   });
 }
 
@@ -258,4 +292,5 @@ loadPlans();
 
 </body>
 </html>
+
 
