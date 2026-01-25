@@ -97,6 +97,15 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
   <button onclick="window.print()">Print QR</button>
 </div>
+  <!-- WHATSAPP ALERTS -->
+<div class="card hidden" id="whatsapp">
+  <h3>📲 WhatsApp Alerts (Expired / Pending)</h3>
+  <button onclick="sendBulkWhatsApp()">
+    📤 Send to ALL Expired Members
+  </button>
+  <hr>
+  <div id="waList">Loading...</div>
+</div>
 
 <!-- NAV -->
 <div class="nav">
@@ -118,6 +127,9 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <button onclick="showTab('qr',this)">
     <i class="fa fa-qrcode"></i>QR
   </button>
+  <button onclick="showTab('whatsapp',this)">
+  <i class="fa fa-whatsapp"></i>WhatsApp
+</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -133,14 +145,21 @@ const db=firebase.firestore();
 
 /* TAB */
 function showTab(id,btn){
-  ["addUser","requests","users","plans","attendance","qr"].forEach(x=>{
+  ["addUser","requests","users","plans","attendance","qr","whatsapp"].forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
-  document.getElementById(id).classList.remove("hidden");
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
-}
 
+  document.getElementById(id).classList.remove("hidden");
+
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
+  btn.classList.add("active");
+
+  // 🔥 Auto load WhatsApp list
+  if(id === "whatsapp"){
+    loadWhatsAppList();
+  }
+}
 /* PLAN OPTIONS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
@@ -305,17 +324,73 @@ async function loadAttendanceSheet(){
 
   document.getElementById("attTable").innerHTML = table;
 }
+const GYM_PHONE = "7994302567"; // 👈 gym owner number
+
+function loadWhatsAppList(){
+  db.collection("users").get().then(snap=>{
+    let h="";
+
+    snap.forEach(d=>{
+      let u = d.data();
+
+      let expired = false;
+      if(u.planExpiry){
+        expired = new Date(u.planExpiry) < new Date();
+      }
+
+      if(expired || u.paymentStatus === "pending"){
+        let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
+        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+
+        h += `
+          <div style="border-bottom:1px solid #eee;padding:8px 0">
+            <b>${u.name}</b><br>
+            📞 ${u.phone}<br>
+            Status: ${expired ? "EXPIRED" : "PAYMENT PENDING"}
+            <button onclick="window.open('${url}','_blank')">
+              📲 Send WhatsApp
+            </button>
+          </div>
+        `;
+      }
+    });
+
+    waList.innerHTML = h || "No expired users 🎉";
+  });
+}
+function sendBulkWhatsApp(){
+  if(!confirm("Open WhatsApp for all expired / pending users?")) return;
+
+  db.collection("users").get().then(snap=>{
+    snap.forEach(d=>{
+      let u = d.data();
+
+      let expired = false;
+      if(u.planExpiry){
+        expired = new Date(u.planExpiry) < new Date();
+      }
+
+      if(expired || u.paymentStatus === "pending"){
+        let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
+        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+        window.open(url, "_blank");
+      }
+    });
+  });
+}
+
 
 /* INIT */
 loadPlanOptions();
 loadUsers();
 loadRequests();
 loadPlans();
-  
+loadWhatsAppList();
 </script>
 
 </body>
 </html>
+
 
 
 
