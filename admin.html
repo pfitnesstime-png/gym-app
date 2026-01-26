@@ -1,7 +1,6 @@
 <script>
-function adminLogout(){
-  localStorage.removeItem("admin");
-  location.href = "admin-login.html";
+if(localStorage.getItem("admin") !== "true"){
+  location.replace("admin-login.html");
 }
 </script>
 <!DOCTYPE html>
@@ -515,6 +514,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
