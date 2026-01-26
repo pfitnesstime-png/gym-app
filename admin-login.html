@@ -30,19 +30,20 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 
+<script>
 function loginAdmin(){
-  let u = username.value;
-  let p = password.value;
+  let u = document.getElementById("username").value.trim();
+  let p = document.getElementById("password").value.trim();
 
-  db.collection("admins").doc("main").get().then(d=>{
-    let a = d.data();
-    if(u===a.username && p===a.password){
-      localStorage.setItem("admin","true");
-      location.href="admin.html";
-    }else{
-      alert("❌ Wrong username or password");
-    }
-  });
+  const ADMIN_USER = "admin";
+  const ADMIN_PASS = "1234";
+
+  if(u === ADMIN_USER && p === ADMIN_PASS){
+    localStorage.setItem("admin","true");
+    location.replace("admin.html");
+  }else{
+    alert("❌ Wrong username or password");
+  }
 }
 </script>
 
