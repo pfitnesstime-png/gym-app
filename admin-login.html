@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin Login</title>
+<style>
+body{font-family:Arial;background:#f1f5f9;display:flex;justify-content:center;align-items:center;height:100vh}
+.box{background:#fff;padding:20px;width:300px;border-radius:10px;box-shadow:0 0 10px #ccc}
+input,button{width:100%;padding:10px;margin-top:10px}
+button{background:#2563eb;color:#fff;border:none}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <h3>🔐 Admin Login</h3>
+  <input id="username" placeholder="Username">
+  <input id="password" type="password" placeholder="Password">
+  <button onclick="loginAdmin()">Login</button>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+firebase.initializeApp({
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+});
+const db=firebase.firestore();
+
+function loginAdmin(){
+  let u = username.value;
+  let p = password.value;
+
+  db.collection("admins").doc("main").get().then(d=>{
+    let a = d.data();
+    if(u===a.username && p===a.password){
+      localStorage.setItem("admin","true");
+      location.href="admin.html";
+    }else{
+      alert("❌ Wrong username or password");
+    }
+  });
+}
+</script>
+
+</body>
+</html>
