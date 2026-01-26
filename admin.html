@@ -8,19 +8,7 @@
 <link rel="stylesheet"
  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
-<style>
 /* your existing CSS */
-</style>
-</head>
-
-<body>
-
-<script>
-if(localStorage.getItem("admin") !== "true"){
-  window.location.href = "admin-login.html";
-}
-</script>
-
 <style>
 body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:70px}
 header{
@@ -140,7 +128,6 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 </div>
 <div class="card hidden" id="payments">
   <h3>💰 Add Payment</h3>
-
   <input id="pay_phone" placeholder="Phone number">
   <input id="pay_amount" type="number" placeholder="Amount">
   <select id="pay_mode">
@@ -149,13 +136,14 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
     <option>UPI</option>
     <option>Card</option>
   </select>
+  <button onclick="addPayment()">Save Payment</button>
+</div>
+
 <div class="card hidden" id="paymentHistory">
   <h3>📜 Payment History</h3>
   <input id="ph_phone" placeholder="Phone number">
   <button onclick="loadPaymentHistory()">Load</button>
   <div id="payList"></div>
-</div>
-
   <button onclick="addPayment()">Save Payment</button>
 </div>
 <!-- NAV -->
@@ -200,9 +188,10 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 
-/* TAB */
-function showTab(id,btn){
- ["addUser","requests","users","editUser","plans","attendance","qr","whatsapp","payments","paymentHistory"]
+function showTab(id, btn){
+  ["addUser","requests","users","editUser","plans",
+   "attendance","qr","whatsapp","payments","paymentHistory"]
+  .forEach(x=>{
     document.getElementById(x).classList.add("hidden");
   });
 
@@ -212,10 +201,7 @@ function showTab(id,btn){
     .forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
 
-  // 🔥 Auto load WhatsApp list
-  if(id === "whatsapp"){
-    loadWhatsAppList();
-  }
+  if(id === "whatsapp") loadWhatsAppList();
 }
 /* PLAN OPTIONS */
 function loadPlanOptions(){
@@ -244,7 +230,6 @@ function loadEditPlans(){
 }
 
 /* ADD USER */
-<script>
 function addUserWithPlan(){
   let name = uname.value.trim();
   let phone = uphone.value.trim();
@@ -283,8 +268,6 @@ function addUserWithPlan(){
     });
   });
 }
-</script>
-
 /* USERS */
 function loadUsers(){
   let key = searchUser.value.toLowerCase();
@@ -637,6 +620,11 @@ function printReceipt(id){
   });
 }
 
+function adminLogout(){
+  localStorage.removeItem("admin");
+  window.location.href = "admin-login.html";
+}
+
 /* INIT */
 loadPlanOptions();
 loadUsers();
@@ -647,6 +635,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
