@@ -602,25 +602,21 @@ function loadPaymentHistory(){
     });
 }
 function printReceipt(id){
-  db.collection("payments").doc(id).get().then(doc=>{
-    let p = doc.data();
+ w.document.write(`
+  <h2 style="text-align:center">GYM RECEIPT</h2>
+  <hr>
+  Name: ${p.name}<br>
+  Phone: ${p.phone}<br>
+  Plan: ${p.plan}<br>
+  Amount: ₹${p.amount}<br>
+  Mode: ${p.mode}<br>
+  Date: ${new Date(p.date).toLocaleString()}
+  <hr>
+  <p style="text-align:center">Thank You 💪</p>
+`);
+w.print();
 
-    let w = window.open("", "", "width=350,height=500");
-    w.document.write(`
-      <h2 style="text-align:center">GYM RECEIPT</h2>
-      <hr>
-      Name: ${p.name}<br>
-      Phone: ${p.phone}<br>
-      Plan: ${p.plan}<br>
-      Amount: ₹${p.amount}<br>
-      Mode: ${p.mode}<br>
-      Date: ${new Date(p.date).toLocaleString()}
-      <hr>
-      <p style="text-align:center">Thank You 💪</p>
-      <script>window.print()</script>
-    `);
-  });
-}
+ 
 
 function adminLogout(){
   localStorage.removeItem("admin");
@@ -637,6 +633,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
