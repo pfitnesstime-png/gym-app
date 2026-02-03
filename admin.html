@@ -204,6 +204,7 @@ function showTab(id, btn){
   btn.classList.add("active");
 
   if(id === "whatsapp") loadWhatsAppList();
+ if(id === "requests") loadRequests();
 }
 /* PLAN OPTIONS */
 function loadPlanOptions(){
@@ -602,19 +603,45 @@ function loadPaymentHistory(){
     });
 }
 function printReceipt(id){
- w.document.write(`
-  <h2 style="text-align:center">GYM RECEIPT</h2>
-  <hr>
-  Name: ${p.name}<br>
-  Phone: ${p.phone}<br>
-  Plan: ${p.plan}<br>
-  Amount: ₹${p.amount}<br>
-  Mode: ${p.mode}<br>
-  Date: ${new Date(p.date).toLocaleString()}
-  <hr>
-  <p style="text-align:center">Thank You 💪</p>
-`);
-w.print();
+  db.collection("payments").doc(id).get().then(doc=>{
+    if(!doc.exists){
+      alert("Receipt not found");
+      return;
+    }
+
+    let p = doc.data();
+    let w = window.open("", "_blank", "width=400,height=600");
+
+    w.document.write(`
+      <html>
+      <head>
+        <title>Gym Receipt</title>
+        <style>
+          body{font-family:Arial;padding:20px}
+          h2{text-align:center}
+          hr{margin:10px 0}
+        </style>
+      </head>
+      <body>
+        <h2>GYM RECEIPT</h2>
+        <hr>
+        <b>Name:</b> ${p.name}<br>
+        <b>Phone:</b> ${p.phone}<br>
+        <b>Plan:</b> ${p.plan}<br>
+        <b>Amount:</b> ₹${p.amount}<br>
+        <b>Mode:</b> ${p.mode}<br>
+        <b>Date:</b> ${new Date(p.date).toLocaleString()}
+        <hr>
+        <p style="text-align:center">Thank You 💪</p>
+      </body>
+      </html>
+    `);
+
+    w.document.close();
+    w.print();
+  });
+}
+
 
  
 
@@ -633,6 +660,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
