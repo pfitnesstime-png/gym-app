@@ -138,6 +138,9 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
     <option>UPI</option>
     <option>Card</option>
   </select>
+ <select id="pay_plan">
+  <option value="">Select Plan</option>
+</select>
   <button onclick="addPayment()">Save Payment</button>
 </div>
 
@@ -541,15 +544,18 @@ Please renew to continue attendance.`;
     }
   });
 }
-function addPayment(){
+ function addPayment(){
   let phone = pay_phone.value.trim();
   let amount = pay_amount.value;
   let mode = pay_mode.value;
+  let planVal = pay_plan.value;
 
-  if(!phone || !amount || !mode){
+  if(!phone || !amount || !mode || !planVal){
     alert("Fill all fields");
     return;
   }
+
+  let [planName, days] = planVal.split("|");
 
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists){
@@ -559,17 +565,37 @@ function addPayment(){
 
     let u = doc.data();
 
-   db.collection("payments").add({
-  phone: phone,
-  name: u.name,
-  plan: u.currentPlan || "-",
-  planExpiry: u.planExpiry || "",   // 👈 ADD THIS
-  amount: Number(amount),
-  mode: mode,
-  date: new Date().toISOString()
- });
+    let exp = new Date();
+    exp.setDate(exp.getDate() + Number(days));
+
+    // 🔥 PAYMENT SAVE
+    db.collection("payments").add({
+      phone: phone,
+      name: u.name,
+      plan: planName,
+      amount: Number(amount),
+      mode: mode,
+      date: new Date().toISOString(),
+      planExpiry: exp.toISOString()
+    });
+
+    // 🔥 PLAN ACTIVATE
+    db.collection("users").doc(phone).update({
+      currentPlan: planName,
+      planStatus: "active",
+      paymentStatus: "paid",
+      planExpiry: exp.toISOString()
+    });
+
+    alert("✅ Payment added & Plan Activated");
+
+    pay_phone.value = "";
+    pay_amount.value = "";
+    pay_mode.value = "";
+    pay_plan.value = "";
   });
-} 
+}
+
    
   function loadPaymentHistory(){
   let phone = ph_phone.value.trim();
@@ -669,6 +695,18 @@ function adminLogout(){
   localStorage.removeItem("admin");
   window.location.href = "admin-login.html";
 }
+ function loadPaymentPlans(){
+  db.collection("plans").get().then(snap=>{
+    let h = '<option value="">Select Plan</option>';
+    snap.forEach(d=>{
+      let p = d.data();
+      h += `<option value="${p.name}|${p.days}">
+        ${p.name} (${p.days} days)
+      </option>`;
+    });
+    document.getElementById("pay_plan").innerHTML = h;
+  });
+}
 
 /* INIT */
 loadPlanOptions();
@@ -676,10 +714,12 @@ loadUsers();
 loadRequests();
 loadPlans();
 loadWhatsAppList();
+loadPaymentPlans();
 </script>
 
 </body>
 </html>
+
 
 
 
