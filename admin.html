@@ -146,7 +146,6 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <input id="ph_phone" placeholder="Phone number">
   <button onclick="loadPaymentHistory()">Load</button>
   <div id="payList"></div>
-  <button onclick="addPayment()">Save Payment</button>
 </div>
 <!-- NAV -->
 <div class="nav">
@@ -560,21 +559,19 @@ function addPayment(){
 
     let u = doc.data();
 
-    db.collection("payments").add({
-      phone: phone,
-      name: u.name,
-      plan: u.currentPlan || "-",
-      amount: Number(amount),
-      mode: mode,
-      date: new Date().toISOString()
-    }).then(()=>{
-      alert("✅ Payment saved");
-      pay_phone.value = pay_amount.value = "";
-      pay_mode.value = "";
-    });
+   db.collection("payments").add({
+  phone: phone,
+  name: u.name,
+  plan: u.currentPlan || "-",
+  planExpiry: u.planExpiry || "",   // 👈 ADD THIS
+  amount: Number(amount),
+  mode: mode,
+  date: new Date().toISOString()
+ });
   });
-}
-function loadPaymentHistory(){
+} 
+   
+  function loadPaymentHistory(){
   let phone = ph_phone.value.trim();
   if(!phone) return;
 
@@ -587,21 +584,44 @@ function loadPaymentHistory(){
 
       snap.forEach(d=>{
         let p = d.data();
+
+        let active = false;
+        if(p.planExpiry){
+          active = new Date(p.planExpiry) >= new Date();
+        }
+
+        let receiptMsg =
+`GYM RECEIPT
+Name: ${p.name}
+Phone: ${p.phone}
+Plan: ${p.plan}
+Amount: ₹${p.amount}
+Mode: ${p.mode}
+Date: ${new Date(p.date).toLocaleString()}`;
+
+        let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
+
         h += `
-          <div style="border-bottom:1px solid #eee;padding:8px 0">
-            <b>₹${p.amount}</b> – ${p.mode}<br>
-            Plan: ${p.plan}<br>
-            ${new Date(p.date).toLocaleString()}<br>
-            <button onclick="printReceipt('${d.id}')">
-              🧾 Receipt
-            </button>
+          <div style="border-bottom:1px solid #eee;padding:10px 0">
+            <b>${p.name}</b> (${p.phone})<br>
+            📦 Plan: ${p.plan}<br>
+            🟢 Status: <b style="color:${active?'green':'red'}">
+              ${active ? 'ACTIVE' : 'EXPIRED'}
+            </b><br>
+            💰 Amount: ₹${p.amount}<br>
+            💳 Mode: ${p.mode}<br>
+            📅 Date: ${new Date(p.date).toLocaleString()}<br>
+
+            <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
+            <button onclick="window.open('${waUrl}','_blank')">📲 Send WhatsApp</button>
           </div>
         `;
       });
 
-      payList.innerHTML = h || "No payments";
+      payList.innerHTML = h || "No payments found";
     });
 }
+
 function printReceipt(id){
   db.collection("payments").doc(id).get().then(doc=>{
     if(!doc.exists){
@@ -660,6 +680,7 @@ loadWhatsAppList();
 
 </body>
 </html>
+
 
 
 
