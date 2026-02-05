@@ -214,6 +214,17 @@ button{
 </select>
   <button onclick="addPayment()">Save Payment</button>
 </div>
+ <!-- SETTINGS MENU -->
+<div class="card hidden" id="settings">
+  <h3>⚙️ Settings</h3>
+
+  <button onclick="showInside('attendance')">📅 Attendance</button>
+  <button onclick="showInside('payments')">💰 Add Payment</button>
+  <button onclick="showInside('paymentHistory')">📜 Payment History</button>
+  <button onclick="showInside('qr')">📷 QR Code</button>
+  <button onclick="showInside('whatsapp')">📲 WhatsApp</button>
+  <button onclick="showInside('requests')">📩 Requests</button>
+</div>
 
 <div class="card hidden" id="paymentHistory">
   <h3>📜 Payment Report</h3>
@@ -245,30 +256,19 @@ button{
   <button class="active" onclick="showTab('addUser',this)">
     <i class="fa fa-user-plus"></i>Add
   </button>
-  <button onclick="showTab('requests',this)">
-    <i class="fa fa-clock"></i>Requests
-  </button>
+
   <button onclick="showTab('users',this)">
     <i class="fa fa-users"></i>Users
   </button>
+
   <button onclick="showTab('plans',this)">
     <i class="fa fa-list"></i>Plans
   </button>
-  <button onclick="showTab('attendance',this)">
-    <i class="fa fa-calendar-check"></i>Attendance
+
+  <!-- ⭐ NEW SETTINGS -->
+  <button onclick="showTab('settings',this)">
+    <i class="fa fa-gear"></i>Setting
   </button>
-  <button onclick="showTab('qr',this)">
-    <i class="fa fa-qrcode"></i>QR
-  </button>
-  <button onclick="showTab('whatsapp',this)">
-  <i class="fa fa-whatsapp"></i>WhatsApp
-</button>
- <button onclick="showTab('payments',this)">
-  <i class="fa fa-money-bill"></i>Payment
-</button>
- <button onclick="showTab('paymentHistory',this)">
-  <i class="fa fa-receipt"></i>History
-</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -283,10 +283,13 @@ firebase.initializeApp({
 const db=firebase.firestore();
 
 function showTab(id, btn){
-  ["addUser","requests","users","editUser","plans",
-   "attendance","qr","whatsapp","payments","paymentHistory"]
-  .forEach(x=>{
-    document.getElementById(x).classList.add("hidden");
+  [
+   "addUser","requests","users","editUser","plans",
+   "attendance","qr","whatsapp","payments",
+   "paymentHistory","settings"   // ⭐ add this
+  ].forEach(x=>{
+    let el = document.getElementById(x);
+    if(el) el.classList.add("hidden");
   });
 
   document.getElementById(id).classList.remove("hidden");
@@ -296,8 +299,9 @@ function showTab(id, btn){
   btn.classList.add("active");
 
   if(id === "whatsapp") loadWhatsAppList();
- if(id === "requests") loadRequests();
+  if(id === "requests") loadRequests();
 }
+
 /* PLAN OPTIONS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
@@ -901,6 +905,13 @@ function loadTodayCollection(){
     todayTotal.innerText=cash+bank;
   });
 }
+function showInside(id){
+  // hide settings
+  document.getElementById("settings").classList.add("hidden");
+
+  // show selected
+  document.getElementById(id).classList.remove("hidden");
+}
 
 /* INIT */
 loadPlanOptions();
@@ -914,6 +925,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
