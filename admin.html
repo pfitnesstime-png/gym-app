@@ -744,7 +744,13 @@ function printReceipt(id){
     }
 
     let p = doc.data();
-    let w = window.open("", "_blank", "width=400,height=600");
+
+    // ✏️ CHANGE THESE (YOUR GYM DETAILS)
+    const GYM_NAME = "FITNESSTIME PRO GYM";
+    const GYM_ADDRESS = " KARIKAKULAMKaraparamb, Kozhikode, Kerala";
+    const GYM_PHONE = "8086361224,7025992455";
+
+    let w = window.open("", "_blank", "width=400,height=650");
 
     w.document.write(`
       <html>
@@ -752,21 +758,39 @@ function printReceipt(id){
         <title>Gym Receipt</title>
         <style>
           body{font-family:Arial;padding:20px}
-          h2{text-align:center}
+          h2{text-align:center;margin:0}
+          .center{text-align:center}
           hr{margin:10px 0}
+          .topbox{
+            text-align:center;
+            border-bottom:1px dashed #000;
+            padding-bottom:10px;
+            margin-bottom:10px;
+          }
         </style>
       </head>
       <body>
-        <h2>GYM RECEIPT</h2>
+
+        <div class="topbox">
+          <h2>${GYM_NAME}</h2>
+          <div>${GYM_ADDRESS}</div>
+          <div>📞 ${GYM_PHONE}</div>
+        </div>
+
+        <h3 class="center">PAYMENT RECEIPT</h3>
         <hr>
+
         <b>Name:</b> ${p.name}<br>
         <b>Phone:</b> ${p.phone}<br>
         <b>Plan:</b> ${p.plan}<br>
         <b>Amount:</b> ₹${p.amount}<br>
         <b>Mode:</b> ${p.mode}<br>
-        <b>Date:</b> ${new Date(p.date).toLocaleString()}
+        <b>Date:</b> ${new Date(p.date).toLocaleString()}<br>
+
         <hr>
-        <p style="text-align:center">Thank You 💪</p>
+
+        <p class="center">Thank You 💪<br>Visit Again</p>
+
       </body>
       </html>
     `);
@@ -775,9 +799,6 @@ function printReceipt(id){
     w.print();
   });
 }
-
-
- 
 
 function adminLogout(){
   localStorage.removeItem("admin");
@@ -830,6 +851,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
