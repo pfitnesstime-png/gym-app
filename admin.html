@@ -145,9 +145,28 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 </div>
 
 <div class="card hidden" id="paymentHistory">
-  <h3>📜 Payment History</h3>
-  <input id="ph_phone" placeholder="Phone number">
-  <button onclick="loadPaymentHistory()">Load</button>
+  <h3>📜 Payment Report</h3>
+<hr>
+<h4>📊 Today Collection</h4>
+💵 Cash: ₹<span id="todayCash">0</span><br>
+🏦 Bank: ₹<span id="todayBank">0</span><br>
+<b>Total: ₹<span id="todayTotal">0</span></b>
+
+  <input type="date" id="fromDate">
+  <input type="date" id="toDate">
+
+  <input id="ph_phone" placeholder="Phone (optional)">
+
+  <button onclick="loadPaymentHistory()">Load Report</button>
+
+  <hr>
+
+  <b>Total Collection: ₹<span id="totalAmt">0</span></b><br>
+  💵 Cash: ₹<span id="cashAmt">0</span><br>
+  🏦 Bank: ₹<span id="bankAmt">0</span>
+
+  <hr>
+
   <div id="payList"></div>
 </div>
 <!-- NAV -->
@@ -544,9 +563,9 @@ Please renew to continue attendance.`;
     }
   });
 }
- function addPayment(){
+function addPayment(){
   let phone = pay_phone.value.trim();
-  let amount = pay_amount.value;
+  let amount = Number(pay_amount.value);
   let mode = pay_mode.value;
   let planVal = pay_plan.value;
 
@@ -565,21 +584,27 @@ Please renew to continue attendance.`;
 
     let u = doc.data();
 
+    // 🔴 already active undo check
+    if(u.planExpiry && new Date(u.planExpiry) >= new Date()){
+      alert("⚠️ User already has ACTIVE plan");
+      return;
+    }
+
     let exp = new Date();
     exp.setDate(exp.getDate() + Number(days));
 
-    // 🔥 PAYMENT SAVE
+    // PAYMENT SAVE
     db.collection("payments").add({
       phone: phone,
       name: u.name,
       plan: planName,
-      amount: Number(amount),
-      mode: mode,
+      amount: amount,
+      mode: mode, // Cash / Bank
       date: new Date().toISOString(),
       planExpiry: exp.toISOString()
     });
 
-    // 🔥 PLAN ACTIVATE
+    // PLAN ACTIVATE
     db.collection("users").doc(phone).update({
       currentPlan: planName,
       planStatus: "active",
@@ -587,36 +612,40 @@ Please renew to continue attendance.`;
       planExpiry: exp.toISOString()
     });
 
-    alert("✅ Payment added & Plan Activated");
+    alert("✅ Payment saved & Plan activated");
 
-    pay_phone.value = "";
-    pay_amount.value = "";
-    pay_mode.value = "";
-    pay_plan.value = "";
+    pay_phone.value="";
+    pay_amount.value="";
+    pay_mode.value="";
+    pay_plan.value="";
+
+    loadTodayCollection(); // 🔥 total refresh
   });
 }
 
    
-  function loadPaymentHistory(){
+function loadPaymentHistory(){
   let phone = ph_phone.value.trim();
-  if(!phone) return;
+  let from = fromDate.value;
+  let to = toDate.value;
 
-  db.collection("payments")
-    .where("phone","==",phone)
-    .orderBy("date","desc")
-    .get()
-    .then(snap=>{
-      let h = "";
+  db.collection("payments").orderBy("date","desc").get().then(snap=>{
+    let h="";
+    let total=0, cash=0, bank=0;
 
-      snap.forEach(d=>{
-        let p = d.data();
+    snap.forEach(d=>{
+      let p=d.data();
+      let payDate = p.date ? p.date.substr(0,10) : "";
 
-        let active = false;
-        if(p.planExpiry){
-          active = new Date(p.planExpiry) >= new Date();
-        }
+      if(from && payDate < from) return;
+      if(to && payDate > to) return;
+      if(phone && p.phone !== phone) return;
 
-        let receiptMsg =
+      total += p.amount;
+      if(p.mode === "Cash") cash += p.amount;
+      else bank += p.amount;
+
+      let receiptMsg =
 `GYM RECEIPT
 Name: ${p.name}
 Phone: ${p.phone}
@@ -625,28 +654,29 @@ Amount: ₹${p.amount}
 Mode: ${p.mode}
 Date: ${new Date(p.date).toLocaleString()}`;
 
-        let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
+      let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
 
-        h += `
-          <div style="border-bottom:1px solid #eee;padding:10px 0">
-            <b>${p.name}</b> (${p.phone})<br>
-            📦 Plan: ${p.plan}<br>
-            🟢 Status: <b style="color:${active?'green':'red'}">
-              ${active ? 'ACTIVE' : 'EXPIRED'}
-            </b><br>
-            💰 Amount: ₹${p.amount}<br>
-            💳 Mode: ${p.mode}<br>
-            📅 Date: ${new Date(p.date).toLocaleString()}<br>
+      h+=`
+        <div style="border-bottom:1px solid #eee;padding:10px 0">
+          <b>${p.name}</b> (${p.phone})<br>
+          💰 ₹${p.amount} – ${p.mode}<br>
+          📅 ${new Date(p.date).toLocaleString()}<br>
+          Plan: ${p.plan}<br>
 
-            <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
-            <button onclick="window.open('${waUrl}','_blank')">📲 Send WhatsApp</button>
-          </div>
-        `;
-      });
-
-      payList.innerHTML = h || "No payments found";
+          <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
+          <button onclick="window.open('${waUrl}','_blank')">📲 WhatsApp</button>
+        </div>
+      `;
     });
+
+    totalAmt.innerText = total;
+    cashAmt.innerText = cash;
+    bankAmt.innerText = bank;
+
+    payList.innerHTML = h || "No data";
+  });
 }
+
 
 function printReceipt(id){
   db.collection("payments").doc(id).get().then(doc=>{
@@ -707,6 +737,28 @@ function adminLogout(){
     document.getElementById("pay_plan").innerHTML = h;
   });
 }
+function loadTodayCollection(){
+  let today = new Date().toISOString().substr(0,10);
+
+  db.collection("payments").get().then(snap=>{
+    let cash=0, bank=0;
+
+    snap.forEach(d=>{
+      let p=d.data();
+      if(!p.date) return;
+
+      let dte = p.date.substr(0,10);
+      if(dte !== today) return;
+
+      if(p.mode==="Cash") cash+=p.amount;
+      else bank+=p.amount;
+    });
+
+    todayCash.innerText=cash;
+    todayBank.innerText=bank;
+    todayTotal.innerText=cash+bank;
+  });
+}
 
 /* INIT */
 loadPlanOptions();
@@ -715,10 +767,12 @@ loadRequests();
 loadPlans();
 loadWhatsAppList();
 loadPaymentPlans();
+ loadTodayCollection();
 </script>
 
 </body>
 </html>
+
 
 
 
