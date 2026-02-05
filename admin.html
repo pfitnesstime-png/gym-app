@@ -58,6 +58,14 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
   <input id="uname" placeholder="User name">
   <input id="uphone" placeholder="Phone number">
   <select id="uplan"><option value="">Select Plan</option></select>
+ <input id="uamount" type="number" placeholder="Payment Amount">
+
+<select id="umode">
+  <option value="">Payment Mode</option>
+  <option>Cash</option>
+  <option>UPI</option>
+  <option>Card</option>
+</select>
   <button onclick="addUserWithPlan()">Add User</button>
 </div>
 
@@ -258,15 +266,16 @@ function addUserWithPlan(){
   let name = uname.value.trim();
   let phone = uphone.value.trim();
   let plan = uplan.value;
+  let amount = Number(uamount.value);
+  let mode = umode.value;
 
-  if(!name || !phone || !plan){
+  if(!name || !phone || !plan || !amount || !mode){
     alert("Fill all fields");
     return;
   }
 
   const userRef = db.collection("users").doc(phone);
 
-  // 🔍 already user undo check
   userRef.get().then(doc=>{
     if(doc.exists){
       alert("⚠️ This user already exists!");
@@ -274,9 +283,11 @@ function addUserWithPlan(){
     }
 
     let [planName, days] = plan.split("|");
+
     let exp = new Date();
     exp.setDate(exp.getDate() + Number(days));
 
+    // 👤 USER SAVE
     userRef.set({
       name,
       phone,
@@ -284,14 +295,32 @@ function addUserWithPlan(){
       planStatus: "active",
       paymentStatus: "paid",
       planExpiry: exp.toISOString()
-    }).then(()=>{
-      alert("✅ User added successfully");
-      uname.value = "";
-      uphone.value = "";
-      uplan.value = "";
     });
+
+    // 💰 PAYMENT SAVE (history + report)
+    db.collection("payments").add({
+      phone: phone,
+      name: name,
+      plan: planName,
+      amount: amount,
+      mode: mode,
+      date: new Date().toISOString(),
+      planExpiry: exp.toISOString(),
+      source: "Add User"
+    });
+
+    alert("✅ User added + Payment saved");
+
+    uname.value="";
+    uphone.value="";
+    uplan.value="";
+    uamount.value="";
+    umode.value="";
+
+    loadTodayCollection(); // refresh totals
   });
 }
+
 /* USERS */
 function loadUsers(){
   let key = searchUser.value.toLowerCase();
@@ -305,11 +334,39 @@ function loadUsers(){
       if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key))
         return;
 
+      // 🔍 PLAN STATUS CALC
+      let statusText = "No Plan";
+      let color = "#666";
+
+      if(u.currentPlan){
+        if(u.planExpiry){
+          let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
+
+          if(diff > 0){
+            statusText = u.currentPlan + " (" + diff + " days left)";
+            color = "green";
+          }else{
+            statusText = "EXPIRED";
+            color = "red";
+
+            // 🔥 AUTO UPDATE EXPIRED STATUS (optional but useful)
+            if(u.planStatus !== "expired"){
+              db.collection("users").doc(u.phone).update({
+                planStatus: "expired"
+              });
+            }
+          }
+        }else{
+          statusText = u.currentPlan;
+        }
+      }
+
       h += `
-        <div style="border-bottom:1px solid #eee;padding:8px 0">
+        <div style="border-bottom:1px solid #eee;padding:10px 0">
           <b>${u.name}</b><br>
           📞 ${u.phone}<br>
-          Plan: ${u.currentPlan || "-"}
+
+          Plan: <b style="color:${color}">${statusText}</b><br>
 
           <button class="ok"
             onclick="openEditUser('${u.phone}','${u.name}','${u.currentPlan || ""}')">
@@ -327,6 +384,7 @@ function loadUsers(){
     usersList.innerHTML = h || "No users";
   });
 }
+
 
 function openEditUser(phone,name,plan){
   showTab("editUser", document.querySelector(".nav button:nth-child(3)"));
@@ -772,6 +830,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
