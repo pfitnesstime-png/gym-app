@@ -751,8 +751,8 @@ function addPayment(){
   });
 }
 
-   
 function loadPaymentHistory(){
+
   let phone = ph_phone.value.trim();
   let from = fromDate.value;
   let to = toDate.value;
@@ -773,14 +773,24 @@ function loadPaymentHistory(){
       if(p.mode === "Cash") cash += p.amount;
       else bank += p.amount;
 
+      // ✅ WhatsApp Receipt Message
       let receiptMsg =
-`GYM RECEIPT
-Name: ${p.name}
+`FITNESSTIME PRO GYM
+Karikakulam, Karaparamb
+📞 8086361224 / 7025992455
+
+----- PAYMENT RECEIPT -----
+
+Member: ${p.name}
 Phone: ${p.phone}
+
 Plan: ${p.plan}
 Amount: ₹${p.amount}
 Mode: ${p.mode}
-Date: ${new Date(p.date).toLocaleString()}`;
+
+Date: ${new Date(p.date).toLocaleString()}
+
+Thank you 💪`;
 
       let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
 
@@ -804,6 +814,7 @@ Date: ${new Date(p.date).toLocaleString()}`;
     payList.innerHTML = h || "No data";
   });
 }
+
 
 
 function printReceipt(id){
@@ -928,6 +939,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
