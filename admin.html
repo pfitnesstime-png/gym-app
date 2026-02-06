@@ -1,33 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-
-<meta name="theme-color" content="#111827">
+ <meta name="theme-color" content="#111827">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Gym App – Admin</title>
 
 <link rel="stylesheet"
-href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
-
+ href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <script>
 if(localStorage.getItem("admin") !== "true"){
   window.location.href = "admin-login.html";
-}
-</script>
-
+} </script>
 <style>
-
-/* ===== BASE ===== */
 body{
   margin:0;
   font-family:Arial;
   background:#f1f5f9;
-  padding-bottom:110px;
+  padding-bottom:70px;
 }
 
 /* ===== HEADER ===== */
@@ -40,9 +32,13 @@ header{
   position:relative;
 }
 
-header img{ height:60px; }
+header img{
+  height:80px;   /* 👈 logo bigger */
+  max-width:105%;
+}
+;
 
-header i{
+header .logout{
   position:absolute;
   right:15px;
   color:#fff;
@@ -50,7 +46,14 @@ header i{
   cursor:pointer;
 }
 
-/* ===== CARD ===== */
+/* MOBILE */
+@media (max-width:700px){
+  header img{
+    height:58px;
+  }
+}
+
+/* ===== CARDS ===== */
 .card{
   background:#fff;
   margin:15px;
@@ -74,26 +77,27 @@ button{
   font-weight:bold;
 }
 
+.ok{background:#16a34a}
+.del{background:#dc2626}
 .hidden{display:none}
 
 /* ===== BOTTOM NAV ===== */
 .nav{
   position:fixed;
+  bottom:0;
   left:0;
   right:0;
-  bottom:0;
-  height:65px;
-  padding-bottom:env(safe-area-inset-bottom);
-  background:#2563eb;
+  height:60px;
+  background:#fff;
+  border-top:1px solid #ddd;
   display:flex;
-  z-index:9999;
 }
 
 .nav button{
   flex:1;
+  background:none;
   border:none;
-  background:transparent;
-  color:#fff;
+  color:#6b7280;
   font-size:12px;
   display:flex;
   flex-direction:column;
@@ -101,186 +105,853 @@ button{
   justify-content:center;
 }
 
-.nav button i{ font-size:18px; }
-
-.nav button.active{
-  background:rgba(255,255,255,0.15);
-  border-radius:6px;
-}
-
+.nav button i{font-size:18px}
+.nav button.active{color:#2563eb}
 </style>
 </head>
 
 <body>
 
 <header>
-  <img src="logo.PNG.png">
-  <i class="fa fa-sign-out-alt" onclick="adminLogout()"></i>
+ <!-- 🔷 YOUR LOGO -->
+  <img src="logo.PNG.png" style="height:40px">
+<i class="fa fa-sign-out-alt" onclick="adminLogout()" style="cursor:pointer"></i>
 </header>
 
 <!-- ADD USER -->
 <div class="card" id="addUser">
   <h3>Add User + Assign Plan</h3>
-
   <input id="uname" placeholder="User name">
   <input id="uphone" placeholder="Phone number">
+  <select id="uplan"><option value="">Select Plan</option></select>
+ <input id="uamount" type="number" placeholder="Payment Amount">
 
-  <select id="uplan">
-    <option value="">Select Plan</option>
-  </select>
+<select id="umode">
+  <option value="">Payment Mode</option>
+  <option>Cash</option>
+  <option>UPI</option>
+  <option>Card</option>
+</select>
+  <button onclick="addUserWithPlan()">Add User</button>
+</div>
 
-  <input id="uamount" type="number" placeholder="Payment Amount">
-
-  <select id="umode">
-    <option value="">Payment Mode</option>
-    <option>Cash</option>
-    <option>UPI</option>
-    <option>Card</option>
-  </select>
-
-  <button onclick="addUser()">Add User</button>
+<!-- REQUESTS -->
+<div class="card hidden" id="requests">
+  <h3>Plan Requests</h3>
+  <div id="reqList">Loading...</div>
 </div>
 
 <!-- USERS -->
 <div class="card hidden" id="users">
-  <h3>Users</h3>
+  <h3>All Users</h3>
+  <input id="searchUser" placeholder="Search name or phone" onkeyup="loadUsers()">
   <div id="usersList">Loading...</div>
+</div>
+  <!-- EDIT USER SECTION -->
+<div class="card hidden" id="editUser">
+  <h3>✏️ Edit User</h3>
+
+  <input type="hidden" id="e_old_phone">
+
+  <input id="e_name" placeholder="User Name">
+  <input id="e_phone" placeholder="Phone Number">
+
+  <select id="e_plan">
+    <option value="">Select Plan</option>
+  </select>
+
+  <button class="ok" onclick="updateUser()">Save Changes</button>
+  <button onclick="showTab('users',document.querySelector('.nav button:nth-child(3)'))">
+    Cancel
+  </button>
 </div>
 
 <!-- PLANS -->
 <div class="card hidden" id="plans">
   <h3>Add Plan</h3>
-
   <input id="pname" placeholder="Plan name">
   <input id="pdays" type="number" placeholder="Days">
   <input id="pprice" type="number" placeholder="Price">
-
   <button onclick="addPlan()">Add Plan</button>
   <hr>
-  <div id="plansList"></div>
+  <div id="plansList">Loading...</div>
 </div>
 
-<!-- SETTINGS -->
+<!-- ATTENDANCE -->
+<div class="card hidden" id="attendance">
+  <h3>Attendance Sheet</h3>
+  <input type="month" id="filterMonth" onchange="loadAttendanceSheet()">
+  <div style="overflow-x:auto">
+    <table border="1" width="100%" id="attTable" style="border-collapse:collapse;text-align:center">
+    </table>
+  </div>
+</div>
+
+<!-- QR -->
+<div class="card hidden" id="qr">
+  <h3>Gym QR</h3>
+  <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
+  <button onclick="window.print()">Print QR</button>
+</div>
+  <!-- WHATSAPP ALERTS -->
+<div class="card hidden" id="whatsapp">
+  <h3>📲 WhatsApp Alerts (Expired / Pending)</h3>
+  <button onclick="sendBulkWhatsApp()">
+    📤 Send to ALL Expired Members
+  </button>
+  <hr>
+  <div id="waList">Loading...</div>
+</div>
+<div class="card hidden" id="payments">
+  <h3>💰 Add Payment</h3>
+  <input id="pay_phone" placeholder="Phone number">
+  <input id="pay_amount" type="number" placeholder="Amount">
+  <select id="pay_mode">
+    <option value="">Payment Mode</option>
+    <option>Cash</option>
+    <option>UPI</option>
+    <option>Card</option>
+  </select>
+ <select id="pay_plan">
+  <option value="">Select Plan</option>
+</select>
+  <button onclick="addPayment()">Save Payment</button>
+</div>
+ <!-- SETTINGS MENU -->
 <div class="card hidden" id="settings">
-  <h3>Settings</h3>
-  Coming soon...
+  <h3>⚙️ Settings</h3>
+
+  <button onclick="showInside('attendance')">📅 Attendance</button>
+  <button onclick="showInside('payments')">💰 Add Payment</button>
+  <button onclick="showInside('paymentHistory')">📜 Payment History</button>
+  <button onclick="showInside('qr')">📷 QR Code</button>
+  <button onclick="showInside('whatsapp')">📲 WhatsApp</button>
+  <button onclick="showInside('requests')">📩 Requests</button>
 </div>
 
+<div class="card hidden" id="paymentHistory">
+  <h3>📜 Payment Report</h3>
+<hr>
+<h4>📊 Today Collection</h4>
+💵 Cash: ₹<span id="todayCash">0</span><br>
+🏦 Bank: ₹<span id="todayBank">0</span><br>
+<b>Total: ₹<span id="todayTotal">0</span></b>
+
+  <input type="date" id="fromDate">
+  <input type="date" id="toDate">
+
+  <input id="ph_phone" placeholder="Phone (optional)">
+
+  <button onclick="loadPaymentHistory()">Load Report</button>
+
+  <hr>
+
+  <b>Total Collection: ₹<span id="totalAmt">0</span></b><br>
+  💵 Cash: ₹<span id="cashAmt">0</span><br>
+  🏦 Bank: ₹<span id="bankAmt">0</span>
+
+  <hr>
+
+  <div id="payList"></div>
+</div>
 <!-- NAV -->
 <div class="nav">
-
   <button class="active" onclick="showTab('addUser',this)">
-    <i class="fa fa-user-plus"></i>
-    Add
+    <i class="fa fa-user-plus"></i>Add
   </button>
 
   <button onclick="showTab('users',this)">
-    <i class="fa fa-users"></i>
-    Users
+    <i class="fa fa-users"></i>Users
   </button>
 
   <button onclick="showTab('plans',this)">
-    <i class="fa fa-list"></i>
-    Plans
+    <i class="fa fa-list"></i>Plans
   </button>
 
+  <!-- ⭐ NEW SETTINGS -->
   <button onclick="showTab('settings',this)">
-    <i class="fa fa-gear"></i>
-    Setting
+    <i class="fa fa-gear"></i>Setting
   </button>
-
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-
-/* ===== FIREBASE ===== */
 firebase.initializeApp({
   apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
   authDomain:"gym-app-79bec.firebaseapp.com",
   projectId:"gym-app-79bec"
 });
+const db=firebase.firestore();
 
-const db = firebase.firestore();
-
-/* ===== TAB SWITCH ===== */
 function showTab(id, btn){
-  document.querySelectorAll(".card").forEach(c=>c.classList.add("hidden"));
+  [
+   "addUser","requests","users","editUser","plans",
+   "attendance","qr","whatsapp","payments",
+   "paymentHistory","settings"   // ⭐ add this
+  ].forEach(x=>{
+    let el = document.getElementById(x);
+    if(el) el.classList.add("hidden");
+  });
+
   document.getElementById(id).classList.remove("hidden");
 
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  document.querySelectorAll(".nav button")
+    .forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
+
+  if(id === "whatsapp") loadWhatsAppList();
+  if(id === "requests") loadRequests();
 }
 
-/* ===== ADD USER ===== */
-function addUser(){
+/* PLAN OPTIONS */
+function loadPlanOptions(){
+  db.collection("plans").get().then(s=>{
+    let h='<option value="">Select Plan</option>';
+    s.forEach(d=>{
+      let p=d.data();
+      h+=`<option value="${p.name}|${p.days}">
+        ${p.name} (${p.days} days – ₹${p.price})
+      </option>`;
+    });
+    uplan.innerHTML=h;
+  });
+}
+function loadEditPlans(){
+  db.collection("plans").get().then(s=>{
+    let h = '<option value="">Select Plan</option>';
+    s.forEach(d=>{
+      let p = d.data();
+      h += `<option value="${p.name}|${p.days}">
+        ${p.name} (${p.days} days)
+      </option>`;
+    });
+    e_plan.innerHTML = h;
+  });
+}
+
+/* ADD USER */
+function addUserWithPlan(){
   let name = uname.value.trim();
   let phone = uphone.value.trim();
+  let plan = uplan.value;
+  let amount = Number(uamount.value);
+  let mode = umode.value;
 
-  if(!name || !phone){
+  if(!name || !phone || !plan || !amount || !mode){
     alert("Fill all fields");
     return;
   }
 
-  db.collection("users").doc(phone).set({
-    name, phone
-  });
+  const userRef = db.collection("users").doc(phone);
 
-  alert("User added");
-  uname.value="";
-  uphone.value="";
+  userRef.get().then(doc=>{
+    if(doc.exists){
+      alert("⚠️ This user already exists!");
+      return;
+    }
+
+    let [planName, days] = plan.split("|");
+
+    let exp = new Date();
+    exp.setDate(exp.getDate() + Number(days));
+
+    // 👤 USER SAVE
+    userRef.set({
+      name,
+      phone,
+      currentPlan: planName,
+      planStatus: "active",
+      paymentStatus: "paid",
+      planExpiry: exp.toISOString()
+    });
+
+    // 💰 PAYMENT SAVE (history + report)
+    db.collection("payments").add({
+      phone: phone,
+      name: name,
+      plan: planName,
+      amount: amount,
+      mode: mode,
+      date: new Date().toISOString(),
+      planExpiry: exp.toISOString(),
+      source: "Add User"
+    });
+
+    alert("✅ User added + Payment saved");
+
+    uname.value="";
+    uphone.value="";
+    uplan.value="";
+    uamount.value="";
+    umode.value="";
+
+    loadTodayCollection(); // refresh totals
+  });
 }
 
-/* ===== LOAD USERS ===== */
-db.collection("users").onSnapshot(snap=>{
-  let h="";
-  snap.forEach(d=>{
-    let u=d.data();
-    h+=`<p>${u.name} - ${u.phone}</p>`;
-  });
-  usersList.innerHTML=h || "No users";
-});
+/* USERS */
+function loadUsers(){
+  let key = searchUser.value.toLowerCase();
 
-/* ===== ADD PLAN ===== */
+  db.collection("users").onSnapshot(s=>{
+    let h = "";
+
+    s.forEach(d=>{
+      let u = d.data();
+
+      if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key))
+        return;
+
+      // 🔍 PLAN STATUS CALC
+      let statusText = "No Plan";
+      let color = "#666";
+
+      if(u.currentPlan){
+        if(u.planExpiry){
+          let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
+
+          if(diff > 0){
+            statusText = u.currentPlan + " (" + diff + " days left)";
+            color = "green";
+          }else{
+            statusText = "EXPIRED";
+            color = "red";
+
+            // 🔥 AUTO UPDATE EXPIRED STATUS (optional but useful)
+            if(u.planStatus !== "expired"){
+              db.collection("users").doc(u.phone).update({
+                planStatus: "expired"
+              });
+            }
+          }
+        }else{
+          statusText = u.currentPlan;
+        }
+      }
+
+      h += `
+        <div style="border-bottom:1px solid #eee;padding:10px 0">
+          <b>${u.name}</b><br>
+          📞 ${u.phone}<br>
+
+          Plan: <b style="color:${color}">${statusText}</b><br>
+
+          <button class="ok"
+            onclick="openEditUser('${u.phone}','${u.name}','${u.currentPlan || ""}')">
+            Edit
+          </button>
+
+          <button class="del"
+            onclick="deleteUser('${u.phone}')">
+            Delete
+          </button>
+        </div>
+      `;
+    });
+
+    usersList.innerHTML = h || "No users";
+  });
+}
+
+
+function openEditUser(phone,name,plan){
+  showTab("editUser", document.querySelector(".nav button:nth-child(3)"));
+
+  e_old_phone.value = phone;
+  e_name.value = name;
+  e_phone.value = phone;
+
+  loadEditPlans();
+}
+
+function deleteUser(phone){
+  if(!confirm("Delete user?")) return;
+  db.collection("users").doc(phone).delete();
+  db.collection("attendance").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+  });
+}
+
+/* REQUESTS */
+function loadRequests(){
+  db.collection("users").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let u=d.data();
+      if(u.planStatus==="pending"){
+        h+=`
+          <p>
+            <b>${u.name}</b><br>
+            Plan: ${u.requestedPlan}<br>
+            ₹${u.requestedPrice}
+            <button class="ok" onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays})">
+              Approve
+            </button>
+          </p><hr>`;
+      }
+    });
+    reqList.innerHTML=h||"No requests";
+  });
+}
+
+function approvePlan(phone,plan,days){
+  let exp=new Date(); exp.setDate(exp.getDate()+Number(days));
+  db.collection("users").doc(phone).update({
+    currentPlan:plan,
+    planStatus:"active",
+    paymentStatus:"paid",
+    planExpiry:exp.toISOString(),
+    requestedPlan:"",
+    requestedDays:"",
+    requestedPrice:""
+  });
+}
+
+/* PLANS */
+function loadPlans(){
+  db.collection("plans").onSnapshot(s=>{
+    let h="";
+    s.forEach(d=>{
+      let p=d.data();
+      h+=`${p.name} – ${p.days} days – ₹${p.price}
+      <button class="del" onclick="db.collection('plans').doc('${d.id}').delete()">Delete</button><hr>`;
+    });
+    plansList.innerHTML=h||"No plans";
+  });
+}
 function addPlan(){
   db.collection("plans").add({
     name:pname.value,
     days:+pdays.value,
     price:+pprice.value
   });
+  pname.value=pdays.value=pprice.value="";
+}
+function updateUser(){
+  let oldPhone = e_old_phone.value;
+  let newPhone = e_phone.value.trim();
+  let name = e_name.value.trim();
+  let planVal = e_plan.value;
+
+  if(!name || !newPhone){
+    alert("Name & Phone required");
+    return;
+  }
+
+  let data = { name, phone:newPhone };
+
+  if(planVal){
+    let [planName, days] = planVal.split("|");
+    let exp = new Date();
+    exp.setDate(exp.getDate() + Number(days));
+
+    data.currentPlan = planName;
+    data.planStatus = "active";
+    data.paymentStatus = "paid";
+    data.planExpiry = exp.toISOString();
+  }
+
+  // same phone
+  if(oldPhone === newPhone){
+    db.collection("users").doc(oldPhone).update(data).then(()=>{
+      alert("User updated ✅");
+      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+    });
+    return;
+  }
+
+  // phone changed
+  db.collection("users").doc(oldPhone).get().then(doc=>{
+    if(!doc.exists) return;
+
+    db.collection("users").doc(newPhone).set(data).then(()=>{
+      db.collection("users").doc(oldPhone).delete();
+      alert("User updated (phone changed) ✅");
+      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+    });
+  });
 }
 
-/* ===== LOAD PLANS ===== */
-db.collection("plans").onSnapshot(snap=>{
-  let h="";
-  snap.forEach(d=>{
-    let p=d.data();
-    h+=`${p.name} - ${p.days} days - ₹${p.price}<br>`;
-  });
-  plansList.innerHTML=h;
-});
+/* ATTENDANCE (WITH NAME) */
+async function loadAttendanceSheet(){
+  const monthInput = filterMonth.value; // 2026-01
+  if(!monthInput) return;
 
-/* ===== LOGOUT ===== */
+  const [year, month] = monthInput.split("-");
+  const daysInMonth = new Date(year, month, 0).getDate();
+
+  let table = `<tr>
+    <th>Member</th>
+    <th>Phone</th>`;
+
+  for(let d=1; d<=daysInMonth; d++){
+    table += `<th>${d}</th>`;
+  }
+  table += `</tr>`;
+
+  const usersSnap = await db.collection("users").get();
+  const attSnap = await db.collection("attendance").get();
+
+  let attendanceMap = {};
+  attSnap.forEach(a=>{
+    let data = a.data();
+    attendanceMap[data.phone+"_"+data.date] = true;
+  });
+
+  usersSnap.forEach(u=>{
+    let user = u.data();
+    table += `<tr>
+      <td>${user.name}</td>
+      <td>${user.phone}</td>`;
+
+    for(let d=1; d<=daysInMonth; d++){
+      let day = String(d).padStart(2,"0");
+      let date = `${year}-${month}-${day}`;
+      let key = user.phone+"_"+date;
+      table += `<td>${attendanceMap[key] ? "✅" : ""}</td>`;
+    }
+    table += `</tr>`;
+  });
+
+  document.getElementById("attTable").innerHTML = table;
+}
+const GYM_PHONE = "7994302567"; // 👈 gym owner number
+
+function loadWhatsAppList(){
+  db.collection("users").get().then(snap=>{
+    let h="";
+
+    snap.forEach(d=>{
+      let u = d.data();
+
+      let expired = false;
+      if(u.planExpiry){
+        expired = new Date(u.planExpiry) < new Date();
+      }
+
+      if(expired || u.paymentStatus === "pending"){
+        let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
+        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+
+        h += `
+          <div style="border-bottom:1px solid #eee;padding:8px 0">
+            <b>${u.name}</b><br>
+            📞 ${u.phone}<br>
+            Status: ${expired ? "EXPIRED" : "PAYMENT PENDING"}
+            <button onclick="window.open('${url}','_blank')">
+              📲 Send WhatsApp
+            </button>
+          </div>
+        `;
+      }
+    });
+
+    waList.innerHTML = h || "No expired users 🎉";
+  });
+}
+function sendBulkWhatsApp(){
+  if(!confirm("Send WhatsApp to ALL expired / pending members?")) return;
+
+  db.collection("users").get().then(snap=>{
+    let delay = 0;
+    let count = 0;
+
+    snap.forEach(d=>{
+      let u = d.data();
+
+      let expired = false;
+      if(u.planExpiry){
+        expired = new Date(u.planExpiry) < new Date();
+      }
+
+      if(expired || u.paymentStatus === "pending"){
+        count++;
+
+        let msg =
+`Hi ${u.name},
+Your gym plan is expired or payment pending.
+Please renew to continue attendance.`;
+
+        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+
+        setTimeout(()=>{
+          window.open(url, "_blank");
+        }, delay);
+
+        delay += 1200; // 🔥 1.2 second gap
+      }
+    });
+
+    if(count === 0){
+      alert("🎉 No expired members");
+    }else{
+      alert("WhatsApp will open one by one.\nPlease DO NOT close tabs.");
+    }
+  });
+}
+function addPayment(){
+  let phone = pay_phone.value.trim();
+  let amount = Number(pay_amount.value);
+  let mode = pay_mode.value;
+  let planVal = pay_plan.value;
+
+  if(!phone || !amount || !mode || !planVal){
+    alert("Fill all fields");
+    return;
+  }
+
+  let [planName, days] = planVal.split("|");
+
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists){
+      alert("User not found");
+      return;
+    }
+
+    let u = doc.data();
+
+    // 🔴 already active undo check
+    if(u.planExpiry && new Date(u.planExpiry) >= new Date()){
+      alert("⚠️ User already has ACTIVE plan");
+      return;
+    }
+
+    let exp = new Date();
+    exp.setDate(exp.getDate() + Number(days));
+
+    // PAYMENT SAVE
+    db.collection("payments").add({
+      phone: phone,
+      name: u.name,
+      plan: planName,
+      amount: amount,
+      mode: mode, // Cash / Bank
+      date: new Date().toISOString(),
+      planExpiry: exp.toISOString()
+    });
+
+    // PLAN ACTIVATE
+    db.collection("users").doc(phone).update({
+      currentPlan: planName,
+      planStatus: "active",
+      paymentStatus: "paid",
+      planExpiry: exp.toISOString()
+    });
+
+    alert("✅ Payment saved & Plan activated");
+
+    pay_phone.value="";
+    pay_amount.value="";
+    pay_mode.value="";
+    pay_plan.value="";
+
+    loadTodayCollection(); // 🔥 total refresh
+  });
+}
+
+   
+function loadPaymentHistory(){
+  let phone = ph_phone.value.trim();
+  let from = fromDate.value;
+  let to = toDate.value;
+
+  db.collection("payments").orderBy("date","desc").get().then(snap=>{
+    let h="";
+    let total=0, cash=0, bank=0;
+
+    snap.forEach(d=>{
+      let p=d.data();
+      let payDate = p.date ? p.date.substr(0,10) : "";
+
+      if(from && payDate < from) return;
+      if(to && payDate > to) return;
+      if(phone && p.phone !== phone) return;
+
+      total += p.amount;
+      if(p.mode === "Cash") cash += p.amount;
+      else bank += p.amount;
+
+      let receiptMsg =
+`GYM RECEIPT
+Name: ${p.name}
+Phone: ${p.phone}
+Plan: ${p.plan}
+Amount: ₹${p.amount}
+Mode: ${p.mode}
+Date: ${new Date(p.date).toLocaleString()}`;
+
+      let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
+
+      h+=`
+        <div style="border-bottom:1px solid #eee;padding:10px 0">
+          <b>${p.name}</b> (${p.phone})<br>
+          💰 ₹${p.amount} – ${p.mode}<br>
+          📅 ${new Date(p.date).toLocaleString()}<br>
+          Plan: ${p.plan}<br>
+
+          <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
+          <button onclick="window.open('${waUrl}','_blank')">📲 WhatsApp</button>
+        </div>
+      `;
+    });
+
+    totalAmt.innerText = total;
+    cashAmt.innerText = cash;
+    bankAmt.innerText = bank;
+
+    payList.innerHTML = h || "No data";
+  });
+}
+
+
+function printReceipt(id){
+  db.collection("payments").doc(id).get().then(doc=>{
+    if(!doc.exists){
+      alert("Receipt not found");
+      return;
+    }
+
+    let p = doc.data();
+
+    // ✏️ CHANGE THESE (YOUR GYM DETAILS)
+    const GYM_NAME = "FITNESSTIME PRO GYM";
+    const GYM_ADDRESS = " KARIKAKULAMKaraparamb, Kozhikode, Kerala";
+    const GYM_PHONE = "8086361224,7025992455";
+
+    let w = window.open("", "_blank", "width=400,height=650");
+
+    w.document.write(`
+      <html>
+      <head>
+        <title>Gym Receipt</title>
+        <style>
+          body{font-family:Arial;padding:20px}
+          h2{text-align:center;margin:0}
+          .center{text-align:center}
+          hr{margin:10px 0}
+          .topbox{
+            text-align:center;
+            border-bottom:1px dashed #000;
+            padding-bottom:10px;
+            margin-bottom:10px;
+          }
+        </style>
+      </head>
+      <body>
+
+        <div class="topbox">
+          <h2>${GYM_NAME}</h2>
+          <div>${GYM_ADDRESS}</div>
+          <div>📞 ${GYM_PHONE}</div>
+        </div>
+
+        <h3 class="center">PAYMENT RECEIPT</h3>
+        <hr>
+
+        <b>Name:</b> ${p.name}<br>
+        <b>Phone:</b> ${p.phone}<br>
+        <b>Plan:</b> ${p.plan}<br>
+        <b>Amount:</b> ₹${p.amount}<br>
+        <b>Mode:</b> ${p.mode}<br>
+        <b>Date:</b> ${new Date(p.date).toLocaleString()}<br>
+
+        <hr>
+
+        <p class="center">Thank You 💪<br>Visit Again</p>
+
+      </body>
+      </html>
+    `);
+
+    w.document.close();
+    w.print();
+  });
+}
+
 function adminLogout(){
   localStorage.removeItem("admin");
-  location.href="admin-login.html";
+  window.location.href = "admin-login.html";
+}
+ function loadPaymentPlans(){
+  db.collection("plans").get().then(snap=>{
+    let h = '<option value="">Select Plan</option>';
+    snap.forEach(d=>{
+      let p = d.data();
+      h += `<option value="${p.name}|${p.days}">
+        ${p.name} (${p.days} days)
+      </option>`;
+    });
+    document.getElementById("pay_plan").innerHTML = h;
+  });
+}
+function loadTodayCollection(){
+  let today = new Date().toISOString().substr(0,10);
+
+  db.collection("payments").get().then(snap=>{
+    let cash=0, bank=0;
+
+    snap.forEach(d=>{
+      let p=d.data();
+      if(!p.date) return;
+
+      let dte = p.date.substr(0,10);
+      if(dte !== today) return;
+
+      if(p.mode==="Cash") cash+=p.amount;
+      else bank+=p.amount;
+    });
+
+    todayCash.innerText=cash;
+    todayBank.innerText=bank;
+    todayTotal.innerText=cash+bank;
+  });
+}
+function showInside(id){
+  // hide settings
+  document.getElementById("settings").classList.add("hidden");
+
+  // show selected
+  document.getElementById(id).classList.remove("hidden");
 }
 
-/* ===== KEYBOARD NAV FIX ===== */
-window.addEventListener("resize", () => {
-  const nav = document.querySelector(".nav");
-  if (!nav) return;
-
-  if (window.innerHeight < window.outerHeight - 150) {
-    nav.style.bottom = "70px";
-  } else {
-    nav.style.bottom = "0px";
-  }
-});
-
+/* INIT */
+loadPlanOptions();
+loadUsers();
+loadRequests();
+loadPlans();
+loadWhatsAppList();
+loadPaymentPlans();
+ loadTodayCollection();
 </script>
 
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
