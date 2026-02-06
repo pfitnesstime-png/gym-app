@@ -134,7 +134,6 @@ button{
 </select>
   <button onclick="addUserWithPlan()">Add User</button>
 </div>
-
 <!-- REQUESTS -->
 <div class="card hidden" id="requests">
   <h3>Plan Requests</h3>
@@ -409,7 +408,12 @@ function loadUsers(){
       let color = "#666";
 
       if(u.currentPlan){
-        if(u.planExpiry){
+       if(u.hold === true){
+  statusText = "ON HOLD (" + (u.remainingDays || 0) + " days left)";
+  color = "orange";
+}
+else
+if(u.planExpiry && !u.hold){
           let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
 
           if(diff > 0){
@@ -447,6 +451,16 @@ function loadUsers(){
             onclick="deleteUser('${u.phone}')">
             Delete
           </button>
+              <button onclick="holdUser('${u.phone}')" 
+      style="background:#f59e0b;color:#fff;margin-top:5px">
+      ⏸ Hold
+    </button>
+
+    <button onclick="resumeUser('${u.phone}')" 
+      style="background:#10b981;color:#fff;margin-top:5px">
+      ▶ Resume
+    </button>
+
         </div>
       `;
     });
@@ -631,7 +645,7 @@ function loadWhatsAppList(){
         expired = new Date(u.planExpiry) < new Date();
       }
 
-      if(expired || u.paymentStatus === "pending"){
+     if((expired && !u.hold) || u.paymentStatus === "pending"){
         let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
         let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
 
@@ -885,6 +899,76 @@ function adminLogout(){
   localStorage.removeItem("admin");
   window.location.href = "admin-login.html";
 }
+ // ================= HOLD USER =================
+function holdUser(phone){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists) return;
+
+    let u = doc.data();
+
+    if(!u.planExpiry){
+      alert("No active plan");
+      return;
+    }
+
+    if(u.hold === true){
+      alert("User already on HOLD");
+      return;
+    }
+
+    let remaining = Math.ceil(
+      (new Date(u.planExpiry) - new Date()) / 86400000
+    );
+
+    if(remaining <= 0){
+      alert("Plan already expired");
+      return;
+    }
+
+    db.collection("users").doc(phone).update({
+      hold:true,
+      holdDate:new Date().toISOString(),
+      remainingDays:remaining,
+      planExpiry:null   // ⭐ freeze expiry
+    });
+
+    alert("⏸ User put on HOLD");
+  });
+}
+
+// ================= RESUME USER =================
+function resumeUser(phone){
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists) return;
+
+    let u = doc.data();
+
+    if(!u.hold){
+      alert("User not on HOLD");
+      return;
+    }
+
+    let days = u.remainingDays || 0;
+
+    if(days <= 0){
+      alert("No remaining days");
+      return;
+    }
+
+    let newExp = new Date();
+    newExp.setDate(newExp.getDate() + days);
+
+    db.collection("users").doc(phone).update({
+      hold:false,
+      remainingDays:0,
+      planExpiry:newExp.toISOString()
+    });
+
+    alert("▶ User resumed. Plan continued");
+  });
+}
+
+
  function loadPaymentPlans(){
   db.collection("plans").get().then(snap=>{
     let h = '<option value="">Select Plan</option>';
@@ -939,6 +1023,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
