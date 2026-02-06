@@ -15,11 +15,12 @@ if(localStorage.getItem("admin") !== "true"){
   window.location.href = "admin-login.html";
 } </script>
 <style>
+/* ===== BASE ===== */
 body{
   margin:0;
   font-family:Arial;
   background:#f1f5f9;
-  padding-bottom:70px;
+  padding-bottom:110px;   /* nav safe space */
 }
 
 /* ===== HEADER ===== */
@@ -33,10 +34,8 @@ header{
 }
 
 header img{
-  height:80px;   /* 👈 logo bigger */
-  max-width:105%;
+  height:60px;
 }
-;
 
 header .logout{
   position:absolute;
@@ -46,14 +45,7 @@ header .logout{
   cursor:pointer;
 }
 
-/* MOBILE */
-@media (max-width:700px){
-  header img{
-    height:58px;
-  }
-}
-
-/* ===== CARDS ===== */
+/* ===== CARD ===== */
 .card{
   background:#fff;
   margin:15px;
@@ -81,15 +73,7 @@ button{
 .del{background:#dc2626}
 .hidden{display:none}
 
-/* ===== BASE ===== */
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f1f5f9;
-  padding-bottom:110px;   /* nav + gesture + keyboard safe */
-}
-
-/* ===== BOTTOM NAV FINAL FIX ===== */
+/* ===== BOTTOM NAV ===== */
 .nav{
   position:fixed;
   left:0;
@@ -101,19 +85,23 @@ body{
   border-top:1px solid #ddd;
   display:flex;
   z-index:99999;
-  transform:translateZ(0);
 }
 
+.nav button{
+  flex:1;
+  background:none;
+  border:none;
+  color:#6b7280;
+  font-size:12px;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+}
 
-/* Extra bottom space for phone gesture bar */
-body{
-  padding-bottom:80px; /* nav height + safe space */
-}
-  margin:0;
-  font-family:Arial;
-  background:#f1f5f9;
-  padding-bottom:90px;   /* 👈 increase */
-}
+.nav button i{font-size:18px}
+.nav button.active{color:#2563eb}
+
 
 .nav button{
   flex:1;
@@ -946,10 +934,24 @@ loadPlans();
 loadWhatsAppList();
 loadPaymentPlans();
  loadTodayCollection();
+
+// 🔽 ADD THIS BELOW
+window.addEventListener("resize", () => {
+  const nav = document.querySelector(".nav");
+  if (!nav) return;
+
+  if (window.innerHeight < window.outerHeight - 150) {
+    nav.style.bottom = "70px";
+  } else {
+    nav.style.bottom = "0px";
+  }
+});
+
 </script>
 
 </body>
 </html>
+
 
 
 
