@@ -5,7 +5,7 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <title>Gym App – Admin</title>
 
 <link rel="stylesheet"
@@ -81,16 +81,38 @@ button{
 .del{background:#dc2626}
 .hidden{display:none}
 
-/* ===== BOTTOM NAV ===== */
+/* ===== BASE ===== */
+body{
+  margin:0;
+  font-family:Arial;
+  background:#f1f5f9;
+  padding-bottom:110px;   /* nav + gesture + keyboard safe */
+}
+
+/* ===== BOTTOM NAV FINAL FIX ===== */
 .nav{
   position:fixed;
-  bottom:0;
   left:0;
   right:0;
-  height:60px;
+  bottom:0;
+  height:65px;
+  padding-bottom:env(safe-area-inset-bottom);
   background:#fff;
   border-top:1px solid #ddd;
   display:flex;
+  z-index:99999;
+  transform:translateZ(0);
+}
+
+
+/* Extra bottom space for phone gesture bar */
+body{
+  padding-bottom:80px; /* nav height + safe space */
+}
+  margin:0;
+  font-family:Arial;
+  background:#f1f5f9;
+  padding-bottom:90px;   /* 👈 increase */
 }
 
 .nav button{
@@ -928,6 +950,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
