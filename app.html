@@ -3,78 +3,72 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym App</title>
+<title>PT Member</title>
 
 <link rel="stylesheet"
 href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
 body{margin:0;font-family:Arial;background:#f1f5f9;padding-bottom:80px}
-header{
-  background:#111827;color:#fff;
-  display:flex;justify-content:space-between;
-  align-items:center;padding:14px
-}
-.card{
-  background:#fff;margin:15px;padding:15px;
-  border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)
-}
+header{background:#111827;color:#fff;display:flex;justify-content:space-between;align-items:center;padding:14px}
+.card{background:#fff;margin:15px;padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
 .hidden{display:none}
-.active{color:green;font-weight:bold}
-.expired{color:red;font-weight:bold}
-button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:8px;border:none;
-  background:#2563eb;color:#fff;font-weight:bold
-}
-.nav{
-  position:fixed;bottom:0;left:0;right:0;
-  height:60px;background:#fff;
-  display:flex;border-top:1px solid #ddd
-}
-.nav button{
-  flex:1;background:none;border:none;
-  color:#6b7280;font-size:12px;
-  display:flex;flex-direction:column;
-  align-items:center;justify-content:center
-}
-.nav button i{font-size:20px}
-.nav button.activeNav{color:#2563eb}
+button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;font-weight:bold}
+.nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;display:flex;border-top:1px solid #ddd}
+.nav button{flex:1;background:none;border:none;color:#6b7280;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.nav button i{font-size:18px}
+.activeNav{color:#2563eb}
 #reader{width:100%}
+.green{color:green;font-weight:bold}
+.red{color:red;font-weight:bold}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h3>🏋️ Gym App</h3>
+  <h3>🏋️ Personal Training</h3>
   <i class="fa fa-sign-out-alt" onclick="logout()"></i>
 </header>
 
 <!-- HOME -->
 <div class="card" id="home">
   <h3 id="welcome">Welcome</h3>
+
   <p>Plan: <b id="planName">-</b></p>
-  <p>Status: <span id="planStatus" class="expired">-</span></p>
-  <p>Remaining Days: <b id="days">0</b></p>
+  <p>Expiry: <b id="expiry">-</b></p>
+
+  <hr>
+
+  <p>Total Sessions: <b id="total">0</b></p>
+  <p>Used Sessions: <b id="used">0</b></p>
+  <p>Remaining: <b id="remain">0</b></p>
+
+  <hr>
+
+  <p>Last Session: <b id="last">-</b></p>
+
+  <hr>
+
+  <p>Trainer: <b id="trainer">-</b></p>
 </div>
 
 <!-- SCAN -->
 <div class="card hidden" id="scan">
-  <h3>Scan Gym QR</h3>
+  <h3>Scan Session QR</h3>
   <div id="reader"></div>
 </div>
 
 <!-- ATTENDANCE -->
 <div class="card hidden" id="attendance">
-  <h3>Attendance History</h3>
+  <h3>Session History</h3>
   <div id="attList">Loading...</div>
 </div>
 
-<!-- PLANS -->
-<div class="card hidden" id="plans">
-  <h3>Available Plans</h3>
-  <div id="plansList">Loading...</div>
+<!-- WORKOUT -->
+<div class="card hidden" id="workout">
+  <h3>Today's Workout</h3>
+  <div id="workoutBox">No workout</div>
 </div>
 
 <!-- NAV -->
@@ -82,14 +76,17 @@ button{
   <button id="navHome" class="activeNav" onclick="showTab('home')">
     <i class="fa fa-house"></i>Home
   </button>
+
   <button id="navScan" onclick="showTab('scan')">
     <i class="fa fa-camera"></i>Scan
   </button>
+
   <button id="navAttendance" onclick="showTab('attendance')">
-    <i class="fa fa-calendar-check"></i>Attendance
+    <i class="fa fa-calendar-check"></i>History
   </button>
-  <button id="navPlans" onclick="showTab('plans')">
-    <i class="fa fa-list"></i>Plans
+
+  <button id="navWorkout" onclick="showTab('workout')">
+    <i class="fa fa-dumbbell"></i>Workout
   </button>
 </div>
 
@@ -105,192 +102,134 @@ firebase.initializeApp({
 });
 const db=firebase.firestore();
 
-/* LOGIN SESSION */
 const phone = localStorage.getItem("gymPhone");
 if(!phone) location.href="index.html";
 
-/* TABS */
-function showTab(tab){
-  ["home","scan","attendance","plans"].forEach(t=>{
-    document.getElementById(t).classList.add("hidden");
-    document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
-      .classList.remove("activeNav");
-  });
-
-  // 🛑 scan tab വിട്ടാൽ camera stop
-  if(tab !== "scan"){
-    stopScanner();
-  }
-
-  document.getElementById(tab).classList.remove("hidden");
-  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
-    .classList.add("activeNav");
-
-  if(tab === "scan") startCamera();
-}
-
-
-/* LOGOUT */
 function logout(){
   localStorage.removeItem("gymPhone");
   location.href="index.html";
 }
 
-/* HOME */
+/* ---------- HOME ---------- */
 function loadHome(){
-  db.collection("users").doc(phone).get().then(d=>{
-    let u=d.data();
+  db.collection("users").doc(phone).get().then(doc=>{
+    if(!doc.exists) return;
+    const u=doc.data();
+
     welcome.innerText="Welcome, "+u.name;
-    planName.innerText=u.currentPlan||"-";
+    planName.innerText=u.planName||"-";
+    expiry.innerText=u.planExpiry?.slice(0,10)||"-";
 
-    if(u.planStatus==="active"){
-      let r=Math.ceil((new Date(u.planExpiry)-new Date())/86400000);
-      days.innerText=r>0?r:0;
-      planStatus.innerText=r>0?"ACTIVE":"EXPIRED";
-      planStatus.className=r>0?"active":"expired";
-    }else{
-      planStatus.innerText=u.planStatus||"INACTIVE";
-      planStatus.className="expired";
-    }
+    total.innerText=u.totalSessions||0;
+    used.innerText=u.usedSessions||0;
+    remain.innerText=u.remainingSessions||0;
+
+    last.innerText=u.lastSession||"-";
+    trainer.innerText=(u.trainerName||"-")+" ("+(u.trainerPhone||"-")+")";
   });
 }
 
-/* ATTENDANCE */
+/* ---------- ATTENDANCE ---------- */
 function loadAttendance(){
-  db.collection("attendance").where("phone","==",phone).get().then(s=>{
-    let h="";
-    s.forEach(d=>h+=`<p>${d.data().date} ✅</p>`);
-    attList.innerHTML=h||"No attendance";
-  });
-}
-
-/* PLANS */
-function loadPlans(){
-  db.collection("plans").get().then(s=>{
+  db.collection("ptSessions")
+  .where("phone","==",phone)
+  .orderBy("date","desc")
+  .get()
+  .then(s=>{
     let h="";
     s.forEach(d=>{
-      let p=d.data();
-      h+=`
-        <p><b>${p.name}</b> – ${p.days} days – ₹${p.price}</p>
-        <button onclick="requestPlan('${p.name}',${p.days},${p.price})">
-          Request
-        </button><hr>
-      `;
+      let x=d.data();
+      h+=`<p>${x.date} ${x.time} ✅</p>`;
     });
-    plansList.innerHTML=h||"No plans";
+    attList.innerHTML=h||"No sessions";
   });
 }
 
-function requestPlan(name,days,price){
-  db.collection("users").doc(phone).update({
-    requestedPlan:name,
-    requestedDays:days,
-    requestedPrice:price,
-    planStatus:"pending"
-  });
-  alert("Please pay ₹"+price+" at gym");
-  showTab("home");
-}
-
-/* CAMERA + SCAN */
-let qr = null;
-
-/* START CAMERA */
-function startCamera(){
-  if(qr) return;
-
-  qr = new Html5Qrcode("reader");
-
-  Html5Qrcode.getCameras().then(devices=>{
-    if(devices.length === 0){
-      alert("Camera not found");
+/* ---------- WORKOUT ---------- */
+function loadWorkout(){
+  db.collection("workouts").doc(phone).get().then(doc=>{
+    if(!doc.exists){
+      workoutBox.innerHTML="No workout";
       return;
     }
-
-    let camera =
-      devices.find(d => d.label.toLowerCase().includes("back")) || devices[0];
-
-    qr.start(
-      camera.id,
-      { fps: 10, qrbox: 250 },
-      onScanSuccess
-    );
+    workoutBox.innerHTML=doc.data().text;
   });
 }
 
-/* STOP CAMERA */
+/* ---------- SCAN ---------- */
+let qr=null;
+
+function showTab(tab){
+  ["home","scan","attendance","workout"].forEach(t=>{
+    document.getElementById(t).classList.add("hidden");
+    document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
+      .classList.remove("activeNav");
+  });
+
+  if(tab!=="scan") stopScanner();
+
+  document.getElementById(tab).classList.remove("hidden");
+  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
+    .classList.add("activeNav");
+
+  if(tab==="scan") startCamera();
+}
+
+function startCamera(){
+  if(qr) return;
+  qr=new Html5Qrcode("reader");
+
+  Html5Qrcode.getCameras().then(devices=>{
+    if(!devices.length) return alert("Camera not found");
+    qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
+  });
+}
+
 function stopScanner(){
   if(qr){
-    qr.stop().then(()=>{
-      qr.clear();
-      qr = null;
-    });
+    qr.stop().then(()=>{qr.clear();qr=null;});
   }
 }
 
-/* QR SCAN SUCCESS */
-function onScanSuccess(decodedText){
-  if(decodedText !== "GYM_ATTENDANCE"){
-    alert("❌ Invalid QR Code");
-    stopScanner();
+function onScanSuccess(text){
+  if(text!=="PT_SESSION"){
+    alert("Invalid QR");
     return;
   }
 
-  const today = new Date().toISOString().slice(0,10);
+  const today=new Date().toISOString().slice(0,10);
 
   db.collection("users").doc(phone).get().then(doc=>{
-    if(!doc.exists){
-      alert("User not found");
+    const u=doc.data();
+
+    if(!u.remainingSessions || u.remainingSessions<=0){
+      alert("No sessions left");
       stopScanner();
       return;
     }
 
-    const user = doc.data();
+    db.collection("ptSessions").add({
+      phone:phone,
+      date:today,
+      time:new Date().toLocaleTimeString()
+    });
 
-    // ❌ plan / payment check
-    if(
-      user.paymentStatus === "pending" ||
-      !user.planExpiry ||
-      new Date(user.planExpiry) < new Date()
-    ){
-      alert("❌ Your plan is expired or payment pending");
-      stopScanner();
-      return;
-    }
+    db.collection("users").doc(phone).update({
+      usedSessions:(u.usedSessions||0)+1,
+      remainingSessions:(u.remainingSessions||0)-1,
+      lastSession:today
+    });
 
-    // 🔁 already submitted today?
-    db.collection("attendance")
-      .where("phone","==",phone)
-      .where("date","==",today)
-      .get()
-      .then(snap=>{
-        if(!snap.empty){
-          alert("ℹ️ Attendance already submitted today");
-          stopScanner();
-          return;
-        }
-
-        // ✅ save attendance
-        db.collection("attendance").add({
-          phone: phone,
-          date: today,
-          time: new Date().toLocaleTimeString()
-        }).then(()=>{
-          alert("✅ Your attendance submitted successfully");
-          stopScanner();
-        });
-      });
+    alert("Session marked ✅");
+    stopScanner();
+    loadHome();
   });
 }
-
 
 /* INIT */
 loadHome();
 loadAttendance();
-loadPlans();
+loadWorkout();
 </script>
-
 </body>
 </html>
-
-
