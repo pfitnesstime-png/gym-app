@@ -14,293 +14,282 @@ header{background:#111827;color:#fff;display:flex;justify-content:space-between;
 .card{background:#fff;margin:15px;padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
 .hidden{display:none}
 button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;font-weight:bold}
+img{border-radius:50%;object-fit:cover}
 .nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;display:flex;border-top:1px solid #ddd}
 .nav button{flex:1;background:none;border:none;color:#6b7280;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .nav button i{font-size:18px}
 .activeNav{color:#2563eb}
 #reader{width:100%}
-.green{color:green;font-weight:bold}
-.red{color:red;font-weight:bold}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h3>🏋️ Personal Training</h3>
-  <i class="fa fa-sign-out-alt" onclick="logout()"></i>
+<h3>🏋️ Personal Training</h3>
+<i class="fa fa-sign-out-alt" onclick="logout()"></i>
 </header>
+
 <!-- PROFILE TOP -->
 <div class="card" id="profileTop">
-
-  <h3>My Profile</h3>
-
-  <p><b>Name:</b> <span id="proName">-</span></p>
-  <p><b>Phone:</b> <span id="proPhone">-</span></p>
-  <p><b>Age:</b> <span id="proAge">-</span></p>
-  <p><b>Weight:</b> <span id="proWeight">-</span> kg</p>
-  <p><b>Height:</b> <span id="proHeight">-</span> cm</p>
-  <p><b>Goal:</b> <span id="proGoal">-</span></p>
-
-  <button onclick="editProfile()">Edit Profile</button>
+<center>
+<img id="proImg" src="https://via.placeholder.com/80" width="80" height="80">
+</center>
+<p><b>Name:</b> <span id="proName">-</span></p>
+<p><b>Phone:</b> <span id="proPhone">-</span></p>
+<p><b>Goal:</b> <span id="proGoal">-</span></p>
+<p><b>Diet:</b> <span id="proDiet">-</span></p>
+<button onclick="openProfile()">Edit Profile</button>
 </div>
 
 <!-- HOME -->
 <div class="card" id="home">
-  <h3 id="welcome">Welcome</h3>
-
-  <p>Plan: <b id="planName">-</b></p>
-  <p>Expiry: <b id="expiry">-</b></p>
-
-  <hr>
-
-  <p>Total Sessions: <b id="total">0</b></p>
-  <p>Used Sessions: <b id="used">0</b></p>
-  <p>Remaining: <b id="remain">0</b></p>
-
-  <hr>
-
-  <p>Last Session: <b id="last">-</b></p>
-
-  <hr>
-
-  <p>Trainer: <b id="trainer">-</b></p>
+<h3 id="welcome">Welcome</h3>
+<p>Plan: <b id="planName">-</b></p>
+<p>Expiry: <b id="expiry">-</b></p>
+<hr>
+<p>Total Sessions: <b id="total">0</b></p>
+<p>Used Sessions: <b id="used">0</b></p>
+<p>Remaining: <b id="remain">0</b></p>
+<hr>
+<p>Last Session: <b id="last">-</b></p>
+<p>Trainer: <b id="trainer">-</b></p>
 </div>
-<div class="card hidden" id="profileEdit">
 
-  <h3>Edit Profile</h3>
+<!-- PROFILE PAGE -->
+<div class="card hidden" id="profilePage">
 
-  <input id="pName" placeholder="Name">
-  <input id="pAge" type="number" placeholder="Age">
-  <input id="pWeight" type="number" placeholder="Weight">
-  <input id="pHeight" type="number" placeholder="Height">
-  <input id="pGoal" placeholder="Goal">
+<center>
+<img id="profileImg" src="https://via.placeholder.com/100" width="100" height="100"><br><br>
+<input type="file" id="pPhoto">
+</center>
 
-  <button onclick="saveProfile()">Save</button>
+<input id="pName" placeholder="Name">
+<input id="pAge" type="number" placeholder="Age">
+<input id="pWeight" type="number" placeholder="Weight">
+<input id="pHeight" type="number" placeholder="Height">
+<input id="pGoal" placeholder="Goal">
+
+<h4>Trainer Diet (Admin editable)</h4>
+<input id="pDiet" placeholder="Diet plan">
+
+<h4>Trainer Note</h4>
+<textarea id="pTrainerNote"></textarea>
+
+<button onclick="saveProfile()">Save Profile</button>
 </div>
 
 <!-- SCAN -->
 <div class="card hidden" id="scan">
-  <h3>Scan Session QR</h3>
-  <div id="reader"></div>
+<h3>Scan Session QR</h3>
+<div id="reader"></div>
 </div>
 
 <!-- ATTENDANCE -->
 <div class="card hidden" id="attendance">
-  <h3>Session History</h3>
-  <div id="attList">Loading...</div>
+<h3>Session History</h3>
+<div id="attList">Loading...</div>
 </div>
 
 <!-- WORKOUT -->
 <div class="card hidden" id="workout">
-  <h3>Today's Workout</h3>
-  <div id="workoutBox">No workout</div>
+<h3>Today's Workout</h3>
+<div id="workoutBox">No workout</div>
 </div>
 
 <!-- NAV -->
 <div class="nav">
-  <button id="navHome" class="activeNav" onclick="showTab('home')">
-    <i class="fa fa-house"></i>Home
-  </button>
-
-  <button id="navScan" onclick="showTab('scan')">
-    <i class="fa fa-camera"></i>Scan
-  </button>
-
-  <button id="navAttendance" onclick="showTab('attendance')">
-    <i class="fa fa-calendar-check"></i>History
-  </button>
-
-  <button id="navWorkout" onclick="showTab('workout')">
-    <i class="fa fa-dumbbell"></i>Workout
-  </button>
+<button id="navHome" class="activeNav" onclick="showTab('home')"><i class="fa fa-house"></i>Home</button>
+<button id="navScan" onclick="showTab('scan')"><i class="fa fa-camera"></i>Scan</button>
+<button id="navAttendance" onclick="showTab('attendance')"><i class="fa fa-calendar-check"></i>History</button>
+<button id="navWorkout" onclick="showTab('workout')"><i class="fa fa-dumbbell"></i>Workout</button>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
 <script src="https://unpkg.com/html5-qrcode"></script>
 
 <script>
 firebase.initializeApp({
-  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain:"gym-app-79bec.firebaseapp.com",
-  projectId:"gym-app-79bec"
+apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+authDomain:"gym-app-79bec.firebaseapp.com",
+projectId:"gym-app-79bec",
+storageBucket:"gym-app-79bec.appspot.com"
 });
-const db=firebase.firestore();
 
-const phone = localStorage.getItem("gymPhone");
+const db=firebase.firestore();
+const storage=firebase.storage();
+const phone=localStorage.getItem("gymPhone");
 if(!phone) location.href="index.html";
 
 function logout(){
-  localStorage.removeItem("gymPhone");
-  location.href="index.html";
+localStorage.removeItem("gymPhone");
+location.href="index.html";
 }
 
-/* ---------- HOME ---------- */
-function loadHome(){
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(!doc.exists) return;
-    const u=doc.data();
-
-    welcome.innerText="Welcome, "+u.name;
-    planName.innerText=u.planName||"-";
-    expiry.innerText=u.planExpiry?.slice(0,10)||"-";
-
-    total.innerText=u.totalSessions||0;
-    used.innerText=u.usedSessions||0;
-    remain.innerText=u.remainingSessions||0;
-
-    last.innerText=u.lastSession||"-";
-    trainer.innerText=(u.trainerName||"-")+" ("+(u.trainerPhone||"-")+")";
-  });
+/* FIRST TIME PROFILE */
+function checkProfile(){
+db.collection("users").doc(phone).get().then(d=>{
+if(!d.exists || !d.data().name) openProfile();
+});
 }
+
 /* LOAD PROFILE TOP */
 function loadProfile(){
-  db.collection("users").doc(phone).get().then(d=>{
-    let u=d.data()||{};
-
-    proName.innerText=u.name||"-";
-    proPhone.innerText=phone;
-    proAge.innerText=u.age||"-";
-    proWeight.innerText=u.weight||"-";
-    proHeight.innerText=u.height||"-";
-    proGoal.innerText=u.goal||"-";
-  });
+db.collection("users").doc(phone).get().then(d=>{
+let u=d.data()||{};
+proName.innerText=u.name||"-";
+proPhone.innerText=phone;
+proGoal.innerText=u.goal||"-";
+proDiet.innerText=u.dietPlan||"-";
+if(u.photoURL) proImg.src=u.photoURL;
+});
 }
 
-/* EDIT BUTTON */
-function editProfile(){
-  document.getElementById("profileEdit").classList.remove("hidden");
+/* OPEN PROFILE */
+function openProfile(){
+home.classList.add("hidden");
+profilePage.classList.remove("hidden");
 
-  db.collection("users").doc(phone).get().then(d=>{
-    let u=d.data()||{};
-    pName.value=u.name||"";
-    pAge.value=u.age||"";
-    pWeight.value=u.weight||"";
-    pHeight.value=u.height||"";
-    pGoal.value=u.goal||"";
-  });
+db.collection("users").doc(phone).get().then(d=>{
+let u=d.data()||{};
+pName.value=u.name||"";
+pAge.value=u.age||"";
+pWeight.value=u.weight||"";
+pHeight.value=u.height||"";
+pGoal.value=u.goal||"";
+pDiet.value=u.dietPlan||"";
+pTrainerNote.value=u.trainerNote||"";
+if(u.photoURL) profileImg.src=u.photoURL;
+});
 }
 
 /* SAVE PROFILE */
 function saveProfile(){
-  db.collection("users").doc(phone).update({
-    name:pName.value,
-    age:pAge.value,
-    weight:pWeight.value,
-    height:pHeight.value,
-    goal:pGoal.value
-  }).then(()=>{
-    alert("Profile updated");
-    document.getElementById("profileEdit").classList.add("hidden");
-    loadProfile();
-    loadHome();
-  });
+const file=pPhoto.files[0];
+
+function saveData(photoURL=""){
+db.collection("users").doc(phone).set({
+name:pName.value,
+age:pAge.value,
+weight:pWeight.value,
+height:pHeight.value,
+goal:pGoal.value,
+dietPlan:pDiet.value,
+trainerNote:pTrainerNote.value,
+photoURL:photoURL||profileImg.src
+},{merge:true}).then(()=>{
+alert("Profile saved");
+profilePage.classList.add("hidden");
+home.classList.remove("hidden");
+loadHome();
+loadProfile();
+});
 }
 
-/* ---------- ATTENDANCE ---------- */
+if(file){
+const ref=storage.ref("profiles/"+phone+".jpg");
+ref.put(file).then(()=>ref.getDownloadURL().then(url=>{
+profileImg.src=url;
+saveData(url);
+}));
+}else saveData();
+}
+
+/* HOME LOAD */
+function loadHome(){
+db.collection("users").doc(phone).get().then(doc=>{
+if(!doc.exists) return;
+const u=doc.data();
+welcome.innerText="Welcome, "+(u.name||"User");
+planName.innerText=u.planName||"-";
+expiry.innerText=u.planExpiry?.slice(0,10)||"-";
+total.innerText=u.totalSessions||0;
+used.innerText=u.usedSessions||0;
+remain.innerText=u.remainingSessions||0;
+last.innerText=u.lastSession||"-";
+trainer.innerText=(u.trainerName||"-")+" ("+(u.trainerPhone||"-")+")";
+});
+}
+
+/* ATTENDANCE */
 function loadAttendance(){
-  db.collection("ptSessions")
-  .where("phone","==",phone)
-  .orderBy("date","desc")
-  .get()
-  .then(s=>{
-    let h="";
-    s.forEach(d=>{
-      let x=d.data();
-      h+=`<p>${x.date} ${x.time} ✅</p>`;
-    });
-    attList.innerHTML=h||"No sessions";
-  });
+db.collection("ptSessions").where("phone","==",phone).orderBy("date","desc").get().then(s=>{
+let h="";
+s.forEach(d=>{let x=d.data();h+=`<p>${x.date} ${x.time} ✅</p>`;});
+attList.innerHTML=h||"No sessions";
+});
 }
 
-/* ---------- WORKOUT ---------- */
+/* WORKOUT */
 function loadWorkout(){
-  db.collection("workouts").doc(phone).get().then(doc=>{
-    if(!doc.exists){
-      workoutBox.innerHTML="No workout";
-      return;
-    }
-    workoutBox.innerHTML=doc.data().text;
-  });
+db.collection("workouts").doc(phone).get().then(doc=>{
+if(!doc.exists) return workoutBox.innerHTML="No workout";
+workoutBox.innerHTML=doc.data().text;
+});
 }
 
-/* ---------- SCAN ---------- */
+/* SCAN */
 let qr=null;
 
 function showTab(tab){
-  ["home","scan","attendance","workout"].forEach(t=>{
-    document.getElementById(t).classList.add("hidden");
-    document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1))
-      .classList.remove("activeNav");
-  });
-
-  if(tab!=="scan") stopScanner();
-
-  document.getElementById(tab).classList.remove("hidden");
-  document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1))
-    .classList.add("activeNav");
-
-  if(tab==="scan") startCamera();
+["home","scan","attendance","workout"].forEach(t=>{
+document.getElementById(t).classList.add("hidden");
+document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1)).classList.remove("activeNav");
+});
+if(tab!=="scan") stopScanner();
+document.getElementById(tab).classList.remove("hidden");
+document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("activeNav");
+if(tab==="scan") startCamera();
 }
 
 function startCamera(){
-  if(qr) return;
-  qr=new Html5Qrcode("reader");
-
-  Html5Qrcode.getCameras().then(devices=>{
-    if(!devices.length) return alert("Camera not found");
-    qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
-  });
+if(qr) return;
+qr=new Html5Qrcode("reader");
+Html5Qrcode.getCameras().then(devices=>{
+if(!devices.length) return alert("Camera not found");
+qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
+});
 }
 
 function stopScanner(){
-  if(qr){
-    qr.stop().then(()=>{qr.clear();qr=null;});
-  }
+if(qr){qr.stop().then(()=>{qr.clear();qr=null;});}
 }
 
 function onScanSuccess(text){
-  if(text!=="PT_SESSION"){
-    alert("Invalid QR");
-    return;
-  }
+if(text!=="PT_SESSION") return alert("Invalid QR");
 
-  const today=new Date().toISOString().slice(0,10);
+const today=new Date().toISOString().slice(0,10);
 
-  db.collection("users").doc(phone).get().then(doc=>{
-    const u=doc.data();
+db.collection("users").doc(phone).get().then(doc=>{
+const u=doc.data();
+if(!u.remainingSessions || u.remainingSessions<=0){
+alert("No sessions left");
+stopScanner();
+return;
+}
 
-    if(!u.remainingSessions || u.remainingSessions<=0){
-      alert("No sessions left");
-      stopScanner();
-      return;
-    }
+db.collection("ptSessions").add({phone:phone,date:today,time:new Date().toLocaleTimeString()});
 
-    db.collection("ptSessions").add({
-      phone:phone,
-      date:today,
-      time:new Date().toLocaleTimeString()
-    });
+db.collection("users").doc(phone).update({
+usedSessions:(u.usedSessions||0)+1,
+remainingSessions:(u.remainingSessions||0)-1,
+lastSession:today
+});
 
-    db.collection("users").doc(phone).update({
-      usedSessions:(u.usedSessions||0)+1,
-      remainingSessions:(u.remainingSessions||0)-1,
-      lastSession:today
-    });
-
-    alert("Session marked ✅");
-    stopScanner();
-    loadHome();
-  });
+alert("Session marked ✅");
+stopScanner();
+loadHome();
+});
 }
 
 /* INIT */
+checkProfile();
 loadHome();
 loadAttendance();
 loadWorkout();
-  loadProfile();
+loadProfile();
 </script>
 </body>
 </html>
-
