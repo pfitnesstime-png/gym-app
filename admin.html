@@ -134,6 +134,41 @@ button{
 </select>
   <button onclick="addUserWithPlan()">Add User</button>
 </div>
+ <!-- PT MEMBER PROFILE -->
+<div class="card hidden" id="ptProfile">
+
+<h3>👤 Member PT Profile</h3>
+
+<img id="pt_img" width="80"><br><br>
+
+Name: <b id="pt_name"></b><br>
+Phone: <b id="pt_phone"></b><br>
+Goal: <b id="pt_goal"></b><br><br>
+
+<h4>Diet Plan</h4>
+<input id="pt_diet">
+
+<h4>Trainer Note</h4>
+<textarea id="pt_note"></textarea>
+
+<h4>Weekly Sessions</h4>
+<input id="pt_weekly" type="number" placeholder="Total weekly sessions">
+
+<button onclick="savePTProfile()">💾 Save Profile</button>
+
+<hr>
+
+<h4>Assign Workout</h4>
+<textarea id="pt_workout" rows="5"></textarea>
+<button onclick="saveWorkout()">🏋️ Assign Workout</button>
+
+<hr>
+
+<h4>Workout Status</h4>
+<div id="pt_status">No data</div>
+
+</div>
+
 <!-- REQUESTS -->
 <div class="card hidden" id="requests">
   <h3>Plan Requests</h3>
@@ -286,9 +321,10 @@ const db=firebase.firestore();
 
 function showTab(id, btn){
   [
-   "addUser","requests","users","editUser","plans",
-   "attendance","qr","whatsapp","payments",
-   "paymentHistory","settings"   // ⭐ add this
+ "addUser","requests","users","editUser","plans",
+ "attendance","qr","whatsapp","payments",
+ "paymentHistory","settings","ptProfile"
+ // ⭐ add this
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
@@ -460,6 +496,10 @@ if(u.planExpiry && !u.hold){
       style="background:#10b981;color:#fff;margin-top:5px">
       ▶ Resume
     </button>
+    <button onclick="openPTProfile('${u.phone}')" 
+style="background:#0ea5e9;color:#fff;margin-top:5px">
+🏋️ PT Profile
+</button>
 
         </div>
       `;
@@ -1010,6 +1050,58 @@ function showInside(id){
   // show selected
   document.getElementById(id).classList.remove("hidden");
 }
+let currentPTUser = null;
+
+/* OPEN PT PROFILE */
+function openPTProfile(phone){
+  currentPTUser = phone;
+ showTab("ptProfile", document.querySelector(".nav button.active"));
+
+  db.collection("users").doc(phone).get().then(d=>{
+    let u=d.data()||{};
+    pt_name.innerText=u.name||"-";
+    pt_phone.innerText=u.phone||"-";
+    pt_goal.innerText=u.goal||"-";
+    pt_diet.value=u.dietPlan||"";
+    pt_note.value=u.trainerNote||"";
+    pt_weekly.value=u.weeklySessions||0;
+   pt_img.src = u.photoURL || "https://via.placeholder.com/80";
+  });
+
+  db.collection("workouts").doc(phone).get().then(d=>{
+    if(d.exists){
+      pt_workout.value=d.data().text||"";
+      pt_status.innerHTML="Workout assigned ✔️";
+    }else{
+      pt_status.innerHTML="No workout";
+    }
+  });
+}
+
+/* SAVE PT PROFILE */
+function savePTProfile(){
+  if(!currentPTUser) return;
+
+  db.collection("users").doc(currentPTUser).update({
+    dietPlan:pt_diet.value,
+    trainerNote:pt_note.value,
+    weeklySessions:+pt_weekly.value
+  });
+
+  alert("PT Profile saved ✅");
+}
+
+/* SAVE WORKOUT */
+function saveWorkout(){
+  if(!currentPTUser) return;
+
+  db.collection("workouts").doc(currentPTUser).set({
+    text:pt_workout.value,
+    updated:new Date().toISOString()
+  });
+
+  alert("Workout assigned 💪");
+}
 
 /* INIT */
 loadPlanOptions();
@@ -1023,6 +1115,7 @@ loadPaymentPlans();
 
 </body>
 </html>
+
 
 
 
