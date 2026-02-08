@@ -30,6 +30,20 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;bac
   <h3>🏋️ Personal Training</h3>
   <i class="fa fa-sign-out-alt" onclick="logout()"></i>
 </header>
+<!-- PROFILE TOP -->
+<div class="card" id="profileTop">
+
+  <h3>My Profile</h3>
+
+  <p><b>Name:</b> <span id="proName">-</span></p>
+  <p><b>Phone:</b> <span id="proPhone">-</span></p>
+  <p><b>Age:</b> <span id="proAge">-</span></p>
+  <p><b>Weight:</b> <span id="proWeight">-</span> kg</p>
+  <p><b>Height:</b> <span id="proHeight">-</span> cm</p>
+  <p><b>Goal:</b> <span id="proGoal">-</span></p>
+
+  <button onclick="editProfile()">Edit Profile</button>
+</div>
 
 <!-- HOME -->
 <div class="card" id="home">
@@ -51,6 +65,18 @@ button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;bac
   <hr>
 
   <p>Trainer: <b id="trainer">-</b></p>
+</div>
+<div class="card hidden" id="profileEdit">
+
+  <h3>Edit Profile</h3>
+
+  <input id="pName" placeholder="Name">
+  <input id="pAge" type="number" placeholder="Age">
+  <input id="pWeight" type="number" placeholder="Weight">
+  <input id="pHeight" type="number" placeholder="Height">
+  <input id="pGoal" placeholder="Goal">
+
+  <button onclick="saveProfile()">Save</button>
 </div>
 
 <!-- SCAN -->
@@ -126,6 +152,49 @@ function loadHome(){
 
     last.innerText=u.lastSession||"-";
     trainer.innerText=(u.trainerName||"-")+" ("+(u.trainerPhone||"-")+")";
+  });
+}
+/* LOAD PROFILE TOP */
+function loadProfile(){
+  db.collection("users").doc(phone).get().then(d=>{
+    let u=d.data()||{};
+
+    proName.innerText=u.name||"-";
+    proPhone.innerText=phone;
+    proAge.innerText=u.age||"-";
+    proWeight.innerText=u.weight||"-";
+    proHeight.innerText=u.height||"-";
+    proGoal.innerText=u.goal||"-";
+  });
+}
+
+/* EDIT BUTTON */
+function editProfile(){
+  document.getElementById("profileEdit").classList.remove("hidden");
+
+  db.collection("users").doc(phone).get().then(d=>{
+    let u=d.data()||{};
+    pName.value=u.name||"";
+    pAge.value=u.age||"";
+    pWeight.value=u.weight||"";
+    pHeight.value=u.height||"";
+    pGoal.value=u.goal||"";
+  });
+}
+
+/* SAVE PROFILE */
+function saveProfile(){
+  db.collection("users").doc(phone).update({
+    name:pName.value,
+    age:pAge.value,
+    weight:pWeight.value,
+    height:pHeight.value,
+    goal:pGoal.value
+  }).then(()=>{
+    alert("Profile updated");
+    document.getElementById("profileEdit").classList.add("hidden");
+    loadProfile();
+    loadHome();
   });
 }
 
@@ -230,6 +299,8 @@ function onScanSuccess(text){
 loadHome();
 loadAttendance();
 loadWorkout();
+  loadProfile();
 </script>
 </body>
 </html>
+
