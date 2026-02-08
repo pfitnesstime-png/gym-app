@@ -14,12 +14,12 @@ header{background:#111827;color:#fff;display:flex;justify-content:space-between;
 .card{background:#fff;margin:15px;padding:15px;border-radius:12px;box-shadow:0 4px 10px rgba(0,0,0,.1)}
 .hidden{display:none}
 button{width:100%;padding:12px;margin-top:10px;border:none;border-radius:8px;background:#2563eb;color:#fff;font-weight:bold}
-img{border-radius:50%;object-fit:cover}
 .nav{position:fixed;bottom:0;left:0;right:0;height:60px;background:#fff;display:flex;border-top:1px solid #ddd}
 .nav button{flex:1;background:none;border:none;color:#6b7280;font-size:12px;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .nav button i{font-size:18px}
 .activeNav{color:#2563eb}
 #reader{width:100%}
+img{border-radius:50%}
 </style>
 </head>
 
@@ -27,19 +27,45 @@ img{border-radius:50%;object-fit:cover}
 
 <header>
 <h3>🏋️ Personal Training</h3>
+<div>
+<i class="fa fa-user" onclick="openProfile()" style="margin-right:15px"></i>
 <i class="fa fa-sign-out-alt" onclick="logout()"></i>
+</div>
 </header>
 
-<!-- PROFILE TOP -->
-<div class="card" id="profileTop">
+<!-- PROFILE PAGE -->
+<div class="card hidden" id="profilePage">
+
 <center>
-<img id="proImg" src="https://via.placeholder.com/80" width="80" height="80">
+<img id="profileImg" src="https://via.placeholder.com/100" width="100" height="100">
+<h3 id="profName">My Profile</h3>
 </center>
-<p><b>Name:</b> <span id="proName">-</span></p>
-<p><b>Phone:</b> <span id="proPhone">-</span></p>
-<p><b>Goal:</b> <span id="proGoal">-</span></p>
-<p><b>Diet:</b> <span id="proDiet">-</span></p>
-<button onclick="openProfile()">Edit Profile</button>
+
+<hr>
+
+<p><b>Name:</b> <span id="pfName">-</span></p>
+<p><b>Phone:</b> <span id="pfPhone">-</span></p>
+<p><b>Age:</b> <span id="pfAge">-</span></p>
+<p><b>Weight:</b> <span id="pfWeight">-</span></p>
+<p><b>Height:</b> <span id="pfHeight">-</span></p>
+<p><b>Goal:</b> <span id="pfGoal">-</span></p>
+<p><b>Diet:</b> <span id="pfDiet">-</span></p>
+
+<button onclick="editProfile()">Edit Profile</button>
+
+<div id="editBox" class="hidden">
+<hr>
+<input type="file" id="pPhoto">
+<input id="pName" placeholder="Name">
+<input id="pAge" type="number" placeholder="Age">
+<input id="pWeight" placeholder="Weight">
+<input id="pHeight" placeholder="Height">
+<input id="pGoal" placeholder="Goal">
+<input id="pDiet" placeholder="Diet Plan">
+<textarea id="pTrainerNote" placeholder="Trainer note"></textarea>
+<button onclick="saveProfile()">Save</button>
+</div>
+
 </div>
 
 <!-- HOME -->
@@ -54,29 +80,6 @@ img{border-radius:50%;object-fit:cover}
 <hr>
 <p>Last Session: <b id="last">-</b></p>
 <p>Trainer: <b id="trainer">-</b></p>
-</div>
-
-<!-- PROFILE PAGE -->
-<div class="card hidden" id="profilePage">
-
-<center>
-<img id="profileImg" src="https://via.placeholder.com/100" width="100" height="100"><br><br>
-<input type="file" id="pPhoto">
-</center>
-
-<input id="pName" placeholder="Name">
-<input id="pAge" type="number" placeholder="Age">
-<input id="pWeight" type="number" placeholder="Weight">
-<input id="pHeight" type="number" placeholder="Height">
-<input id="pGoal" placeholder="Goal">
-
-<h4>Trainer Diet (Admin editable)</h4>
-<input id="pDiet" placeholder="Diet plan">
-
-<h4>Trainer Note</h4>
-<textarea id="pTrainerNote"></textarea>
-
-<button onclick="saveProfile()">Save Profile</button>
 </div>
 
 <!-- SCAN -->
@@ -128,30 +131,30 @@ localStorage.removeItem("gymPhone");
 location.href="index.html";
 }
 
-/* FIRST TIME PROFILE */
-function checkProfile(){
-db.collection("users").doc(phone).get().then(d=>{
-if(!d.exists || !d.data().name) openProfile();
-});
-}
-
-/* LOAD PROFILE TOP */
-function loadProfile(){
-db.collection("users").doc(phone).get().then(d=>{
-let u=d.data()||{};
-proName.innerText=u.name||"-";
-proPhone.innerText=phone;
-proGoal.innerText=u.goal||"-";
-proDiet.innerText=u.dietPlan||"-";
-if(u.photoURL) proImg.src=u.photoURL;
-});
-}
-
 /* OPEN PROFILE */
 function openProfile(){
 home.classList.add("hidden");
+scan.classList.add("hidden");
+attendance.classList.add("hidden");
+workout.classList.add("hidden");
 profilePage.classList.remove("hidden");
 
+db.collection("users").doc(phone).get().then(d=>{
+let u=d.data()||{};
+pfName.innerText=u.name||"-";
+pfPhone.innerText=phone;
+pfAge.innerText=u.age||"-";
+pfWeight.innerText=u.weight||"-";
+pfHeight.innerText=u.height||"-";
+pfGoal.innerText=u.goal||"-";
+pfDiet.innerText=u.dietPlan||"-";
+profName.innerText=u.name||"My Profile";
+if(u.photoURL) profileImg.src=u.photoURL;
+});
+}
+
+function editProfile(){
+editBox.classList.remove("hidden");
 db.collection("users").doc(phone).get().then(d=>{
 let u=d.data()||{};
 pName.value=u.name||"";
@@ -161,11 +164,9 @@ pHeight.value=u.height||"";
 pGoal.value=u.goal||"";
 pDiet.value=u.dietPlan||"";
 pTrainerNote.value=u.trainerNote||"";
-if(u.photoURL) profileImg.src=u.photoURL;
 });
 }
 
-/* SAVE PROFILE */
 function saveProfile(){
 const file=pPhoto.files[0];
 
@@ -181,10 +182,9 @@ trainerNote:pTrainerNote.value,
 photoURL:photoURL||profileImg.src
 },{merge:true}).then(()=>{
 alert("Profile saved");
-profilePage.classList.add("hidden");
-home.classList.remove("hidden");
+editBox.classList.add("hidden");
+openProfile();
 loadHome();
-loadProfile();
 });
 }
 
@@ -194,10 +194,12 @@ ref.put(file).then(()=>ref.getDownloadURL().then(url=>{
 profileImg.src=url;
 saveData(url);
 }));
-}else saveData();
+}else{
+saveData();
+}
 }
 
-/* HOME LOAD */
+/* HOME */
 function loadHome(){
 db.collection("users").doc(phone).get().then(doc=>{
 if(!doc.exists) return;
@@ -238,23 +240,16 @@ function showTab(tab){
 document.getElementById(t).classList.add("hidden");
 document.getElementById("nav"+t.charAt(0).toUpperCase()+t.slice(1)).classList.remove("activeNav");
 });
-if(tab!=="scan") stopScanner();
+if(tab!=="scan" && qr){qr.stop().then(()=>{qr.clear();qr=null;});}
 document.getElementById(tab).classList.remove("hidden");
 document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("activeNav");
-if(tab==="scan") startCamera();
-}
-
-function startCamera(){
-if(qr) return;
+if(tab==="scan"){
 qr=new Html5Qrcode("reader");
 Html5Qrcode.getCameras().then(devices=>{
 if(!devices.length) return alert("Camera not found");
 qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
 });
 }
-
-function stopScanner(){
-if(qr){qr.stop().then(()=>{qr.clear();qr=null;});}
 }
 
 function onScanSuccess(text){
@@ -266,12 +261,10 @@ db.collection("users").doc(phone).get().then(doc=>{
 const u=doc.data();
 if(!u.remainingSessions || u.remainingSessions<=0){
 alert("No sessions left");
-stopScanner();
 return;
 }
 
 db.collection("ptSessions").add({phone:phone,date:today,time:new Date().toLocaleTimeString()});
-
 db.collection("users").doc(phone).update({
 usedSessions:(u.usedSessions||0)+1,
 remainingSessions:(u.remainingSessions||0)-1,
@@ -279,17 +272,14 @@ lastSession:today
 });
 
 alert("Session marked ✅");
-stopScanner();
 loadHome();
 });
 }
 
 /* INIT */
-checkProfile();
 loadHome();
 loadAttendance();
 loadWorkout();
-loadProfile();
 </script>
 </body>
 </html>
