@@ -50,6 +50,8 @@ img{border-radius:50%}
 <p><b>Height:</b> <span id="pfHeight">-</span></p>
 <p><b>Goal:</b> <span id="pfGoal">-</span></p>
 <p><b>Diet:</b> <span id="pfDiet">-</span></p>
+<p><b>Weekly PT Sessions:</b> <span id="pfWeekly">0</span></p>
+<p><b>Trainer Note:</b> <span id="pfNote">-</span></p>
 
 <button onclick="editProfile()">Edit Profile</button>
 
@@ -146,8 +148,10 @@ pfPhone.innerText=phone;
 pfAge.innerText=u.age||"-";
 pfWeight.innerText=u.weight||"-";
 pfHeight.innerText=u.height||"-";
-pfGoal.innerText=u.goal||"-";
-pfDiet.innerText=u.dietPlan||"-";
+pfGoal.innerText = u.goal || "-";
+pfDiet.innerText = u.dietPlan || "-";
+pfWeekly.innerText = u.weeklySessions || 0;
+pfNote.innerText = u.trainerNote || "-";
 profName.innerText=u.name||"My Profile";
 if(u.photoURL) profileImg.src=u.photoURL;
 });
@@ -205,7 +209,7 @@ db.collection("users").doc(phone).get().then(doc=>{
 if(!doc.exists) return;
 const u=doc.data();
 welcome.innerText="Welcome, "+(u.name||"User");
-planName.innerText=u.planName||"-";
+planName.innerText = u.currentPlan || "-";
 expiry.innerText=u.planExpiry?.slice(0,10)||"-";
 total.innerText=u.totalSessions||0;
 used.innerText=u.usedSessions||0;
@@ -244,13 +248,14 @@ if(tab!=="scan" && qr){qr.stop().then(()=>{qr.clear();qr=null;});}
 document.getElementById(tab).classList.remove("hidden");
 document.getElementById("nav"+tab.charAt(0).toUpperCase()+tab.slice(1)).classList.add("activeNav");
 if(tab==="scan"){
-qr=new Html5Qrcode("reader");
-Html5Qrcode.getCameras().then(devices=>{
-if(!devices.length) return alert("Camera not found");
-qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
-});
+ if(qr) return;
+ qr=new Html5Qrcode("reader");
+ Html5Qrcode.getCameras().then(devices=>{
+  if(!devices.length) return alert("Camera not found");
+  qr.start(devices[0].id,{fps:10,qrbox:250},onScanSuccess);
+ });
 }
-}
+
 
 function onScanSuccess(text){
 if(text!=="PT_SESSION") return alert("Invalid QR");
@@ -283,3 +288,4 @@ loadWorkout();
 </script>
 </body>
 </html>
+
