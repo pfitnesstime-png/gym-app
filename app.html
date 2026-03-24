@@ -67,9 +67,17 @@ img{border-radius:50%}
 <textarea id="pTrainerNote" placeholder="Trainer note"></textarea>
 <button onclick="saveProfile()">Save</button>
 </div>
+<select id="userSelect">
+<option value="">Select Member</option>
+</select>
+<div class="card hidden" id="scan">
+<h3>Scan Session QR</h3>
 
+<select id="userSelect"></select>
+<input id="phoneInput" placeholder="Phone Number">
+
+<div id="reader"></div>
 </div>
-
 <!-- HOME -->
 <div class="card" id="home">
 <h3 id="welcome">Welcome</h3>
@@ -170,7 +178,21 @@ pDiet.value=u.dietPlan||"";
 pTrainerNote.value=u.trainerNote||"";
 });
 }
+function loadUsers(){
+db.collection("users").get().then(snapshot=>{
+let dropdown = document.getElementById("userSelect");
 
+snapshot.forEach(doc=>{
+let u = doc.data();
+
+let option = document.createElement("option");
+option.value = doc.id; // phone number
+option.text = u.name + " (" + doc.id + ")";
+
+dropdown.appendChild(option);
+});
+});
+}
 function saveProfile(){
 const file=pPhoto.files[0];
 
@@ -235,7 +257,12 @@ if(!doc.exists) return workoutBox.innerHTML="No workout";
 workoutBox.innerHTML=doc.data().text;
 });
 }
+document.getElementById("userSelect").addEventListener("change",function(){
 
+let phone = this.value;
+document.getElementById("phoneInput").value = phone;
+
+});
 /* SCAN */
 let qr=null;
 
@@ -285,6 +312,7 @@ loadHome();
 loadHome();
 loadAttendance();
 loadWorkout();
+ loadUsers();
 </script>
 </body>
 </html>
