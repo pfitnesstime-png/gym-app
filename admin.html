@@ -907,8 +907,14 @@ function deletePayment(id){
     return;
   }
 
-  db.collection("payments").doc(id).delete();
-  alert("✅ Payment deleted");
+  db.collection("payments").doc(id).delete()
+    .then(()=>{
+      alert("✅ Payment deleted");
+      loadPaymentHistory(); // 👈 refresh list
+    })
+    .catch(err=>{
+      alert("❌ Error: " + err.message);
+    });
 }
 
 function printReceipt(id){
