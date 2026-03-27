@@ -122,7 +122,7 @@ button{
 <div class="card" id="addUser">
   <h3>Add User + Assign Plan</h3>
   <input id="uname" placeholder="User name">
-  <input id="uphone" placeholder="Phone number">
+<input id="uphone" type="tel" placeholder="Phone number" maxlength="10" oninput="validatePhone(this)">
   <select id="uplan"><option value="">Select Plan</option></select>
  <input id="uamount" type="number" placeholder="Payment Amount">
 
@@ -339,7 +339,15 @@ function showTab(id, btn){
   if(id === "whatsapp") loadWhatsAppList();
   if(id === "requests") loadRequests();
 }
+function validatePhone(input){
+  // numbers mathram allow
+  input.value = input.value.replace(/[^0-9]/g, '');
 
+  // 10 digit limit
+  if(input.value.length > 10){
+    input.value = input.value.slice(0,10);
+  }
+}
 /* PLAN OPTIONS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
@@ -370,6 +378,10 @@ function loadEditPlans(){
 function addUserWithPlan(){
   let name = uname.value.trim();
   let phone = uphone.value.trim();
+ if(phone.length !== 10){
+  alert("Enter valid 10 digit phone number");
+  return;
+}
   let plan = uplan.value;
   let amount = Number(uamount.value);
   let mode = umode.value;
