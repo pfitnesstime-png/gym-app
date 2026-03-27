@@ -613,7 +613,6 @@ function updateUser(){
   let oldPhone = e_old_phone.value;
   let newPhone = e_phone.value.trim();
   let name = e_name.value.trim();
-  let planVal = e_plan.value;
 
   if(!name || !newPhone){
     alert("Name & Phone required");
@@ -622,18 +621,6 @@ function updateUser(){
 
   let data = { name, phone:newPhone };
 
-  if(planVal){
-    let [planName, days] = planVal.split("|");
-    let exp = new Date();
-    exp.setDate(exp.getDate() + Number(days));
-
-    data.currentPlan = planName;
-    data.planStatus = "active";
-    data.paymentStatus = "paid";
-    data.planExpiry = exp.toISOString();
-  }
-
-  // same phone
   if(oldPhone === newPhone){
     db.collection("users").doc(oldPhone).update(data).then(()=>{
       alert("User updated ✅");
@@ -642,7 +629,6 @@ function updateUser(){
     return;
   }
 
-  // phone changed
   db.collection("users").doc(oldPhone).get().then(doc=>{
     if(!doc.exists) return;
 
@@ -897,26 +883,21 @@ Thank you 💪`;
   });
 }
 
-function deletePayment(id){
-  if(!confirm("Delete this payment?")) return;
+function deleteUser(phone){
+  if(!confirm("Delete user?")) return;
 
-  let pass = prompt("Enter password");
+  db.collection("users").doc(phone).delete();
 
-  if(pass !== DELETE_PASSWORD){
-    alert("❌ Wrong password");
-    return;
-  }
+  db.collection("attendance").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+  });
 
-  db.collection("payments").doc(id).delete()
-    .then(()=>{
-      alert("✅ Payment deleted");
-      loadPaymentHistory(); // 👈 refresh list
-    })
-    .catch(err=>{
-      alert("❌ Error: " + err.message);
-    });
+  db.collection("payments").where("phone","==",phone).get().then(s=>{
+    s.forEach(d=>db.collection("payments").doc(d.id).delete());
+  });
+
+  alert("✅ User + All data deleted");
 }
-
 function printReceipt(id){
   db.collection("payments").doc(id).get().then(doc=>{
     if(!doc.exists){
