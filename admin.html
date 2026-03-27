@@ -584,8 +584,7 @@ function loadPlans(){
     let h="";
     s.forEach(d=>{
       let p=d.data();
-      h+=`${p.name} – ${p.days} days – ₹${p.price}
-<button class="del" onclick="deletePlan('${d.id}')">Delete</button> 
+      h+=`${p.name} – ${p.days} days – ₹${p.price}<button class="del" onclick="deletePlan('${d.id}')">Delete</button><hr>`;
     });
     plansList.innerHTML=h||"No plans";
   });
