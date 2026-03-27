@@ -83,7 +83,21 @@ button{
 .ok{background:#16a34a}
 .del{background:#dc2626}
 .hidden{display:none}
+#nameSuggest, #phoneSuggest{
+  background:#fff;
+  border:1px solid #ccc;
+  max-height:150px;
+  overflow:auto;
+}
 
+#nameSuggest div, #phoneSuggest div{
+  padding:6px;
+  cursor:pointer;
+}
+
+#nameSuggest div:hover, #phoneSuggest div:hover{
+  background:#eee;
+}
 /* ===== BOTTOM NAV ===== */
 .nav{
   position:fixed;
@@ -241,7 +255,11 @@ Goal: <b id="pt_goal"></b><br><br>
 </div>
 <div class="card hidden" id="payments">
   <h3>💰 Add Payment</h3>
-  <input id="pay_phone" placeholder="Phone number">
+ <input id="pay_name" placeholder="Search name" oninput="searchUserByName()">
+<div id="nameSuggest"></div>
+
+<input id="pay_phone" placeholder="Search phone" oninput="searchUserByPhone()">
+<div id="phoneSuggest"></div>
   <input id="pay_amount" type="number" placeholder="Amount">
   <select id="pay_mode">
     <option value="">Payment Mode</option>
@@ -816,7 +834,66 @@ function addPayment(){
     loadTodayCollection(); // 🔥 total refresh
   });
 }
+function searchUserByName(){
+  let key = pay_name.value.toLowerCase();
 
+  db.collection("users").get().then(snap=>{
+    let h="";
+
+    snap.forEach(d=>{
+      let u = d.data();
+
+      if(!u.name.toLowerCase().includes(key)) return;
+
+      h += `
+        <div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')"
+        style="padding:6px;border-bottom:1px solid #eee;cursor:pointer">
+          ${u.name} (${u.phone})
+        </div>
+      `;
+    });
+
+    nameSuggest.innerHTML = h;
+  });
+}
+ function searchUserByPhone(){
+  let key = pay_phone.value;
+
+  db.collection("users").get().then(snap=>{
+    let h="";
+
+    snap.forEach(d=>{
+      let u = d.data();
+
+      if(!u.phone.includes(key)) return;
+
+      h += `
+        <div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')"
+        style="padding:6px;border-bottom:1px solid #eee;cursor:pointer">
+          ${u.phone} (${u.name})
+        </div>
+      `;
+    });
+
+    phoneSuggest.innerHTML = h;
+  });
+}
+ function selectUser(name, phone, plan){
+  pay_name.value = name;
+  pay_phone.value = phone;
+
+  nameSuggest.innerHTML = "";
+  phoneSuggest.innerHTML = "";
+
+  // 👉 current plan auto select
+  if(plan){
+    for(let opt of pay_plan.options){
+      if(opt.value.includes(plan)){
+        pay_plan.value = opt.value;
+      }
+    }
+  }
+}
 function loadPaymentHistory(){
 
   let phone = ph_phone.value.trim();
