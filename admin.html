@@ -314,7 +314,7 @@ Goal: <b id="pt_goal"></b><br><br>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
+<script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
 firebase.initializeApp({
   apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
@@ -867,8 +867,7 @@ Thank you 💪`;
           💰 ₹${p.amount} – ${p.mode}<br>
           📅 ${new Date(p.date).toLocaleString()}<br>
           Plan: ${p.plan}<br>
-
-          <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
+<button onclick="downloadReceiptImage('${d.id}')">📸 Image</button>
           <button onclick="window.open('${waUrl}','_blank')">📲 WhatsApp</button>
           <button class="del" onclick="deletePayment('${d.id}')">🗑 Delete</button>
         </div>
@@ -898,7 +897,7 @@ function deleteUser(phone){
 
   alert("✅ User + All data deleted");
 }
-function printReceipt(id){
+function downloadReceiptImage(id){
   db.collection("payments").doc(id).get().then(doc=>{
     if(!doc.exists){
       alert("Receipt not found");
@@ -907,61 +906,33 @@ function printReceipt(id){
 
     let p = doc.data();
 
-    // ✏️ CHANGE THESE (YOUR GYM DETAILS)
-    const GYM_NAME = "FITNESSTIME PRO GYM";
-    const GYM_ADDRESS = " KARIKAKULAMKaraparamb, Kozhikode, Kerala";
-    const GYM_PHONE = "8086361224,7025992455";
-
-    let w = window.open("", "_blank", "width=400,height=650");
-
-    w.document.write(`
-      <html>
-      <head>
-        <title>Gym Receipt</title>
-        <style>
-          body{font-family:Arial;padding:20px}
-          h2{text-align:center;margin:0}
-          .center{text-align:center}
-          hr{margin:10px 0}
-          .topbox{
-            text-align:center;
-            border-bottom:1px dashed #000;
-            padding-bottom:10px;
-            margin-bottom:10px;
-          }
-        </style>
-      </head>
-      <body>
-
-        <div class="topbox">
-          <h2>${GYM_NAME}</h2>
-          <div>${GYM_ADDRESS}</div>
-          <div>📞 ${GYM_PHONE}</div>
-        </div>
-
-        <h3 class="center">PAYMENT RECEIPT</h3>
+    let div = document.createElement("div");
+    div.innerHTML = `
+      <div id="receiptBox" style="padding:20px;font-family:Arial;background:#fff">
+        <h2 style="text-align:center">FITNESSTIME PRO GYM</h2>
         <hr>
-
-        <b>Name:</b> ${p.name}<br>
-        <b>Phone:</b> ${p.phone}<br>
-        <b>Plan:</b> ${p.plan}<br>
-        <b>Amount:</b> ₹${p.amount}<br>
-        <b>Mode:</b> ${p.mode}<br>
-        <b>Date:</b> ${new Date(p.date).toLocaleString()}<br>
-
+        Name: ${p.name}<br>
+        Phone: ${p.phone}<br>
+        Plan: ${p.plan}<br>
+        Amount: ₹${p.amount}<br>
+        Mode: ${p.mode}<br>
+        Date: ${new Date(p.date).toLocaleString()}<br>
         <hr>
+        Thank You 💪
+      </div>
+    `;
+    document.body.appendChild(div);
 
-        <p class="center">Thank You 💪<br>Visit Again</p>
+    html2canvas(document.getElementById("receiptBox")).then(canvas=>{
+      let link = document.createElement("a");
+      link.download = "receipt.png";
+      link.href = canvas.toDataURL();
+      link.click();
 
-      </body>
-      </html>
-    `);
-
-    w.document.close();
-    w.print();
+      div.remove();
+    });
   });
 }
-
 function adminLogout(){
   localStorage.removeItem("admin");
   window.location.href = "admin-login.html";
