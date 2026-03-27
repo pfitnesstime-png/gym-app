@@ -278,6 +278,7 @@ Goal: <b id="pt_goal"></b><br><br>
   <input type="date" id="toDate">
 
   <input id="ph_phone" placeholder="Phone (optional)">
+ <input id="ph_name" placeholder="Name (optional)">
 
   <button onclick="loadPaymentHistory()">Load Report</button>
 
@@ -833,6 +834,7 @@ function addPayment(){
 function loadPaymentHistory(){
 
   let phone = ph_phone.value.trim();
+ let name = ph_name.value.toLowerCase();
   let from = fromDate.value;
   let to = toDate.value;
 
@@ -847,7 +849,7 @@ function loadPaymentHistory(){
       if(from && payDate < from) return;
       if(to && payDate > to) return;
       if(phone && p.phone !== phone) return;
-
+if(name && !p.name.toLowerCase().includes(name)) return;
       total += p.amount;
       if(p.mode === "Cash") cash += p.amount;
       else bank += p.amount;
@@ -882,6 +884,7 @@ Thank you 💪`;
 
           <button onclick="printReceipt('${d.id}')">🧾 Receipt</button>
           <button onclick="window.open('${waUrl}','_blank')">📲 WhatsApp</button>
+          <button class="del" onclick="deletePayment('${d.id}')">🗑 Delete</button>
         </div>
       `;
     });
@@ -894,7 +897,19 @@ Thank you 💪`;
   });
 }
 
+function deletePayment(id){
+  if(!confirm("Delete this payment?")) return;
 
+  let pass = prompt("Enter password");
+
+  if(pass !== DELETE_PASSWORD){
+    alert("❌ Wrong password");
+    return;
+  }
+
+  db.collection("payments").doc(id).delete();
+  alert("✅ Payment deleted");
+}
 
 function printReceipt(id){
   db.collection("payments").doc(id).get().then(doc=>{
