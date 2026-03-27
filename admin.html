@@ -585,7 +585,7 @@ function loadPlans(){
     s.forEach(d=>{
       let p=d.data();
       h+=`${p.name} – ${p.days} days – ₹${p.price}
-      <button class="del" onclick="db.collection('plans').doc('${d.id}').delete()">Delete</button><hr>`;
+<button class="del" onclick="deletePlan('${d.id}')">Delete</button> 
     });
     plansList.innerHTML=h||"No plans";
   });
@@ -597,6 +597,17 @@ function addPlan(){
     price:+pprice.value
   });
   pname.value=pdays.value=pprice.value="";
+}
+ const DELETE_PASSWORD = "1234"; // 👈 ninte password ivide set cheyyu
+ function deletePlan(id){
+  let pass = prompt("Enter password to delete");
+
+  if(pass === DELETE_PASSWORD){
+    db.collection("plans").doc(id).delete();
+    alert("✅ Plan deleted");
+  }else{
+    alert("❌ Wrong password");
+  }
 }
 function updateUser(){
   let oldPhone = e_old_phone.value;
