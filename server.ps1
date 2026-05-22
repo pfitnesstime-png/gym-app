@@ -1,5 +1,5 @@
 # Simple PowerShell Static File Web Server for Windows
-$port = 8080
+$port = 8082
 $listener = New-Object System.Net.HttpListener
 $listener.Prefixes.Add("http://localhost:$port/")
 
@@ -17,6 +17,7 @@ try {
 }
 
 while ($listener.IsListening) {
+    $response = $null
     try {
         $context = $listener.GetContext()
         $request = $context.Request
