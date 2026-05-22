@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnesstime – Trainer Dashboard</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<style>
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --surface-hover: rgba(26, 30, 56, 0.85);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #10b981;
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --red: #ef4444;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 60px;
+}
+
+header {
+  background: rgba(8, 9, 20, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+}
+
+header h2 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.7rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+header button {
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+header button:hover {
+  transform: translateY(-2px);
+  background: rgba(239, 68, 68, 0.18);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.15);
+}
+
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  margin: 24px auto;
+  padding: 28px;
+  border-radius: 28px;
+  max-width: 720px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 16px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+input, textarea, select {
+  width: 100%;
+  padding: 14px 18px;
+  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px var(--primary-glow);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+button.btn-primary {
+  width: 100%;
+  padding: 15px;
+  margin-top: 16px;
+  border: none;
+  border-radius: 18px;
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+button.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.1);
+}
+
+.badge {
+  display: inline-flex;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.2);
+  font-size: 0.85rem;
+  font-weight: 700;
+  margin-top: 8px;
+}
+
+.small {
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+#memberResult {
+  margin-top: 12px;
+  max-height: 250px;
+  overflow-y: auto;
+  border-radius: 16px;
+}
+
+#memberResult div {
+  padding: 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  cursor: pointer;
+  background: rgba(255,255,255,0.01);
+  transition: all 0.2s ease;
+}
+
+#memberResult div:hover {
+  background: rgba(59, 130, 246, 0.08);
+  border-color: rgba(59, 130, 246, 0.2);
+}
+
+.member-list-item {
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255,255,255,0.02);
+  border: 1px solid var(--border);
+  margin-bottom: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.member-list-item:hover {
+  background: rgba(255,255,255,0.04);
+  transform: translateY(-1px);
+}
+
+.qr-box {
+  background: white;
+  padding: 20px;
+  border-radius: 24px;
+  display: inline-block;
+  box-shadow: var(--shadow);
+  margin: 18px 0;
+  border: 1px solid var(--border);
+}
+
+.carousel-container button:hover {
+  background: rgba(59, 130, 246, 0.45) !important;
+  transform: scale(1.05);
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+</style>
+</head>
+<body>
+<header>
+  <h2>🏋️ Fitnesstime Trainer</h2>
+  <button onclick="logoutTrainer()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+</header>
+
+<div class="container" style="padding: 0 16px;">
+  <!-- QR Code Session Generator (Locked Daily) -->
+  <div class="card" style="text-align: center;">
+    <h3>Live Gym Attendance QR</h3>
+    <p class="small">Members scan this date-locked code to verify physical check-in at the gym desk.</p>
+    
+    <div class="qr-box">
+      <img id="qrImage" src="" alt="Live Attendance QR" width="220" height="220" style="display: block;">
+    </div>
+    
+    <div>
+      <span class="badge" id="qrText">Generating...</span>
+    </div>
+    <p class="small" id="qrTime" style="margin-top: 10px; font-weight: 600;"></p>
+  </div>
+
+  <!-- Search Member -->
+  <div class="card">
+    <h3>Search Member Profile</h3>
+    <input id="searchMember" placeholder="Search by name or phone..." oninput="findMember()">
+    <div id="memberResult"></div>
+  </div>
+
+  <!-- Member Info Header / Badges -->
+  <div class="card">
+    <h3>Selected Client Summary</h3>
+    <p class="badge">Client: <span id="selectedMember">None selected</span></p>
+    <div id="progressStats" style="margin-top: 16px;">
+      <p class="small">Search and select a member to view stats and progress photos.</p>
+    </div>
+    <div id="photosContainer"></div>
+  </div>
+
+  <!-- Assign Workout Plan -->
+  <div class="card">
+    <h3>Workout Program Assignment</h3>
+    <p class="badge">Client: <span id="selectedMemberWorkout">None selected</span></p>
+    <textarea id="assignWorkout" rows="5" placeholder="Enter personalized workout schedule / Youtube training terms..."></textarea>
+    <button class="btn-primary" onclick="assignWorkoutToMember()"><i class="fa fa-dumbbell"></i> Assign Workout Plan</button>
+  </div>
+
+  <!-- Assign Diet Plan -->
+  <div class="card">
+    <h3>Diet & Nutrition Assignment</h3>
+    <p class="badge">Client: <span id="selectedMemberDiet">None selected</span></p>
+    <textarea id="assignDiet" rows="5" placeholder="Enter dietary prescriptions (Proteins, Hydration target, calories)..."></textarea>
+    <button class="btn-primary" onclick="assignDietToMember()"><i class="fa fa-apple-whole"></i> Save Diet Plan</button>
+  </div>
+
+  <!-- Trainer Notes -->
+  <div class="card">
+    <h3>Trainer Private Remarks</h3>
+    <p class="badge">Client: <span id="selectedMemberNotes">None selected</span></p>
+    <textarea id="trainerNote" rows="4" placeholder="Enter remarks regarding form, weight goals, or health advisories..."></textarea>
+    <button class="btn-primary" onclick="saveTrainerNote()"><i class="fa fa-save"></i> Save Trainer Remarks</button>
+  </div>
+
+  <!-- Progress Monitoring -->
+  <div class="card">
+    <h3>All Registered Gym Clients</h3>
+    <button class="btn-primary" onclick="loadTodayMembers()" style="margin-top:0; margin-bottom:16px;"><i class="fa fa-sync"></i> Refresh Client Records</button>
+    <div id="memberList">Loading clients...</div>
+  </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+// Initialize Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
+});
+const db = firebase.firestore();
+let selectedPhone = null;
+
+// Route guard
+if(localStorage.getItem('gymTrainer') !== 'true'){
+  window.location.href = 'trainer-login.html';
+}
+
+function logoutTrainer(){
+  localStorage.removeItem('gymTrainer');
+  window.location.href = 'trainer-login.html';
+}
+
+// Generate dynamic secure QR code (YYYY-MM-DD)
+function generateSessionQR() {
+  const today = new Date();
+  const yyyy = today.getFullYear();
+  const mm = String(today.getMonth() + 1).padStart(2, '0');
+  const dd = String(today.getDate()).padStart(2, '0');
+  const todayStr = `${yyyy}-${mm}-${dd}`;
+  
+  const token = `PT_SESSION_${todayStr}`;
+  const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(token)}&color=080914&bgcolor=ffffff`;
+  
+  const qrImage = document.getElementById('qrImage');
+  const qrText = document.getElementById('qrText');
+  const qrTime = document.getElementById('qrTime');
+  
+  if (qrImage) qrImage.src = qrUrl;
+  if (qrText) qrText.innerText = token;
+  if (qrTime) {
+    qrTime.innerText = `Today: ${today.toLocaleDateString(undefined, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}`;
+  }
+}
+
+// Find member via dynamic input
+function findMember(){
+  const query = searchMember.value.trim().toLowerCase();
+  if(!query){ memberResult.innerHTML=''; return; }
+  db.collection('users').get().then(snap=>{
+    let html='';
+    snap.forEach(doc=>{
+      const u = doc.data();
+      if(u.name && u.phone && (u.name.toLowerCase().includes(query) || u.phone.includes(query))){
+        html += `<div onclick="selectMember('${u.phone}','${u.name}')">
+          <strong>${u.name}</strong><br><span class="small">${u.phone}</span><br><small style="color:var(--primary); font-weight:600;">Plan: ${u.currentPlan||'No active plan'}</small>
+        </div>`;
+      }
+    });
+    memberResult.innerHTML = html || '<div style="padding:10px;">No matching members found</div>';
+  });
+}
+
+// Select a member
+function selectMember(phone, name){
+  selectedPhone = phone;
+  const label = `${name} (${phone})`;
+  selectedMember.innerText = label;
+  selectedMemberWorkout.innerText = label;
+  selectedMemberDiet.innerText = label;
+  selectedMemberNotes.innerText = label;
+  
+  db.collection('users').doc(phone).get().then(doc=>{
+    if(!doc.exists) return;
+    const u = doc.data()||{};
+    trainerNote.value = u.trainerNote||'';
+    assignDiet.value = u.dietPlan||'';
+    
+    // Fill workout text box
+    db.collection('workouts').doc(phone).get().then(wDoc => {
+      if(wDoc.exists) {
+        assignWorkout.value = wDoc.data().text || '';
+      } else {
+        assignWorkout.value = '';
+      }
+    });
+    
+    loadMemberProgress(phone);
+  });
+}
+
+// Assign Workout
+function assignWorkoutToMember(){
+  if(!selectedPhone){ alert('Please search and select a client first.'); return; }
+  const text = assignWorkout.value.trim();
+  if(!text){ alert('Please fill in the workout details.'); return; }
+  db.collection('workouts').doc(selectedPhone).set({
+    text: text,
+    updated: new Date().toISOString()
+  }).then(() => {
+    alert('Workout plan successfully assigned!');
+  }).catch(err => {
+    console.error(err);
+    alert('Database error saving workout.');
+  });
+}
+
+// Assign Diet Plan
+function assignDietToMember(){
+  if(!selectedPhone){ alert('Please search and select a client first.'); return; }
+  const text = assignDiet.value.trim();
+  if(!text){ alert('Please fill in the diet plan details.'); return; }
+  db.collection('users').doc(selectedPhone).update({
+    dietPlan: text
+  }).then(() => {
+    alert('Diet & Nutrition plan successfully saved!');
+  }).catch(err => {
+    console.error(err);
+    alert('Database error saving diet plan.');
+  });
+}
+
+// Save Trainer Note
+function saveTrainerNote(){
+  if(!selectedPhone){ alert('Please search and select a client first.'); return; }
+  db.collection('users').doc(selectedPhone).update({
+    trainerNote: trainerNote.value
+  }).then(()=>{
+    alert('Trainer remarks successfully saved!');
+  }).catch(err => {
+    console.error(err);
+    alert('Database error saving trainer notes.');
+  });
+}
+
+// Load attendance statistics and progress photos carousel
+function loadMemberProgress(phone){
+  if(!phone) return;
+  
+  db.collection('users').doc(phone).get().then(doc => {
+    if (!doc.exists) return;
+    const u = doc.data() || {};
+    const photos = u.progressPhotos || [];
+    
+    db.collection('ptSessions').where('phone','==',phone).get().then(snap=>{
+      let count = snap.size;
+      let last = 'No sessions logged';
+      snap.forEach(doc=>{ 
+        const d = doc.data(); 
+        if(!last || d.date > last) last = d.date; 
+      });
+      
+      progressStats.innerHTML = `
+        <div style="display: flex; gap: 14px; margin-bottom: 20px; flex-wrap: wrap;">
+          <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing:0.5px;">Logged Attendance</span>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 6px;">${count} Sessions</div>
+          </div>
+          <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+            <span style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing:0.5px;">Last Active</span>
+            <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-top: 6px;">${last}</div>
+          </div>
+        </div>
+      `;
+    });
+    
+    const photosContainer = document.getElementById('photosContainer');
+    if (!photosContainer) return;
+    
+    if (photos.length === 0) {
+      photosContainer.innerHTML = `
+        <p class="small" style="text-align: center; color: var(--text-muted); padding: 24px; background: rgba(255,255,255,0.01); border-radius: 20px; border: 1px dashed var(--border); margin:0;">
+          No progress photos uploaded by this member yet.
+        </p>
+      `;
+    } else {
+      let photoHtml = `
+        <p style="font-weight: 600; margin-top: 20px; margin-bottom: 10px; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing:0.5px;">Client Progress Gallery (${photos.length}):</p>
+        <div class="carousel-container" style="position: relative; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); border-radius: 24px; padding: 20px; border: 1px solid var(--border);">
+          <!-- Left Arrow -->
+          <button onclick="prevPhoto()" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: absolute; left: 16px; z-index: 10; background: rgba(13, 16, 35, 0.8); border: 1px solid rgba(255,255,255,0.1); cursor:pointer; transition: all 0.2s;"><i class="fa fa-chevron-left" style="color:#fff;"></i></button>
+          
+          <!-- Image -->
+          <div style="width: 100%; height: 340px; display: flex; align-items: center; justify-content: center; overflow: hidden; border-radius: 16px;">
+            <img id="carouselImg" src="${photos[0]}" style="max-height: 100%; max-width: 100%; object-fit: contain; border-radius: 12px;">
+          </div>
+          
+          <!-- Right Arrow -->
+          <button onclick="nextPhoto()" style="width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; position: absolute; right: 16px; z-index: 10; background: rgba(13, 16, 35, 0.8); border: 1px solid rgba(255,255,255,0.1); cursor:pointer; transition: all 0.2s;"><i class="fa fa-chevron-right" style="color:#fff;"></i></button>
+          
+          <!-- Indicator -->
+          <div id="carouselIndex" style="position: absolute; bottom: 12px; left: 50%; transform: translateX(-50%); background: rgba(8, 9, 20, 0.8); border: 1px solid rgba(255,255,255,0.15); padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 700; color: #fff;">1 / ${photos.length}</div>
+        </div>
+      `;
+      photosContainer.innerHTML = photoHtml;
+      
+      // Store globally for carousel actions
+      window.currentPhotos = photos;
+      window.currentPhotoIndex = 0;
+    }
+  });
+}
+
+window.prevPhoto = function() {
+  if (!window.currentPhotos || window.currentPhotos.length <= 1) return;
+  window.currentPhotoIndex = (window.currentPhotoIndex - 1 + window.currentPhotos.length) % window.currentPhotos.length;
+  document.getElementById('carouselImg').src = window.currentPhotos[window.currentPhotoIndex];
+  document.getElementById('carouselIndex').innerText = `${window.currentPhotoIndex + 1} / ${window.currentPhotos.length}`;
+};
+
+window.nextPhoto = function() {
+  if (!window.currentPhotos || window.currentPhotos.length <= 1) return;
+  window.currentPhotoIndex = (window.currentPhotoIndex + 1) % window.currentPhotos.length;
+  document.getElementById('carouselImg').src = window.currentPhotos[window.currentPhotoIndex];
+  document.getElementById('carouselIndex').innerText = `${window.currentPhotoIndex + 1} / ${window.currentPhotos.length}`;
+};
+
+// Load full list of registered members
+function loadTodayMembers(){
+  db.collection('users').orderBy('name').get().then(snap=>{
+    let html='';
+    snap.forEach(doc=>{
+      const u = doc.data();
+      if(u.phone && u.name) {
+        const isSelected = u.phone === selectedPhone ? 'border-color:var(--primary); background:rgba(59, 130, 246, 0.04);' : '';
+        html += `
+          <div class="member-list-item" style="${isSelected} cursor:pointer;" onclick="selectMember('${u.phone}','${u.name}')">
+            <div>
+              <strong>${u.name}</strong><br>
+              <span class="small" style="font-size:0.85rem;">Phone: ${u.phone}</span>
+            </div>
+            <div style="text-align: right;">
+              <span class="badge" style="font-size:0.75rem; background: ${u.planStatus === 'active' ? 'rgba(16,185,129,0.15)' : 'rgba(239,68,68,0.15)'}; color: ${u.planStatus === 'active' ? 'var(--accent)' : 'var(--red)'}; border-color: ${u.planStatus === 'active' ? 'rgba(16,185,129,0.3)' : 'rgba(239,68,68,0.3)'};">
+                ${u.planStatus ? u.planStatus.toUpperCase() : 'INACTIVE'}
+              </span><br>
+              <small style="color:var(--text-muted); font-size:0.75rem;">Plan: ${u.currentPlan||'None'}</small>
+            </div>
+          </div>
+        `;
+      }
+    });
+    memberList.innerHTML = html || '<p class="small">No members registered yet.</p>';
+  });
+}
+
+// Initial triggers
+generateSessionQR();
+loadTodayMembers();
+</script>
+</body>
+</html>

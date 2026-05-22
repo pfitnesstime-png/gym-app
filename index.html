@@ -1,50 +1,390 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym App – Register / Login</title>
+<title>Fitnesstime Gym – Register / Login</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
 
 <style>
-body{margin:0;font-family:Arial;background:#f1f5f9}
-header{background:#111827;color:#fff;text-align:center;padding:15px}
-.card{
-  background:#fff;margin:20px;padding:20px;border-radius:12px;
-  box-shadow:0 4px 10px rgba(0,0,0,.1)
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --surface-hover: rgba(26, 30, 56, 0.85);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #10b981;
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
 }
-input,button{
-  width:100%;padding:12px;margin-top:10px;
-  border-radius:8px;border:1px solid #ccc
+
+* {
+  box-sizing: border-box;
 }
-button{background:#2563eb;color:#fff;border:none;font-weight:bold}
-.link{margin-top:15px;text-align:center;color:#2563eb;cursor:pointer}
-.hidden{display:none}
+
+html, body {
+  min-height: 100%;
+  margin: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  overflow-x: hidden;
+}
+
+.container {
+  padding: 0 16px 60px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+header {
+  padding: 60px 24px 30px;
+  text-align: center;
+}
+
+header h2 {
+  margin: 0;
+  font-size: 3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  font-family: 'Playfair Display', serif;
+}
+
+header p {
+  margin: 16px auto 0;
+  color: var(--text-muted);
+  max-width: 600px;
+  line-height: 1.8;
+  font-size: 1.1rem;
+  font-weight: 300;
+}
+
+.small-note {
+  font-size: 0.9rem;
+  color: var(--primary);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-weight: 600;
+}
+
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  margin: 30px auto;
+  padding: 40px;
+  border-radius: 28px;
+  max-width: 580px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.6rem;
+  color: #fff;
+  font-family: 'Playfair Display', serif;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#plansSection {
+  max-width: 900px;
+}
+
+input, textarea, button, select {
+  width: 100%;
+  padding: 16px 20px;
+  margin-top: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  font-size: 15px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  outline: none;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 18px center;
+  background-size: 18px;
+}
+
+select option {
+  background: #0d0f21;
+  color: #fff;
+}
+
+textarea {
+  resize: vertical;
+  min-height: 110px;
+}
+
+button {
+  background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
+  color: #fff;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  letter-spacing: 0.5px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px var(--primary-glow);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+.link {
+  display: block;
+  margin-top: 22px;
+  text-align: center;
+  color: var(--primary);
+  font-weight: 600;
+  cursor: pointer;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+  font-size: 0.95rem;
+}
+
+.link:hover {
+  color: #60a5fa;
+  text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
+}
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.footer-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 24px;
+}
+
+.footer-links button {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.footer-links button:hover {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.2);
+  box-shadow: none;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 18px;
+  margin-top: 14px;
+  border-radius: 999px;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  background: var(--primary-soft);
+  color: #60a5fa;
+  font-weight: 600;
+  font-size: 0.85rem;
+  letter-spacing: 0.5px;
+}
+
+.plan-card {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 20px;
+  padding: 24px;
+  border: 1px solid var(--border);
+  text-align: left;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.plan-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
+  background: var(--surface-hover);
+}
+
+.plan-card h4 {
+  margin: 0 0 8px;
+  font-size: 1.4rem;
+  font-family: 'Playfair Display', serif;
+  color: #fff;
+}
+
+.plan-details {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  margin-bottom: 12px;
+}
+
+.plan-price {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 16px;
+}
+
+.plan-desc {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  min-height: 48px;
+  margin-bottom: 20px;
+}
+
+.plan-buttons {
+  display: flex;
+  gap: 10px;
+  margin-top: auto;
+}
+
+.plan-buttons button {
+  margin-top: 0;
+}
+
+.btn-choose {
+  flex: 1.5;
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+}
+
+.btn-details {
+  flex: 1;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.btn-details:hover {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: none;
+}
 </style>
 </head>
 
 <body>
+<div class="container">
+<header>
+  <div class="small-note">Fitnesstime Gym</div>
+  <h2>Elevate Your Strength</h2>
+  <p>Your portal to ultimate fitness. Join us today and experience a complete, trainer-guided workout ecosystem tailored exactly to your goals.</p>
+</header>
 
-<header><h2>🏋️ Gym App</h2></header>
+<!-- PLANS & PRICING -->
+<div class="card" id="plansSection">
+  <h3>Select Your Plan</h3>
+  <div id="plansGrid" class="section-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); display: grid; gap: 20px;">
+    Loading plans...
+  </div>
+</div>
 
-<!-- REGISTER -->
+<!-- REGISTRATION CARD -->
 <div class="card" id="registerBox">
-  <h3>Register</h3>
+  <h3>New Member Registration</h3>
   <input id="r_name" placeholder="Name">
   <input id="r_phone" placeholder="Phone">
   <input id="r_email" placeholder="Email">
-  <input id="r_age" type="number" placeholder="Age">
-  <input id="r_weight" type="number" placeholder="Weight (kg)">
-  <input id="r_height" type="number" placeholder="Height (cm)">
-  <button onclick="register()">Register</button>
-  <div class="link" onclick="showLogin()">Already registered? Login</div>
+  <input id="r_password" type="password" placeholder="Password (for login)">
+  
+  <div class="grid-2">
+    <input id="r_age" type="number" placeholder="Age">
+    <select id="r_gender">
+      <option value="">Gender</option>
+      <option value="Male">Male</option>
+      <option value="Female">Female</option>
+      <option value="Other">Other</option>
+    </select>
+  </div>
+  
+  <div class="grid-2">
+    <input id="r_weight" type="number" placeholder="Weight (kg)">
+    <input id="r_height" type="number" placeholder="Height (cm)">
+  </div>
+  
+  <textarea id="r_goal" placeholder="Fitness goal (e.g. lose weight, build muscle)" rows="3"></textarea>
+  
+  <select id="r_plan" onchange="updatePlanAmount()">
+    <option value="">Select plan</option>
+  </select>
+  
+  <input id="r_amount" type="text" placeholder="Plan amount" readonly style="margin-top: 14px;">
+  
+  <button onclick="register()">Register & Continue</button>
+  <div class="link" onclick="showLogin()">Already registered? Login here</div>
 </div>
 
-<!-- LOGIN -->
+<!-- LOGIN CARD -->
 <div class="card hidden" id="loginBox">
-  <h3>Login</h3>
-  <input id="l_phone" placeholder="Phone">
+  <h3>Member Login</h3>
+  <input id="l_phone" placeholder="Phone Number">
+  <input id="l_password" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
-  <div class="link" onclick="showRegister()">New user? Register</div>
+  <div class="link" onclick="showForgot()">Forgot password?</div>
+  <div class="link" onclick="showRegister()">New member? Register here</div>
+  <div class="footer-links">
+    <button onclick="window.location.href='trainer-login.html'">Trainer Panel</button>
+    <button onclick="window.location.href='admin-login.html'">Admin Panel</button>
+  </div>
+</div>
+
+<!-- FORGOT CARD -->
+<div class="card hidden" id="forgotBox">
+  <h3>Forgot Password</h3>
+  <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Enter your phone or email to request password reset assistance from the admin.</p>
+  <input id="f_phone" placeholder="Phone or Email">
+  <button onclick="forgotPassword()">Request Reset Info</button>
+  <div class="link" onclick="showLogin()">Back to login</div>
+</div>
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -52,81 +392,230 @@ button{background:#2563eb;color:#fff;border:none;font-weight:bold}
 
 <script>
 firebase.initializeApp({
-  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain:"gym-app-79bec.firebaseapp.com",
-  projectId:"gym-app-79bec"
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
 });
 const db = firebase.firestore();
 
-/* 🔐 AUTO LOGIN */
-if(localStorage.getItem("gymPhone")){
+if (localStorage.getItem("gymPhone")) {
   window.location.replace("app.html");
 }
 
-/* TOGGLE */
-function showLogin(){
+function loadPlanOptions() {
+  db.collection("plans").get().then(snap => {
+    let h = '<option value="">Select plan</option>';
+    if (snap.empty) {
+      let defaultPlans = [
+        {name: "Basic", days: 30, price: 1500},
+        {name: "Standard", days: 60, price: 2800},
+        {name: "Premium", days: 90, price: 3900}
+      ];
+      defaultPlans.forEach(p => {
+        h += `<option value="${p.name}|${p.days}|${p.price}">${p.name} (${p.days} days) - ₹${p.price}</option>`;
+      });
+    } else {
+      snap.forEach(doc => {
+        let p = doc.data();
+        h += `<option value="${p.name}|${p.days}|${p.price}">${p.name} (${p.days} days) - ₹${p.price}</option>`;
+      });
+    }
+    r_plan.innerHTML = h;
+  }).catch(() => {
+    r_plan.innerHTML = '<option value="">Select plan</option><option value="Basic|30|1500">Basic (30 days) - ₹1500</option><option value="Standard|60|2800">Standard (60 days) - ₹2800</option><option value="Premium|90|3900">Premium (90 days) - ₹3900</option>';
+  });
+}
+
+function updatePlanAmount() {
+  let value = r_plan.value;
+  if (!value) {
+    r_amount.value = "";
+    return;
+  }
+  let parts = value.split("|");
+  r_amount.value = "₹" + (parts[2] || "");
+}
+
+loadPlanOptions();
+
+function renderPlans() {
+  const grid = document.getElementById('plansGrid');
+  if (!grid) return;
+
+  db.collection('plans').get().then(snap => {
+    let plans = [];
+    if (snap.empty) {
+      plans = [
+        {name: 'Basic', days: 30, price: 1500, desc: 'Full Gym Access, Free Cardio & Strength Guidance'},
+        {name: 'Standard', days: 60, price: 2800, desc: 'Advanced Trainer Support, Custom Diet & Nutrition Coaching'},
+        {name: 'Premium', days: 90, price: 3900, desc: 'All-Access VIP Pass, Personal Training sessions, Priority Equipment'}
+      ];
+    } else {
+      snap.forEach(d => {
+        let p = d.data();
+        plans.push({name: p.name, days: p.days, price: p.price, desc: p.description || 'Gym Access & Strength Coaching'});
+      });
+    }
+
+    grid.innerHTML = plans.map(p => `
+      <div class="plan-card">
+        <div>
+          <h4>${p.name}</h4>
+          <div class="plan-details">${p.days} days subscription</div>
+          <div class="plan-desc">${p.desc}</div>
+        </div>
+        <div>
+          <div class="plan-price">₹${p.price}</div>
+          <div class="plan-buttons">
+            <button class="btn-choose" onclick="choosePlanFromCard('${p.name.replace(/'/g, "\\'")}', '${p.days}', '${p.price}')">Choose Plan</button>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+  }).catch(() => {
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted)">Plans failed to load. Please register using the form.</div>';
+  });
+}
+
+function choosePlanFromCard(name, days, price) {
+  if (!window.r_plan) return;
+  r_plan.value = `${name}|${days}|${price}`;
+  updatePlanAmount();
+  const el = document.getElementById('registerBox');
+  if (el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
+}
+
+renderPlans();
+
+function showLogin() {
   registerBox.classList.add("hidden");
+  forgotBox.classList.add("hidden");
   loginBox.classList.remove("hidden");
 }
-function showRegister(){
+function showRegister() {
   loginBox.classList.add("hidden");
+  forgotBox.classList.add("hidden");
   registerBox.classList.remove("hidden");
 }
+function showForgot() {
+  loginBox.classList.add("hidden");
+  registerBox.classList.add("hidden");
+  forgotBox.classList.remove("hidden");
+}
 
-/* REGISTER */
-function register(){
+function register() {
   let phone = r_phone.value.trim();
   let name  = r_name.value.trim();
+  let password = r_password.value.trim();
 
-  if(!name || !phone){
+  if (!name || !phone) {
     alert("Name & Phone required");
     return;
   }
-
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
-      alert("User already exists. Login please.");
-      showLogin();
-    }else{
-      db.collection("users").doc(phone).set({
-        name:name,
-        phone:phone,
-        email:r_email.value,
-        age:r_age.value,
-        weight:r_weight.value,
-        height:r_height.value,
-        planStatus:"inactive",
-        currentPlan:"",
-        planExpiry:""
-      }).then(()=>{
-        // ✅ SAVE SESSION
-        localStorage.setItem("gymPhone", phone);
-
-        // ✅ GO TO APP
-        window.location.replace("app.html");
-      });
-    }
-  });
-}
-
-/* LOGIN */
-function login(){
-  let phone = l_phone.value.trim();
-  if(!phone){
-    alert("Enter phone number");
+  if (!password || password.length < 4) {
+    alert("Password required (minimum 4 characters)");
     return;
   }
 
-  db.collection("users").doc(phone).get().then(doc=>{
-    if(doc.exists){
+  let planValue = r_plan.value;
+  if (!planValue) {
+    alert("Please select a subscription plan to register.");
+    return;
+  }
+
+  db.collection("users").doc(phone).get().then(doc => {
+    if (doc.exists) {
+      alert("User already exists. Please login.");
+      showLogin();
+      return;
+    }
+
+    let parts = planValue.split("|");
+    let requestedPlan = parts[0] || "";
+    let requestedDays = parts[1] || 0;
+    let requestedPrice = parts[2] || 0;
+
+    db.collection("users").doc(phone).set({
+      name: name,
+      phone: phone,
+      password: password,
+      email: r_email.value || "",
+      age: r_age.value || "",
+      gender: r_gender.value || "",
+      weight: r_weight.value || "",
+      height: r_height.value || "",
+      goal: r_goal.value || "",
+      currentPlan: "",
+      planStatus: "pending_approval",
+      planExpiry: "",
+      paymentStatus: "pending",
+      requestedPlan: requestedPlan,
+      requestedDays: Number(requestedDays),
+      requestedPrice: Number(requestedPrice),
+      paymentMode: "",
+      progressPhotos: [],
+      waterIntake: 0,
+      trainerNote: "",
+      rewardPoints: 0,
+      bookingRequests: []
+    }).then(() => {
       localStorage.setItem("gymPhone", phone);
       window.location.replace("app.html");
-    }else{
-      alert("User not found. Contact admin.");
+    });
+  });
+}
+
+function login() {
+  let phone = l_phone.value.trim();
+  let password = l_password.value.trim();
+  
+  if (!phone || !password) {
+    alert("Enter phone number and password");
+    return;
+  }
+
+  db.collection("users").doc(phone).get().then(doc => {
+    if (doc.exists) {
+      let userData = doc.data();
+      // Safe fallback to '1234' for users loaded without password
+      let savedPass = userData.password || "1234";
+      if (password === savedPass) {
+        localStorage.setItem("gymPhone", phone);
+        window.location.replace("app.html");
+      } else {
+        alert("Incorrect password!");
+      }
+    } else {
+      alert("User not found. Please contact the administrator.");
     }
   });
 }
-</script>
 
+function forgotPassword() {
+  let val = f_phone.value.trim();
+  if (!val) {
+    alert("Enter phone or email");
+    return;
+  }
+
+  db.collection("users").where("phone", "==", val).get().then(snap => {
+    if (!snap.empty) {
+      alert("Password reset requested! Please contact administration for approval.");
+      showLogin();
+      return;
+    }
+
+    db.collection("users").where("email", "==", val).get().then(snap2 => {
+      if (!snap2.empty) {
+        alert("Password reset requested! Please contact administration for approval.");
+      } else {
+        alert("No account found with this phone or email.");
+      }
+      showLogin();
+    });
+  });
+}
+</script>
 </body>
 </html>

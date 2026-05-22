@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Gym App Sample Data Seeder</title>
+<style>
+body{margin:0;font-family:Arial,Helvetica,sans-serif;background:#f8fafc;color:#111827}
+.container{max-width:720px;margin:auto;padding:20px}
+.card{background:#fff;border-radius:16px;box-shadow:0 10px 30px rgba(15,23,42,.08);padding:20px;margin:20px 0}
+button{background:#2563eb;color:#fff;border:none;padding:14px 18px;border-radius:12px;font-size:16px;cursor:pointer}
+pre{background:#f3f4f6;padding:12px;border-radius:12px;overflow:auto}
+.success{color:#16a34a;font-weight:700}
+.error{color:#dc2626;font-weight:700}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="card">
+    <h1>Gym App Sample Data Seeder</h1>
+    <p>ഈ പേജ് ഉപയോഗിച്ച് GitHub-ലെ gym-app പ്രോജക്ടിലേക്ക് ഡെമോ ഡാറ്റ സീഡ് ചെയ്യാം.</p>
+    <p>Firebase config അതേ തന്നെ ഉപയോഗിക്കുന്നു, അതിനാൽ ഈ പേജ് തുറന്ന് <b>Seed Data</b> അമര്‍ത്തുക.</p>
+    <button id="seedBtn">Seed Demo Data</button>
+    <p id="status"></p>
+  </div>
+  <div class="card">
+    <h2>Seeded Collections</h2>
+    <ul>
+      <li><b>users</b> - members, trainer notes, diet plans, sessions</li>
+      <li><b>plans</b> - monthly / yearly plans</li>
+      <li><b>workouts</b> - assigned workout text for members</li>
+      <li><b>ptSessions</b> - QR check-in attendance</li>
+      <li><b>attendance</b> - admin attendance sheet</li>
+      <li><b>payments</b> - payment history</li>
+    </ul>
+  </div>
+</div>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain:"gym-app-79bec.firebaseapp.com",
+  projectId:"gym-app-79bec"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
+const samplePlans = [
+  { name: "Basic Monthly", days: 30, price: 1200 },
+  { name: "Standard Monthly", days: 30, price: 1800 },
+  { name: "Premium Quarterly", days: 90, price: 4500 },
+  { name: "Annual Gold", days: 365, price: 15000 }
+];
+
+const sampleUsers = [
+  {
+    name: "Aarav Ramesh",
+    phone: "9638527410",
+    email: "aarav.ramesh@gmail.com",
+    age: 28,
+    weight: 78,
+    height: 176,
+    goal: "Build chest & back",
+    dietPlan: "High protein breakfast, grilled chicken lunch, salad dinner",
+    weeklySessions: 4,
+    trainerNote: "Start with moderate weight. Focus on form, then increase reps.",
+    currentPlan: "Premium Quarterly",
+    planStatus: "active",
+    paymentStatus: "paid",
+    planExpiry: new Date(new Date().setDate(new Date().getDate() + 60)).toISOString(),
+    totalSessions: 24,
+    usedSessions: 8,
+    remainingSessions: 16,
+    lastSession: new Date(new Date().setDate(new Date().getDate() - 1)).toISOString().slice(0,10),
+    trainerName: "Nisha PT",
+    trainerPhone: "7994302567",
+    photoURL: "https://i.pravatar.cc/120?img=32"
+  },
+  {
+    name: "Meera Nair",
+    phone: "9845123670",
+    email: "meera.nair@example.com",
+    age: 24,
+    weight: 62,
+    height: 164,
+    goal: "Slim down & tone legs",
+    dietPlan: "Oatmeal, vegetable bowl, fruit smoothie",
+    weeklySessions: 3,
+    trainerNote: "Add interval training and yoga for flexibility.",
+    currentPlan: "Standard Monthly",
+    planStatus: "active",
+    paymentStatus: "paid",
+    planExpiry: new Date(new Date().setDate(new Date().getDate() + 15)).toISOString(),
+    totalSessions: 12,
+    usedSessions: 5,
+    remainingSessions: 7,
+    lastSession: new Date(new Date().setDate(new Date().getDate() - 2)).toISOString().slice(0,10),
+    trainerName: "Arjun PT",
+    trainerPhone: "7025992455",
+    photoURL: "https://i.pravatar.cc/120?img=14"
+  },
+  {
+    name: "Sneha Mathew",
+    phone: "8473629150",
+    email: "sneha.mathew@example.com",
+    age: 31,
+    weight: 70,
+    height: 168,
+    goal: "Strength training & fat loss",
+    dietPlan: "Protein shake, boiled eggs, mixed vegetables",
+    weeklySessions: 5,
+    trainerNote: "Keep a daily water tracker and log meals.",
+    currentPlan: "Premium Quarterly",
+    planStatus: "active",
+    paymentStatus: "paid",
+    planExpiry: new Date(new Date().setDate(new Date().getDate() + 45)).toISOString(),
+    totalSessions: 36,
+    usedSessions: 18,
+    remainingSessions: 18,
+    lastSession: new Date().toISOString().slice(0,10),
+    trainerName: "Vijay PT",
+    trainerPhone: "8086361224",
+    photoURL: "https://i.pravatar.cc/120?img=24"
+  },
+  {
+    name: "Rahul Kumar",
+    phone: "7301594682",
+    email: "rahul.kumar@example.com",
+    age: 35,
+    weight: 85,
+    height: 180,
+    goal: "Lose belly fat",
+    dietPlan: "Vegetable dal, brown rice, grilled fish",
+    weeklySessions: 3,
+    trainerNote: "Cardio focus first week, then resistance training.",
+    currentPlan: "Basic Monthly",
+    planStatus: "expired",
+    paymentStatus: "paid",
+    planExpiry: new Date(new Date().setDate(new Date().getDate() - 5)).toISOString(),
+    totalSessions: 12,
+    usedSessions: 12,
+    remainingSessions: 0,
+    lastSession: new Date(new Date().setDate(new Date().getDate() - 6)).toISOString().slice(0,10),
+    trainerName: "Rohit PT",
+    trainerPhone: "7994302567",
+    photoURL: "https://i.pravatar.cc/120?img=6"
+  },
+  {
+    name: "Deepak S",
+    phone: "9658741230",
+    email: "deepak.s@example.com",
+    age: 29,
+    weight: 90,
+    height: 175,
+    goal: "Gain lean muscle",
+    dietPlan: "High calorie meals, protein shakes, nuts",
+    weeklySessions: 4,
+    trainerNote: "Increase protein intake and track progress photos.",
+    currentPlan: "",
+    planStatus: "pending",
+    paymentStatus: "pending",
+    planExpiry: "",
+    totalSessions: 0,
+    usedSessions: 0,
+    remainingSessions: 0,
+    trainerName: "Anjali PT",
+    trainerPhone: "7025992455",
+    photoURL: "https://i.pravatar.cc/120?img=18"
+  }
+];
+
+const sampleWorkouts = [
+  {
+    phone: "9638527410",
+    text: `Chest Day:\n- Bench Press 4x10\n- Incline Dumbbell Press 4x12\n- Pushups 3x15\nBack Day:\n- Deadlift 4x8\n- Lat Pulldown 4x12\n- Seated Row 4x12\nLeg Day:\n- Squats 4x10\n- Lunges 3x12 each leg\n- Leg Press 4x10`
+  },
+  {
+    phone: "9845123670",
+    text: `Leg Focus:\n- Leg Press 4x12\n- Bulgarian Split Squat 3x10\n- Hamstring Curls 4x12\n- Calf Raises 4x15\nCore:\n- Plank 3x60s\n- Bicycle Crunches 3x20`
+  },
+  {
+    phone: "8473629150",
+    text: `Full Body:\n- Squats 4x10\n- Overhead Press 4x10\n- Kettlebell Swings 3x15\n- Pull-ups 3x8\n- Mountain Climbers 3x30s`
+  }
+];
+
+const sampleAttendance = [
+  { phone: "9638527410", date: "2026-05-15", time: "09:05 AM" },
+  { phone: "9638527410", date: "2026-05-17", time: "10:20 AM" },
+  { phone: "9845123670", date: "2026-05-14", time: "07:30 AM" },
+  { phone: "8473629150", date: "2026-05-18", time: "06:45 AM" }
+];
+
+const samplePaymentHistory = [
+  {
+    phone: "9638527410",
+    name: "Aarav Ramesh",
+    plan: "Premium Quarterly",
+    amount: 4500,
+    mode: "UPI",
+    date: new Date(new Date().setDate(new Date().getDate() - 60)).toISOString()
+  },
+  {
+    phone: "9845123670",
+    name: "Meera Nair",
+    plan: "Standard Monthly",
+    amount: 1800,
+    mode: "Cash",
+    date: new Date(new Date().setDate(new Date().getDate() - 15)).toISOString()
+  },
+  {
+    phone: "8473629150",
+    name: "Sneha Mathew",
+    plan: "Premium Quarterly",
+    amount: 4500,
+    mode: "Card",
+    date: new Date(new Date().setDate(new Date().getDate() - 45)).toISOString()
+  },
+  {
+    phone: "7301594682",
+    name: "Rahul Kumar",
+    plan: "Basic Monthly",
+    amount: 1200,
+    mode: "Cash",
+    date: new Date(new Date().setDate(new Date().getDate() - 35)).toISOString()
+  }
+];
+
+async function seedCollection(name, docs){
+  const batch = db.batch();
+  docs.forEach(doc => {
+    const ref = name === "plans" ? db.collection(name).doc() : db.collection(name).doc(doc.phone || undefined);
+    batch.set(ref, doc);
+  });
+  await batch.commit();
+}
+
+async function runSeeder(){
+  const status = document.getElementById("status");
+  status.innerHTML = "Starting seed...";
+  try {
+    const plansExist = await db.collection("plans").get().then(s => !s.empty);
+    if (plansExist) {
+      status.innerHTML = "<span class=\"success\">Demo data already exists. Aborting duplicate seed.</span>";
+      return;
+    }
+
+    await Promise.all(samplePlans.map(plan => db.collection("plans").add(plan)));
+    await Promise.all(sampleUsers.map(user => db.collection("users").doc(user.phone).set(user)));
+    await Promise.all(sampleWorkouts.map(w => db.collection("workouts").doc(w.phone).set(w)));
+    await Promise.all(sampleAttendance.map(a => db.collection("ptSessions").add(a)));
+    await Promise.all(sampleAttendance.map(a => db.collection("attendance").add(a)));
+    await Promise.all(samplePaymentHistory.map(p => db.collection("payments").add(p)));
+    status.innerHTML = `<span class="success">Demo data seeded successfully. Open index.html or admin.html to test.</span>`;
+  } catch (err) {
+    console.error(err);
+    status.innerHTML = `<span class="error">Failed to seed data: ${err.message}</span>`;
+  }
+}
+
+seedBtn.addEventListener("click", runSeeder);
+</script>
+</body>
+</html>

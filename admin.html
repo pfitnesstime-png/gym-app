@@ -1,317 +1,748 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
- <meta name="theme-color" content="#111827">
+<meta name="theme-color" content="#080914">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Gym App – Admin</title>
+<title>Fitnesstime – Admin Console</title>
 
-<link rel="stylesheet"
- href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <script>
 if(localStorage.getItem("admin") !== "true"){
   window.location.href = "admin-login.html";
-} </script>
+}
+</script>
 <style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#f1f5f9;
-  padding-bottom:70px;
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --surface-hover: rgba(26, 30, 56, 0.85);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #10b981;
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --red: #ef4444;
 }
 
-/* ===== HEADER ===== */
-header{
-  background:#111827;
-  padding:10px 0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  position:relative;
+* {
+  box-sizing: border-box;
+  font-family: 'Outfit', sans-serif;
 }
 
-header img{
-  height:80px;   /* 👈 logo bigger */
-  max-width:105%;
-}
-;
-
-header .logout{
-  position:absolute;
-  right:15px;
-  color:#fff;
-  font-size:18px;
-  cursor:pointer;
+body {
+  margin: 0;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 140px;
+  overflow-x: hidden;
 }
 
-/* MOBILE */
-@media (max-width:700px){
-  header img{
-    height:58px;
+header {
+  background: rgba(8, 9, 20, 0.5);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(15px);
+  -webkit-backdrop-filter: blur(15px);
+  max-width: 1100px;
+  margin: 0 auto;
+  border-radius: 0 0 24px 24px;
+}
+
+header .brand {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+header .brand img {
+  height: 52px;
+  width: auto;
+  border-radius: 16px;
+  box-shadow: 0 10px 25px rgba(59, 130, 246, 0.25);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+header .brand .title h1 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+header .brand .title p {
+  margin: 4px 0 0;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+header .logout {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  background: rgba(239, 68, 68, 0.08);
+  color: #f87171;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+header .logout:hover {
+  transform: translateY(-2px);
+  background: rgba(239, 68, 68, 0.18);
+  box-shadow: 0 5px 15px rgba(239, 68, 68, 0.15);
+}
+
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  margin: 24px auto;
+  padding: 28px;
+  border-radius: 28px;
+  max-width: 980px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: border-color 0.3s ease;
+}
+
+.card:hover {
+  border-color: rgba(59, 130, 246, 0.25);
+}
+
+.card h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.card h4 {
+  margin: 20px 0 10px;
+  color: #fff;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+input, select, button, textarea {
+  width: 100%;
+  padding: 14px 18px;
+  margin-top: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+  color: #fff;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+input:focus, textarea:focus, select:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px var(--primary-glow);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+input::placeholder, textarea::placeholder, select option {
+  color: var(--text-muted);
+  background: #0d1023;
+}
+
+textarea {
+  min-height: 110px;
+  resize: vertical;
+}
+
+button {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: #fff;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
+  filter: brightness(1.1);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+button.small {
+  width: auto;
+  padding: 10px 18px;
+  border-radius: 20px;
+  margin-top: 0;
+  font-size: 0.85rem;
+}
+
+.ok {
+  background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+  box-shadow: 0 8px 18px rgba(16, 185, 129, 0.2) !important;
+}
+
+.ok:hover {
+  box-shadow: 0 12px 24px rgba(16, 185, 129, 0.35) !important;
+}
+
+.del {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  box-shadow: 0 8px 18px rgba(239, 68, 68, 0.2) !important;
+}
+
+.del:hover {
+  box-shadow: 0 12px 24px rgba(239, 68, 68, 0.35) !important;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.list-row {
+  display: grid;
+  gap: 12px;
+}
+
+.list-item {
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.02);
+  display: grid;
+  gap: 10px;
+  transition: transform 0.3s, background 0.3s;
+}
+
+.list-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  transform: translateY(-2px);
+}
+
+.list-item b {
+  color: #fff;
+}
+
+.section-grid {
+  display: grid;
+  gap: 14px;
+}
+
+.badge-status {
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  display: inline-block;
+  border: 1px solid;
+}
+
+@media(min-width:780px) {
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
   }
 }
 
-/* ===== CARDS ===== */
- .card{
-  background:#fff;
-  margin:10px;
-  padding:20px;        /* 👈 120px alla! */
-  border-radius:12px;
-  max-width:500px;
-  margin-left:auto;
-  margin-right:auto;
+#nameSuggest, #phoneSuggest {
+  background: #0a0b16;
+  border: 1px solid var(--border);
+  max-height: 180px;
+  overflow-y: auto;
+  border-radius: 16px;
+  position: absolute;
+  z-index: 100;
+  width: calc(100% - 32px);
+  box-shadow: var(--shadow);
 }
 
-input,select,button{
-  width:100%;
-  display:block;     /* 👈 add this */
-  padding:20px;
-  margin-top:8px;   /* 👈 gap */
-  border-radius:25px;
-  border:1px solid #ccc;
+#nameSuggest div, #phoneSuggest div {
+  padding: 12px 16px;
+  cursor: pointer;
+  color: var(--text);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+  transition: background 0.2s;
 }
 
-button{
-  background:#2563eb;
-  color:#fff;
-  border:none;
-  font-weight:bold;
+#nameSuggest div:hover, #phoneSuggest div:hover {
+  background: rgba(59, 130, 246, 0.15);
 }
 
-.ok{background:#16a34a}
-.del{background:#dc2626}
-.hidden{display:none}
-#nameSuggest, #phoneSuggest{
-  background:#fff;
-  border:1px solid #ccc;
-  max-height:150px;
-  overflow:auto;
+.nav {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  right: 20px;
+  height: 84px;
+  background: rgba(13, 16, 35, 0.85);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  box-shadow: var(--shadow);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  max-width: 1040px;
+  margin: 0 auto;
+  z-index: 200;
+  padding: 6px;
 }
 
-#nameSuggest div, #phoneSuggest div{
-  padding:6px;
-  cursor:pointer;
+.nav button {
+  flex: 1;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  margin: 0;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: 22px;
+  transition: all 0.3s ease;
 }
 
-#nameSuggest div:hover, #phoneSuggest div:hover{
-  background:#eee;
-}
-/* ===== BOTTOM NAV ===== */
-.nav{
-  position:fixed;
-  bottom:10px;
-  left:0;
-  right:0;
-  height:60x;
-  background:#fff;
-  border-top:1px solid #ddd;
-  display:flex;
+.nav button:hover {
+  transform: none;
+  color: #fff;
+  box-shadow: none;
+  background: rgba(255, 255, 255, 0.03);
 }
 
-.nav button{
-  flex:1;
-  background:none;
-  border:none;
-  color:#6b7280;
-  font-size:12px;
-  display:flex;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
+.nav button i {
+  font-size: 20px;
+  margin-bottom: 5px;
+  transition: transform 0.3s ease;
 }
 
-.nav button i{font-size:18px}
-.nav button.active{color:#2563eb}
+.nav button:hover i {
+  transform: translateY(-2px);
+}
+
+.nav button.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+
+hr {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 24px 0;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  overflow: hidden;
+}
+
+th, td {
+  padding: 14px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+th {
+  background: var(--primary-soft);
+  color: #fff;
+  font-weight: 600;
+}
+
+td {
+  color: var(--text);
+  font-size: 0.9rem;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #080914;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,0.1);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255,255,255,0.2);
+}
 </style>
 </head>
-
 <body>
 
 <header>
- <!-- 🔷 YOUR LOGO -->
-  <img src="logo.PNG.png" style="height:40px">
-<i class="fa fa-sign-out-alt" onclick="adminLogout()" style="cursor:pointer"></i>
+  <div class="brand">
+    <img src="logo.PNG.png" alt="Gym logo">
+    <div class="title">
+      <h1>Fitnesstime Admin</h1>
+      <p>Premium Gym Management Console</p>
+    </div>
+  </div>
+  <button class="logout" onclick="adminLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>
 </header>
 
-<!-- ADD USER -->
-<div class="card" id="addUser">
-  <h3>Add User + Assign Plan</h3>
-  <input id="uname" placeholder="User name">
-<input id="uphone" type="tel" placeholder="Phone number" maxlength="10" oninput="validatePhone(this)">
-  <select id="uplan"><option value="">Select Plan</option></select>
- <input id="uamount" type="number" placeholder="Payment Amount">
+<div class="container" style="max-width: 980px; margin: 0 auto; padding: 0 16px 20px;">
+  <!-- ADD USER -->
+  <div class="card" id="addUser">
+    <h3>Add User & Assign Subscription</h3>
+    <div class="form-grid">
+      <input id="uname" placeholder="Member name">
+      <input id="uphone" type="tel" placeholder="10-digit Phone number" maxlength="10" oninput="validatePhone(this)">
+    </div>
+    <!-- Password field addition -->
+    <input id="upassword" type="password" placeholder="Set Member Password (default is 1234)">
+    
+    <div class="form-grid">
+      <select id="uplan" onchange="loadPlanAmountPreview()"><option value="">Select Plan</option></select>
+      <input id="uamount" type="number" placeholder="Payment Amount (₹)">
+    </div>
+    
+    <select id="umode">
+      <option value="">Payment Mode</option>
+      <option>Cash</option>
+      <option>UPI</option>
+      <option>Card</option>
+    </select>
+    
+    <button class="btn-primary" onclick="addUserWithPlan()"><i class="fa fa-user-plus"></i> Create Account & Activate Plan</button>
+  </div>
 
-<select id="umode">
-  <option value="">Payment Mode</option>
-  <option>Cash</option>
-  <option>UPI</option>
-  <option>Card</option>
-</select>
-  <button onclick="addUserWithPlan()">Add User</button>
-</div>
- <!-- PT MEMBER PROFILE -->
-<div class="card hidden" id="ptProfile">
+  <!-- PT MEMBER PROFILE -->
+  <div class="card hidden" id="ptProfile">
+    <h3>👤 Member PT & Diet Profile</h3>
+    <center>
+      <img id="pt_img" width="96" height="96" style="border-radius:24px; object-fit:cover; border:2px solid var(--primary); background:#eef2ff">
+      <h4 id="pt_name" style="margin-top:14px; margin-bottom: 2px;">-</h4>
+      <p id="pt_phone" style="color: var(--text-muted); font-size: 0.9rem; margin-top:0; margin-bottom: 20px;">-</p>
+    </center>
+    
+    <p><b style="color: var(--text-muted);">Current Goal:</b> <span id="pt_goal" style="font-weight: 600;">-</span></p>
+    
+    <hr>
+    
+    <h4>Prescribe Diet Plan</h4>
+    <textarea id="pt_diet" placeholder="Enter custom diet regime details..."></textarea>
+    
+    <h4>Weekly Session Target</h4>
+    <input id="pt_weekly" type="number" placeholder="Committed weekly session count">
+    
+    <h4>Trainer Remarks & Notes</h4>
+    <textarea id="pt_note" placeholder="Write remarks, logs or guidelines..."></textarea>
+    
+    <button class="btn-primary" onclick="savePTProfile()"><i class="fa fa-save"></i> Save PT & Diet Profile</button>
+    
+    <hr>
+    
+    <h4>Assign Workout Schedule</h4>
+    <textarea id="pt_workout" rows="5" placeholder="List workout exercises / daily workout logs..."></textarea>
+    <button class="btn-primary" onclick="saveWorkout()"><i class="fa fa-dumbbell"></i> Assign Workout Program</button>
+    
+    <hr>
+    
+    <h4>Workout Status</h4>
+    <div id="pt_status" style="padding:14px; background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:14px; font-weight:600; text-align:center;">
+      No workout program assigned yet.
+    </div>
+  </div>
 
-<h3>👤 Member PT Profile</h3>
+  <!-- REQUESTS -->
+  <div class="card hidden" id="requests">
+    <h3>Online Plan Selection Requests</h3>
+    <div id="reqList">Loading requests...</div>
+  </div>
 
-<img id="pt_img" width="80"><br><br>
+  <!-- ALL USERS -->
+  <div class="card hidden" id="users">
+    <h3>All Registered Members</h3>
+    <input id="searchUser" placeholder="Search by name or phone..." onkeyup="loadUsers()">
+    <div id="usersList" style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
+      Loading...
+    </div>
+  </div>
 
-Name: <b id="pt_name"></b><br>
-Phone: <b id="pt_phone"></b><br>
-Goal: <b id="pt_goal"></b><br><br>
-
-<h4>Diet Plan</h4>
-<input id="pt_diet">
-
-<h4>Trainer Note</h4>
-<textarea id="pt_note"></textarea>
-
-<h4>Weekly Sessions</h4>
-<input id="pt_weekly" type="number" placeholder="Total weekly sessions">
-
-<button onclick="savePTProfile()">💾 Save Profile</button>
-
-<hr>
-
-<h4>Assign Workout</h4>
-<textarea id="pt_workout" rows="5"></textarea>
-<button onclick="saveWorkout()">🏋️ Assign Workout</button>
-
-<hr>
-
-<h4>Workout Status</h4>
-<div id="pt_status">No data</div>
-
-</div>
-
-<!-- REQUESTS -->
-<div class="card hidden" id="requests">
-  <h3>Plan Requests</h3>
-  <div id="reqList">Loading...</div>
-</div>
-
-<!-- USERS -->
-<div class="card hidden" id="users">
-  <h3>All Users</h3>
-  <input id="searchUser" placeholder="Search name or phone" onkeyup="loadUsers()">
-  <div id="usersList">Loading...</div>
-</div>
   <!-- EDIT USER SECTION -->
-<div class="card hidden" id="editUser">
-  <h3>✏️ Edit User</h3>
+  <div class="card hidden" id="editUser">
+    <h3>✏️ Edit Member Profile</h3>
+    <input type="hidden" id="e_old_phone">
+    
+    <div class="form-grid">
+      <input id="e_name" placeholder="Member Name">
+      <input id="e_phone" placeholder="Phone Number">
+    </div>
+    
+    <!-- Password modification box -->
+    <input id="e_password" type="password" placeholder="Update Password">
+    
+    <select id="e_plan">
+      <option value="">Select Plan</option>
+    </select>
+    
+    <button class="ok" onclick="updateUser()"><i class="fa fa-save"></i> Save Profile Modifications</button>
+    <button class="del" onclick="showTab('users',document.querySelectorAll('.nav button')[1])" style="margin-top:10px;">
+      Cancel
+    </button>
+  </div>
 
-  <input type="hidden" id="e_old_phone">
+  <!-- PLANS -->
+  <div class="card hidden" id="plans">
+    <h3>Manage Pricing Plans</h3>
+    <div class="form-grid">
+      <input id="pname" placeholder="Plan name (e.g. Basic 1 Month)">
+      <input id="pdays" type="number" placeholder="Duration in Days">
+    </div>
+    <input id="pprice" type="number" placeholder="Price (₹)">
+    <button class="btn-primary" onclick="addPlan()"><i class="fa fa-plus"></i> Add Plan Option</button>
+    
+    <hr>
+    
+    <div id="plansList" style="display: flex; flex-direction: column; gap: 12px;">
+      Loading active plans...
+    </div>
+  </div>
 
-  <input id="e_name" placeholder="User Name">
-  <input id="e_phone" placeholder="Phone Number">
+  <!-- ATTENDANCE -->
+  <div class="card hidden" id="attendance">
+    <h3>Gym Attendance Grid</h3>
+    <input type="month" id="filterMonth" onchange="loadAttendanceSheet()" style="margin-bottom: 20px;">
+    <div style="overflow-x:auto">
+      <table id="attTable">
+        <tr><td style="padding: 30px; color: var(--text-muted);">Please select a month above to load logs.</td></tr>
+      </table>
+    </div>
+  </div>
 
-  <select id="e_plan">
-    <option value="">Select Plan</option>
-  </select>
+  <!-- QR PRINT -->
+  <div class="card hidden" id="qr" style="text-align: center;">
+    <h3>Print Gym Desk QR</h3>
+    <p class="small" style="margin-bottom: 24px;">Note: Static check-in QR codes are deprecated. Please use the Trainer Dashboard's live dynamic QR to ensure physical attendance.</p>
+    <div style="background: white; padding: 20px; border-radius: 20px; display: inline-block; border: 1px solid var(--border); margin-bottom: 16px;">
+      <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE" style="display: block;">
+    </div>
+    <button class="btn-primary" onclick="window.print()"><i class="fa fa-print"></i> Print Desk Poster</button>
+  </div>
 
-  <button class="ok" onclick="updateUser()">Save Changes</button>
-  <button onclick="showTab('users',document.querySelector('.nav button:nth-child(3)'))">
-    Cancel
-  </button>
-</div>
+  <!-- WHATSAPP ALERTS -->
+  <div class="card hidden" id="whatsapp">
+    <h3>📲 Broadcast Reminders</h3>
+    <p class="small" style="margin-bottom: 20px;">Remind expired memberships or members with pending dues securely via WhatsApp Web.</p>
+    <button class="btn-primary ok" onclick="sendBulkWhatsApp()" style="margin-top:0; margin-bottom: 20px;">
+      <i class="fab fa-whatsapp"></i> Broadcast to ALL Expired / Pending Clients
+    </button>
+    <hr>
+    <div id="waList" style="display: flex; flex-direction: column; gap: 12px;">
+      Loading expired logs...
+    </div>
+  </div>
 
-<!-- PLANS -->
-<div class="card hidden" id="plans">
-  <h3>Add Plan</h3>
-  <input id="pname" placeholder="Plan name">
-  <input id="pdays" type="number" placeholder="Days">
-  <input id="pprice" type="number" placeholder="Price">
-  <button onclick="addPlan()">Add Plan</button>
-  <hr>
-  <div id="plansList">Loading...</div>
-</div>
+  <!-- DIRECT ADD PAYMENT -->
+  <div class="card hidden" id="payments">
+    <h3>💰 Log Client Payment</h3>
+    
+    <div style="position: relative;">
+      <input id="pay_name" placeholder="Search member by name..." oninput="searchUserByName()" autocomplete="off">
+      <div id="nameSuggest"></div>
+    </div>
+    
+    <div style="position: relative; margin-top: 10px;">
+      <input id="pay_phone" placeholder="Search member by phone..." oninput="searchUserByPhone()" autocomplete="off">
+      <div id="phoneSuggest"></div>
+    </div>
+    
+    <input id="pay_amount" type="number" placeholder="Payment Amount (₹)">
+    
+    <select id="pay_mode">
+      <option value="">Payment Mode</option>
+      <option>Cash</option>
+      <option>UPI</option>
+      <option>Card</option>
+    </select>
+    
+    <select id="pay_plan">
+      <option value="">Select Plan</option>
+    </select>
+    
+    <button class="btn-primary" onclick="addPayment()"><i class="fa fa-receipt"></i> Save Payment & Activate Plan</button>
+  </div>
 
-<!-- ATTENDANCE -->
-<div class="card hidden" id="attendance">
-  <h3>Attendance Sheet</h3>
-  <input type="month" id="filterMonth" onchange="loadAttendanceSheet()">
-  <div style="overflow-x:auto">
-    <table border="1" width="100%" id="attTable" style="border-collapse:collapse;text-align:center">
-    </table>
+  <!-- SETTINGS MENU -->
+  <div class="card hidden" id="settings">
+    <h3>⚙️ Admin Tools & Reports</h3>
+    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 14px; margin-top: 10px;">
+      <button class="btn-primary" onclick="showInside('attendance')" style="margin-top:0;"><i class="fa fa-calendar-alt"></i> Attendance Sheets</button>
+      <button class="btn-primary" onclick="showInside('payments')" style="margin-top:0;"><i class="fa fa-money-bill-wave"></i> Add Payment</button>
+      <button class="btn-primary" onclick="showInside('paymentHistory')" style="margin-top:0;"><i class="fa fa-file-invoice-dollar"></i> Collections Report</button>
+      <button class="btn-primary" onclick="showInside('qr')" style="margin-top:0;"><i class="fa fa-qrcode"></i> Print desk QR</button>
+      <button class="btn-primary" onclick="showInside('whatsapp')" style="margin-top:0;"><i class="fa fa-whatsapp"></i> WhatsApp Alerts</button>
+      <button class="btn-primary" onclick="showInside('bookings')" style="margin-top:0;"><i class="fa fa-clock"></i> Bookings Management</button>
+      <button class="btn-primary" onclick="showInside('offerBanners')" style="margin-top:0;"><i class="fa fa-images"></i> Offer Banners</button>
+      <button class="btn-primary" onclick="showInside('requests')" style="margin-top:0;"><i class="fa fa-inbox"></i> Signup Requests</button>
+      <button class="btn-primary" onclick="showInside('paymentConfigBox')" style="margin-top:0;"><i class="fa fa-gears"></i> Payment Settings</button>
+    </div>
+  </div>
+
+  <!-- PAYMENT CONFIGURATION SETTINGS -->
+  <div class="card hidden" id="paymentConfigBox">
+    <h3>💳 Payment Gateway Configuration</h3>
+    <p class="small" style="margin-bottom: 20px;">Configure your custom GPay UPI ID and bank transfer details that will be shown to customers for registration.</p>
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">GPay / UPI ID Address:</label>
+    <input id="cfg_upi" placeholder="e.g. fitnesstime@okaxis">
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-top: 14px; display: block;">Account Holder Name:</label>
+    <input id="cfg_holder" placeholder="e.g. Fitnesstime Gym">
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-top: 14px; display: block;">Bank Name:</label>
+    <input id="cfg_bank" placeholder="e.g. Federal Bank">
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-top: 14px; display: block;">Bank Account Number:</label>
+    <input id="cfg_acc" placeholder="e.g. 12340200012345">
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-top: 14px; display: block;">IFSC Code:</label>
+    <input id="cfg_ifsc" placeholder="e.g. FDRL0001234">
+    
+    <button class="ok" onclick="savePaymentConfig()" style="margin-top: 24px;"><i class="fa fa-save"></i> Save Payment Config</button>
+    <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 10px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
+  </div>
+
+  <!-- PAYMENT HISTORY REPORT -->
+  <div class="card hidden" id="paymentHistory">
+    <h3>📊 Collections Report</h3>
+    <hr>
+    <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px;">
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's Cash</span>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--accent); margin-top: 6px;">₹<span id="todayCash">0</span></div>
+      </div>
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's Bank/UPI</span>
+        <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary); margin-top: 6px;">₹<span id="todayBank">0</span></div>
+      </div>
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Today's Total</span>
+        <div style="font-size: 1.5rem; font-weight: 800; color: #fff; margin-top: 6px;">₹<span id="todayTotal">0</span></div>
+      </div>
+    </div>
+
+    <h4>Filter Collections by Date Range</h4>
+    <div class="form-grid">
+      <input type="date" id="fromDate" placeholder="From Date">
+      <input type="date" id="toDate" placeholder="To Date">
+    </div>
+    <div class="form-grid">
+      <input id="ph_phone" placeholder="Phone filter (Optional)">
+      <input id="ph_name" placeholder="Name filter (Optional)">
+    </div>
+    
+    <button class="btn-primary" onclick="loadPaymentHistory()" style="margin-top: 20px;"><i class="fa fa-filter"></i> Run Collections Report</button>
+    
+    <hr>
+    
+    <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 20px;">
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Filtered Cash</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--accent); margin-top: 4px;">₹<span id="cashAmt">0</span></div>
+      </div>
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Filtered Bank/UPI</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: var(--primary); margin-top: 4px;">₹<span id="bankAmt">0</span></div>
+      </div>
+      <div style="flex:1; min-width: 140px; background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 14px; border-radius: 16px; text-align: center;">
+        <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Filtered Total</span>
+        <div style="font-size: 1.4rem; font-weight: 800; color: #fff; margin-top: 4px;">₹<span id="totalAmt">0</span></div>
+      </div>
+    </div>
+
+    <hr>
+    
+    <div id="payList" style="display: flex; flex-direction: column; gap: 12px;"></div>
+  </div>
+
+  <!-- BOOKING MANAGEMENT -->
+  <div class="card hidden" id="bookings">
+    <h3>🗓 Personal Training & Slot Bookings</h3>
+    <div class="form-grid">
+      <input id="bookingPhone" placeholder="Member Phone number">
+      <select id="bookingService">
+        <option value="">Select Service / Class</option>
+        <option value="Personal Training">Personal Training Session</option>
+        <option value="Zumba Class">Zumba Dance Session</option>
+        <option value="Yoga Class">Yoga & Body Flexibility</option>
+      </select>
+    </div>
+    <div class="form-grid">
+      <input id="bookingDate" type="date">
+      <input id="bookingTime" type="time">
+    </div>
+    <button class="btn-primary" onclick="addBooking()"><i class="fa fa-save"></i> Save Slot Booking</button>
+    
+    <hr>
+    
+    <div id="bookingList" style="display: flex; flex-direction: column; gap: 12px;">
+      Loading bookings...
+    </div>
+  </div>
+
+  <!-- OFFER BANNERS -->
+  <div class="card hidden" id="offerBanners">
+    <h3>🏷 Promotional Offer Banners</h3>
+    <div class="form-grid">
+      <input id="bannerTitle" placeholder="Banner Title (e.g. 20% Ramzan discount!)">
+      <input id="bannerSubtitle" placeholder="Banner Subtitle">
+    </div>
+    <input id="bannerUrl" placeholder="Image URL link (optional)">
+    <button class="btn-primary" onclick="saveOfferBanner()"><i class="fa fa-check"></i> Add Promo Banner</button>
+    
+    <hr>
+    
+    <div id="offerList" style="display: flex; flex-direction: column; gap: 14px;">
+      Loading active promos...
+    </div>
   </div>
 </div>
 
-<!-- QR -->
-<div class="card hidden" id="qr">
-  <h3>Gym QR</h3>
-  <img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=GYM_ATTENDANCE">
-  <button onclick="window.print()">Print QR</button>
-</div>
-  <!-- WHATSAPP ALERTS -->
-<div class="card hidden" id="whatsapp">
-  <h3>📲 WhatsApp Alerts (Expired / Pending)</h3>
-  <button onclick="sendBulkWhatsApp()">
-    📤 Send to ALL Expired Members
-  </button>
-  <hr>
-  <div id="waList">Loading...</div>
-</div>
-<div class="card hidden" id="payments">
-  <h3>💰 Add Payment</h3>
- <input id="pay_name" placeholder="Search name" oninput="searchUserByName()">
-<div id="nameSuggest"></div>
-
-<input id="pay_phone" placeholder="Search phone" oninput="searchUserByPhone()">
-<div id="phoneSuggest"></div>
-  <input id="pay_amount" type="number" placeholder="Amount">
-  <select id="pay_mode">
-    <option value="">Payment Mode</option>
-    <option>Cash</option>
-    <option>UPI</option>
-    <option>Card</option>
-  </select>
- <select id="pay_plan">
-  <option value="">Select Plan</option>
-</select>
-  <button onclick="addPayment()">Save Payment</button>
-</div>
- <!-- SETTINGS MENU -->
-<div class="card hidden" id="settings">
-  <h3>⚙️ Settings</h3>
-
-  <button onclick="showInside('attendance')">📅 Attendance</button>
-  <button onclick="showInside('payments')">💰 Add Payment</button>
-  <button onclick="showInside('paymentHistory')">📜 Payment History</button>
-  <button onclick="showInside('qr')">📷 QR Code</button>
-  <button onclick="showInside('whatsapp')">📲 WhatsApp</button>
-  <button onclick="showInside('requests')">📩 Requests</button>
-</div>
-
-<div class="card hidden" id="paymentHistory">
-  <h3>📜 Payment Report</h3>
-<hr>
-<h4>📊 Today Collection</h4>
-💵 Cash: ₹<span id="todayCash">0</span><br>
-🏦 Bank: ₹<span id="todayBank">0</span><br>
-<b>Total: ₹<span id="todayTotal">0</span></b>
-
-  <input type="date" id="fromDate">
-  <input type="date" id="toDate">
-
-  <input id="ph_phone" placeholder="Phone (optional)">
- <input id="ph_name" placeholder="Name (optional)">
-
-  <button onclick="loadPaymentHistory()">Load Report</button>
-
-  <hr>
-
-  <b>Total Collection: ₹<span id="totalAmt">0</span></b><br>
-  💵 Cash: ₹<span id="cashAmt">0</span><br>
-  🏦 Bank: ₹<span id="bankAmt">0</span>
-
-  <hr>
-
-  <div id="payList"></div>
-</div>
-<!-- NAV -->
- <div class="nav" style="margin-top:60px;">
+<!-- NAV BAR -->
+<div class="nav">
   <button class="active" onclick="showTab('addUser',this)">
     <i class="fa fa-user-plus"></i>Add
   </button>
@@ -324,65 +755,65 @@ Goal: <b id="pt_goal"></b><br><br>
     <i class="fa fa-list"></i>Plans
   </button>
 
-  <!-- ⭐ NEW SETTINGS -->
   <button onclick="showTab('settings',this)">
-    <i class="fa fa-gear"></i>Setting
+    <i class="fa fa-gear"></i>Settings
   </button>
 </div>
 
+<!-- Firebase & Screenshot libraries -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
 <script>
+// Initialize Firebase
 firebase.initializeApp({
-  apiKey:"AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
-  authDomain:"gym-app-79bec.firebaseapp.com",
-  projectId:"gym-app-79bec"
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
 });
-const db=firebase.firestore();
+const db = firebase.firestore();
 
 function showTab(id, btn){
   [
- "addUser","requests","users","editUser","plans",
- "attendance","qr","whatsapp","payments",
- "paymentHistory","settings","ptProfile"
- // ⭐ add this
+    "addUser","requests","users","editUser","plans",
+    "attendance","qr","whatsapp","payments",
+    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox"
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
   });
 
-  document.getElementById(id).classList.remove("hidden");
+  const target = document.getElementById(id);
+  if(target) target.classList.remove("hidden");
 
-  document.querySelectorAll(".nav button")
-    .forEach(b=>b.classList.remove("active"));
-  btn.classList.add("active");
+  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
+  if (btn) btn.classList.add("active");
 
   if(id === "whatsapp") loadWhatsAppList();
   if(id === "requests") loadRequests();
 }
-function validatePhone(input){
-  // numbers mathram allow
-  input.value = input.value.replace(/[^0-9]/g, '');
 
-  // 10 digit limit
+function validatePhone(input){
+  input.value = input.value.replace(/[^0-9]/g, '');
   if(input.value.length > 10){
     input.value = input.value.slice(0,10);
   }
 }
-/* PLAN OPTIONS */
+
+/* PLAN OPTIONS LOADERS */
 function loadPlanOptions(){
   db.collection("plans").get().then(s=>{
     let h='<option value="">Select Plan</option>';
     s.forEach(d=>{
       let p=d.data();
-      h+=`<option value="${p.name}|${p.days}">
+      h+=`<option value="${p.name}|${p.days}|${p.price}">
         ${p.name} (${p.days} days – ₹${p.price})
       </option>`;
     });
     uplan.innerHTML=h;
   });
 }
+
 function loadEditPlans(){
   db.collection("plans").get().then(s=>{
     let h = '<option value="">Select Plan</option>';
@@ -396,20 +827,33 @@ function loadEditPlans(){
   });
 }
 
-/* ADD USER */
+function loadPlanAmountPreview() {
+  const value = uplan.value;
+  if (!value) {
+    uamount.value = "";
+    return;
+  }
+  const parts = value.split("|");
+  uamount.value = parts[2] || "";
+}
+
+/* ADD USER LOGIC */
 function addUserWithPlan(){
   let name = uname.value.trim();
   let phone = uphone.value.trim();
- if(phone.length !== 10){
-  alert("Enter valid 10 digit phone number");
-  return;
-}
+  let password = upassword.value.trim() || "1234"; // secure: fallback to 1234
+  
+  if(phone.length !== 10){
+    alert("Enter valid 10 digit phone number");
+    return;
+  }
+  
   let plan = uplan.value;
   let amount = Number(uamount.value);
   let mode = umode.value;
 
   if(!name || !phone || !plan || !amount || !mode){
-    alert("Fill all fields");
+    alert("Please complete all user registration inputs");
     return;
   }
 
@@ -417,50 +861,58 @@ function addUserWithPlan(){
 
   userRef.get().then(doc=>{
     if(doc.exists){
-      alert("⚠️ This user already exists!");
+      alert("⚠️ A user with this phone number already exists!");
       return;
     }
 
     let [planName, days] = plan.split("|");
-
     let exp = new Date();
     exp.setDate(exp.getDate() + Number(days));
 
-    // 👤 USER SAVE
+    // Save user with set password
     userRef.set({
-      name,
-      phone,
+      name: name,
+      phone: phone,
+      password: password,
       currentPlan: planName,
       planStatus: "active",
       paymentStatus: "paid",
-      planExpiry: exp.toISOString()
-    });
-
-    // 💰 PAYMENT SAVE (history + report)
-    db.collection("payments").add({
-      phone: phone,
-      name: name,
-      plan: planName,
-      amount: amount,
-      mode: mode,
-      date: new Date().toISOString(),
       planExpiry: exp.toISOString(),
-      source: "Add User"
+      waterIntake: 0,
+      trainerNote: "",
+      progressPhotos: []
+    }).then(() => {
+      // Save Payment entry
+      return db.collection("payments").add({
+        phone: phone,
+        name: name,
+        plan: planName,
+        amount: amount,
+        mode: mode,
+        date: new Date().toISOString(),
+        planExpiry: exp.toISOString(),
+        source: "Add User"
+      });
+    }).then(() => {
+      alert("✅ User account registered successfully!");
+      
+      uname.value="";
+      uphone.value="";
+      upassword.value="";
+      uplan.value="";
+      uamount.value="";
+      umode.value="";
+
+      loadTodayCollection();
+      loadUsers();
+    }).catch(err => {
+      console.error(err);
+      alert("Registration failed due to Firestore error.");
     });
-
-    alert("✅ User added + Payment saved");
-
-    uname.value="";
-    uphone.value="";
-    uplan.value="";
-    uamount.value="";
-    umode.value="";
-
-    loadTodayCollection(); // refresh totals
   });
 }
 
-/* USERS */
+/* VIEW MEMBERS & CALCULATE STATUS */
 function loadUsers(){
   let key = searchUser.value.toLowerCase();
 
@@ -469,96 +921,107 @@ function loadUsers(){
 
     s.forEach(d=>{
       let u = d.data();
+      if(!u.phone || !u.name) return;
 
       if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key))
         return;
 
-      // 🔍 PLAN STATUS CALC
-      let statusText = "No Plan";
-      let color = "#666";
+      let statusText = "No Subscription";
+      let bg = "rgba(255,255,255,0.03)";
+      let color = "var(--text-muted)";
+      let border = "rgba(255,255,255,0.06)";
 
       if(u.currentPlan){
-       if(u.hold === true){
-  statusText = "ON HOLD (" + (u.remainingDays || 0) + " days left)";
-  color = "orange";
-}
-else
-if(u.planExpiry && !u.hold){
+        if(u.hold === true){
+          statusText = `ON HOLD (${u.remainingDays || 0} days remaining)`;
+          bg = "rgba(245, 158, 11, 0.12)";
+          color = "orange";
+          border = "rgba(245, 158, 11, 0.25)";
+        } else if(u.planExpiry){
           let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
 
           if(diff > 0){
-            statusText = u.currentPlan + " (" + diff + " days left)";
-            color = "green";
-          }else{
+            statusText = `${u.currentPlan} (${diff} days left)`;
+            bg = "rgba(16, 185, 129, 0.12)";
+            color = "var(--accent)";
+            border = "rgba(16, 185, 129, 0.25)";
+          } else {
             statusText = "EXPIRED";
-            color = "red";
+            bg = "rgba(239, 68, 68, 0.12)";
+            color = "var(--red)";
+            border = "rgba(239, 68, 68, 0.25)";
 
-            // 🔥 AUTO UPDATE EXPIRED STATUS (optional but useful)
             if(u.planStatus !== "expired"){
               db.collection("users").doc(u.phone).update({
                 planStatus: "expired"
               });
             }
           }
-        }else{
+        } else {
           statusText = u.currentPlan;
         }
       }
 
+      let avatar = u.photoURL ? u.photoURL : 'https://via.placeholder.com/64?text=Gym';
       h += `
-        <div style="border-bottom:1px solid #eee;padding:10px 0">
-          <b>${u.name}</b><br>
-          📞 ${u.phone}<br>
-
-          Plan: <b style="color:${color}">${statusText}</b><br>
-
-          <button class="ok"
-            onclick="openEditUser('${u.phone}','${u.name}','${u.currentPlan || ""}')">
-            Edit
-          </button>
-
-          <button class="del"
-            onclick="deleteUser('${u.phone}')">
-            Delete
-          </button>
-              <button onclick="holdUser('${u.phone}')" 
-      style="background:#f59e0b;color:#fff;margin-top:5px">
-      ⏸ Hold
-    </button>
-
-    <button onclick="resumeUser('${u.phone}')" 
-      style="background:#10b981;color:#fff;margin-top:5px">
-      ▶ Resume
-    </button>
-    <button onclick="openPTProfile('${u.phone}')" 
-style="background:#0ea5e9;color:#fff;margin-top:5px">
-🏋️ PT Profile
-</button>
-
+        <div style="border: 1px solid var(--border); border-radius:24px; padding:18px; display:flex; gap:16px; align-items:center; background:rgba(255,255,255,0.01);">
+          <img src="${avatar}" width="64" height="64" style="border-radius:18px; object-fit:cover; flex-shrink:0; border:1px solid rgba(255,255,255,0.1);">
+          <div style="flex:1">
+            <b style="font-size:1.15rem;">${u.name}</b><br>
+            <span style="font-size:0.85rem; color:var(--text-muted);"><i class="fa fa-phone"></i> ${u.phone}</span><br>
+            <span class="badge-status" style="background:${bg}; color:${color}; border-color:${border}; margin-top:6px;">${statusText}</span>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px; min-width:140px;">
+            <button class="ok small" onclick="openEditUser('${u.phone}','${u.name}','${u.currentPlan || ""}')"><i class="fa fa-edit"></i> Edit</button>
+            <button class="del small" onclick="deleteUser('${u.phone}')"><i class="fa fa-trash"></i> Delete</button>
+            <button onclick="holdUser('${u.phone}')" style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.3); color:orange; font-size:0.8rem; margin-top:0;" class="small">⏸ Hold</button>
+            <button onclick="resumeUser('${u.phone}')" style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.3); color:var(--accent); font-size:0.8rem; margin-top:0;" class="small">▶ Resume</button>
+            <button onclick="openPTProfile('${u.phone}')" style="background:rgba(14,165,233,0.08); border:1px solid rgba(14,165,233,0.3); color:#0ea5e9; font-size:0.8rem; margin-top:0;" class="small">🏋️ PT Profile</button>
+          </div>
         </div>
       `;
     });
 
-    usersList.innerHTML = h || "No users";
+    usersList.innerHTML = h || '<p class="small">No users matching search.</p>';
   });
 }
 
-
 function openEditUser(phone,name,plan){
-  showTab("editUser", document.querySelector(".nav button:nth-child(3)"));
+  showTab("editUser", null); // hide standard highlights
 
   e_old_phone.value = phone;
   e_name.value = name;
   e_phone.value = phone;
 
+  // Retrieve the existing password
+  db.collection("users").doc(phone).get().then(doc => {
+    if(doc.exists){
+      e_password.value = doc.data().password || "1234";
+    } else {
+      e_password.value = "1234";
+    }
+  });
+
   loadEditPlans();
 }
 
 function deleteUser(phone){
-  if(!confirm("Delete user?")) return;
-  db.collection("users").doc(phone).delete();
-  db.collection("attendance").where("phone","==",phone).get().then(s=>{
-    s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+  if(!confirm("Are you absolutely sure you want to delete this user and all related transaction/attendance history?")) return;
+
+  db.collection("users").doc(phone).delete().then(() => {
+    db.collection("attendance").where("phone","==",phone).get().then(s=>{
+      s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+    });
+    db.collection("payments").where("phone","==",phone).get().then(s=>{
+      s.forEach(d=>db.collection("payments").doc(d.id).delete());
+    });
+    db.collection("bookings").where("phone","==",phone).get().then(s=>{
+      s.forEach(d=>db.collection("bookings").doc(d.id).delete());
+    });
+    db.collection("workouts").doc(phone).delete();
+    
+    alert("✅ User profile and history successfully purged.");
+    loadUsers();
   });
 }
 
@@ -568,32 +1031,69 @@ function loadRequests(){
     let h="";
     s.forEach(d=>{
       let u=d.data();
-      if(u.planStatus==="pending"){
+      if(u.planStatus === "pending_approval"){
+        let badgeColor = "var(--primary)";
+        let badgeBg = "rgba(59, 130, 246, 0.12)";
+        let badgeBorder = "rgba(59, 130, 246, 0.3)";
+        if(u.paymentMode === "Cash") {
+          badgeColor = "orange";
+          badgeBg = "rgba(245, 158, 11, 0.12)";
+          badgeBorder = "rgba(245, 158, 11, 0.3)";
+        }
+        
         h+=`
-          <p>
-            <b>${u.name}</b><br>
-            Plan: ${u.requestedPlan}<br>
-            ₹${u.requestedPrice}
-            <button class="ok" onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays})">
-              Approve
-            </button>
-          </p><hr>`;
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:18px; border-radius:22px; margin-bottom:14px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;">
+            <div>
+              <b style="font-size:1.1rem; color:#fff;">${u.name}</b> (${u.phone})<br>
+              <span class="small">Plan: <b>${u.requestedPlan || "Starter"}</b> (₹${u.requestedPrice || 0})</span><br>
+              <span class="badge-status" style="background:${badgeBg}; color:${badgeColor}; border-color:${badgeBorder}; margin-top:6px; font-size:0.75rem;">
+                <i class="fa fa-credit-card"></i> ${u.paymentMode || "UPI"} Payment - ${u.paymentStatus === 'paid_pending_approval' ? 'Paid Online' : 'Pending Desk Payment'}
+              </span>
+            </div>
+            <button class="ok small" onclick="approvePlan('${u.phone}','${u.requestedPlan}',${u.requestedDays},${u.requestedPrice},'${u.paymentMode}')"><i class="fa fa-circle-check"></i> Approve & Activate</button>
+          </div>`;
       }
     });
-    reqList.innerHTML=h||"No requests";
+    reqList.innerHTML=h||'<p class="small" style="text-align:center; padding: 20px; color:var(--text-muted);">No pending membership approval requests.</p>';
   });
 }
 
-function approvePlan(phone,plan,days){
-  let exp=new Date(); exp.setDate(exp.getDate()+Number(days));
-  db.collection("users").doc(phone).update({
-    currentPlan:plan,
-    planStatus:"active",
-    paymentStatus:"paid",
-    planExpiry:exp.toISOString(),
-    requestedPlan:"",
-    requestedDays:"",
-    requestedPrice:""
+function approvePlan(phone,plan,days,price,mode){
+  if (!confirm("Are you sure you want to approve and activate this membership?")) return;
+  
+  let exp=new Date(); 
+  exp.setDate(exp.getDate()+Number(days));
+  
+  db.collection("users").doc(phone).get().then(doc => {
+    if (!doc.exists) return;
+    let name = doc.data().name || "Member";
+    
+    db.collection("users").doc(phone).update({
+      currentPlan: plan,
+      planStatus: "active",
+      paymentStatus: "paid",
+      planExpiry: exp.toISOString(),
+      requestedPlan: "",
+      requestedDays: "",
+      requestedPrice: "",
+      paymentMode: mode || "UPI"
+    }).then(() => {
+      // Create payment log so it registers in today's cash/bank collection
+      return db.collection("payments").add({
+        phone: phone,
+        name: name,
+        plan: plan,
+        amount: Number(price),
+        mode: mode || "UPI",
+        date: new Date().toISOString(),
+        planExpiry: exp.toISOString(),
+        source: "Signup Approval"
+      });
+    }).then(() => {
+      alert("✅ Membership successfully approved and activated!");
+      loadTodayCollection();
+      loadUsers();
+    });
   });
 }
 
@@ -603,23 +1103,34 @@ function loadPlans(){
     let h="";
     s.forEach(d=>{
       let p=d.data();
-      h+=`${p.name} – ${p.days} days – ₹${p.price}<button class="del" onclick="deletePlan('${d.id}')">Delete</button><hr>`;
+      h+=`
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px 18px; border-radius:16px; display:flex; justify-content:space-between; align-items:center;">
+          <span><b>${p.name}</b> – ${p.days} Days – ₹${p.price}</span>
+          <button class="del small" onclick="deletePlan('${d.id}')">Delete</button>
+        </div>`;
     });
-    plansList.innerHTML=h||"No plans";
+    plansList.innerHTML=h||'<p class="small">No configured plan packages yet.</p>';
   });
 }
+
 function addPlan(){
+  if (!pname.value || !pdays.value || !pprice.value) {
+    alert("Enter complete plan credentials");
+    return;
+  }
   db.collection("plans").add({
     name:pname.value,
     days:+pdays.value,
     price:+pprice.value
+  }).then(() => {
+    pname.value=pdays.value=pprice.value="";
+    alert("Plan added.");
   });
-  pname.value=pdays.value=pprice.value="";
 }
- const DELETE_PASSWORD = "1234"; // 👈 ninte password ivide set cheyyu
- function deletePlan(id){
-  let pass = prompt("Enter password to delete");
 
+const DELETE_PASSWORD = "1234";
+function deletePlan(id){
+  let pass = prompt("Enter administrator password to delete this pricing package:");
   if(pass === DELETE_PASSWORD){
     db.collection("plans").doc(id).delete();
     alert("✅ Plan deleted");
@@ -627,40 +1138,46 @@ function addPlan(){
     alert("❌ Wrong password");
   }
 }
+
+/* SAVE MEMBER UPDATES */
 function updateUser(){
   let oldPhone = e_old_phone.value;
   let newPhone = e_phone.value.trim();
   let name = e_name.value.trim();
+  let password = e_password.value.trim() || "1234";
 
   if(!name || !newPhone){
     alert("Name & Phone required");
     return;
   }
 
-  let data = { name, phone:newPhone };
+  let data = { name: name, phone: newPhone, password: password };
 
   if(oldPhone === newPhone){
     db.collection("users").doc(oldPhone).update(data).then(()=>{
-      alert("User updated ✅");
-      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+      alert("User updated successfully ✅");
+      showTab("users", document.querySelectorAll(".nav button")[1]);
     });
     return;
   }
 
   db.collection("users").doc(oldPhone).get().then(doc=>{
     if(!doc.exists) return;
+    let oldData = doc.data() || {};
+    let merged = Object.assign({}, oldData, data);
 
-    db.collection("users").doc(newPhone).set(data).then(()=>{
-      db.collection("users").doc(oldPhone).delete();
-      alert("User updated (phone changed) ✅");
-      showTab("users", document.querySelector(".nav button:nth-child(3)"));
+    db.collection("users").doc(newPhone).set(merged).then(()=>{
+      return db.collection("users").doc(oldPhone).delete();
+    }).then(() => {
+      alert("User updated (Phone code transfer completed) ✅");
+      showTab("users", document.querySelectorAll(".nav button")[1]);
     });
   });
 }
 
-/* ATTENDANCE (WITH NAME) */
+/* ATTENDANCE SHEET GRID */
 async function loadAttendanceSheet(){
-  const monthInput = filterMonth.value; // 2026-01
+  const monthInput = filterMonth.value;
   if(!monthInput) return;
 
   const [year, month] = monthInput.split("-");
@@ -686,57 +1203,61 @@ async function loadAttendanceSheet(){
 
   usersSnap.forEach(u=>{
     let user = u.data();
+    if (!user.name || !user.phone) return;
     table += `<tr>
-      <td>${user.name}</td>
+      <td style="font-weight:600; text-align:left;">${user.name}</td>
       <td>${user.phone}</td>`;
 
     for(let d=1; d<=daysInMonth; d++){
       let day = String(d).padStart(2,"0");
       let date = `${year}-${month}-${day}`;
       let key = user.phone+"_"+date;
-      table += `<td>${attendanceMap[key] ? "✅" : ""}</td>`;
+      table += `<td style="font-size:1.1rem;">${attendanceMap[key] ? "✅" : ""}</td>`;
     }
     table += `</tr>`;
   });
 
   document.getElementById("attTable").innerHTML = table;
 }
-const GYM_PHONE = "7994302567"; // 👈 gym owner number
 
+/* WHATSAPP OUTREACH */
 function loadWhatsAppList(){
   db.collection("users").get().then(snap=>{
     let h="";
 
     snap.forEach(d=>{
       let u = d.data();
+      if(!u.phone || !u.name) return;
 
       let expired = false;
       if(u.planExpiry){
         expired = new Date(u.planExpiry) < new Date();
       }
 
-     if((expired && !u.hold) || u.paymentStatus === "pending"){
-        let msg = `Hi ${u.name}, your gym plan is expired or payment pending. Please renew to continue attendance.`;
+      if((expired && !u.hold) || u.paymentStatus === "pending"){
+        let msg = `Hi ${u.name}, your Fitnesstime Gym membership has expired or has pending dues. Please contact us or visit the desk to renew. Thank you!`;
         let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
 
         h += `
-          <div style="border-bottom:1px solid #eee;padding:8px 0">
-            <b>${u.name}</b><br>
-            📞 ${u.phone}<br>
-            Status: ${expired ? "EXPIRED" : "PAYMENT PENDING"}
-            <button onclick="window.open('${url}','_blank')">
-              📲 Send WhatsApp
-            </button>
+          <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:16px; border-radius:18px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <b>${u.name}</b> (${u.phone})<br>
+              <span class="badge-status" style="background:rgba(239,68,68,0.1); color:var(--red); border-color:rgba(239,68,68,0.25); margin-top:4px;">
+                ${expired ? "EXPIRED" : "DUES PENDING"}
+              </span>
+            </div>
+            <button class="ok small" onclick="window.open('${url}','_blank')"><i class="fab fa-whatsapp"></i> Send Reminder</button>
           </div>
         `;
       }
     });
 
-    waList.innerHTML = h || "No expired users 🎉";
+    waList.innerHTML = h || '<p class="small">No expired memberships today! 🎉</p>';
   });
 }
+
 function sendBulkWhatsApp(){
-  if(!confirm("Send WhatsApp to ALL expired / pending members?")) return;
+  if(!confirm("Send broadcast reminder links one-by-one to ALL expired / pending members?")) return;
 
   db.collection("users").get().then(snap=>{
     let delay = 0;
@@ -744,37 +1265,35 @@ function sendBulkWhatsApp(){
 
     snap.forEach(d=>{
       let u = d.data();
+      if(!u.phone || !u.name) return;
 
       let expired = false;
       if(u.planExpiry){
         expired = new Date(u.planExpiry) < new Date();
       }
 
-      if(expired || u.paymentStatus === "pending"){
+      if((expired && !u.hold) || u.paymentStatus === "pending"){
         count++;
-
-        let msg =
-`Hi ${u.name},
-Your gym plan is expired or payment pending.
-Please renew to continue attendance.`;
-
+        let msg = `Hi ${u.name}, your Fitnesstime Gym membership has expired or has pending dues. Please visit the desk to renew. Thank you!`;
         let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
 
         setTimeout(()=>{
           window.open(url, "_blank");
         }, delay);
 
-        delay += 1200; // 🔥 1.2 second gap
+        delay += 1500; // 1.5 second intervals
       }
     });
 
     if(count === 0){
-      alert("🎉 No expired members");
+      alert("No expired members found.");
     }else{
-      alert("WhatsApp will open one by one.\nPlease DO NOT close tabs.");
+      alert("WhatsApp Web client links will open sequentially. Please let them load completely.");
     }
   });
 }
+
+/* RECORD PAYMENT DIRECT */
 function addPayment(){
   let phone = pay_phone.value.trim();
   let amount = Number(pay_amount.value);
@@ -782,7 +1301,7 @@ function addPayment(){
   let planVal = pay_plan.value;
 
   if(!phone || !amount || !mode || !planVal){
-    alert("Fill all fields");
+    alert("Complete all fields to record payment.");
     return;
   }
 
@@ -790,102 +1309,88 @@ function addPayment(){
 
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists){
-      alert("User not found");
+      alert("Member account not found.");
       return;
     }
 
     let u = doc.data();
-
-    // 🔴 already active undo check
     if(u.planExpiry && new Date(u.planExpiry) >= new Date()){
-      alert("⚠️ User already has ACTIVE plan");
-      return;
+      if(!confirm("⚠️ Client already has an ACTIVE subscription. Do you still want to overwrite?")) return;
     }
 
     let exp = new Date();
     exp.setDate(exp.getDate() + Number(days));
 
-    // PAYMENT SAVE
+    // Save to payments report
     db.collection("payments").add({
       phone: phone,
       name: u.name,
       plan: planName,
       amount: amount,
-      mode: mode, // Cash / Bank
+      mode: mode,
       date: new Date().toISOString(),
       planExpiry: exp.toISOString()
+    }).then(() => {
+      // Update plan credentials
+      return db.collection("users").doc(phone).update({
+        currentPlan: planName,
+        planStatus: "active",
+        paymentStatus: "paid",
+        planExpiry: exp.toISOString()
+      });
+    }).then(() => {
+      alert("✅ Payment logged successfully!");
+      pay_phone.value="";
+      pay_name.value="";
+      pay_amount.value="";
+      pay_mode.value="";
+      pay_plan.value="";
+
+      loadTodayCollection();
     });
-
-    // PLAN ACTIVATE
-    db.collection("users").doc(phone).update({
-      currentPlan: planName,
-      planStatus: "active",
-      paymentStatus: "paid",
-      planExpiry: exp.toISOString()
-    });
-
-    alert("✅ Payment saved & Plan activated");
-
-    pay_phone.value="";
-    pay_amount.value="";
-    pay_mode.value="";
-    pay_plan.value="";
-
-    loadTodayCollection(); // 🔥 total refresh
   });
 }
+
+/* SEARCH SUGGESTIONS */
 function searchUserByName(){
   let key = pay_name.value.toLowerCase();
+  if(!key) { nameSuggest.innerHTML = ""; return; }
 
   db.collection("users").get().then(snap=>{
     let h="";
-
     snap.forEach(d=>{
       let u = d.data();
-
-      if(!u.name.toLowerCase().includes(key)) return;
-
-      h += `
-        <div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')"
-        style="padding:6px;border-bottom:1px solid #eee;cursor:pointer">
-          ${u.name} (${u.phone})
-        </div>
-      `;
+      if(u.name && u.name.toLowerCase().includes(key)){
+        h += `<div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')">${u.name} (${u.phone})</div>`;
+      }
     });
-
     nameSuggest.innerHTML = h;
   });
 }
- function searchUserByPhone(){
+
+function searchUserByPhone(){
   let key = pay_phone.value;
+  if(!key) { phoneSuggest.innerHTML = ""; return; }
 
   db.collection("users").get().then(snap=>{
     let h="";
-
     snap.forEach(d=>{
       let u = d.data();
-
-      if(!u.phone.includes(key)) return;
-
-      h += `
-        <div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')"
-        style="padding:6px;border-bottom:1px solid #eee;cursor:pointer">
-          ${u.phone} (${u.name})
-        </div>
-      `;
+      if(u.phone && u.phone.includes(key)){
+        h += `<div onclick="selectUser('${u.name}','${u.phone}','${u.currentPlan || ""}')">${u.phone} (${u.name})</div>`;
+      }
     });
-
     phoneSuggest.innerHTML = h;
   });
 }
- function selectUser(name, phone, plan){
+
+function selectUser(name, phone, plan){
   pay_name.value = name;
   pay_phone.value = phone;
 
   nameSuggest.innerHTML = "";
   phoneSuggest.innerHTML = "";
 
-  // 👉 current plan auto select
   if(plan){
     for(let opt of pay_plan.options){
       if(opt.value.includes(plan)){
@@ -894,10 +1399,11 @@ function searchUserByName(){
     }
   }
 }
-function loadPaymentHistory(){
 
+/* DETAILED COLLECTIONS REPORT */
+function loadPaymentHistory(){
   let phone = ph_phone.value.trim();
- let name = ph_name.value.toLowerCase();
+  let name = ph_name.value.toLowerCase();
   let from = fromDate.value;
   let to = toDate.value;
 
@@ -912,12 +1418,13 @@ function loadPaymentHistory(){
       if(from && payDate < from) return;
       if(to && payDate > to) return;
       if(phone && p.phone !== phone) return;
-if(name && !p.name.toLowerCase().includes(name)) return;
+      if(name && p.name && !p.name.toLowerCase().includes(name)) return;
+      
       total += p.amount;
       if(p.mode === "Cash") cash += p.amount;
       else bank += p.amount;
 
-      // ✅ WhatsApp Receipt Message
+      // WhatsApp Invoice Receipt
       let receiptMsg =
 `FITNESSTIME PRO GYM
 Karikakulam, Karaparamb
@@ -939,14 +1446,17 @@ Thank you 💪`;
       let waUrl = `https://wa.me/91${p.phone}?text=${encodeURIComponent(receiptMsg)}`;
 
       h+=`
-        <div style="border-bottom:1px solid #eee;padding:10px 0">
-          <b>${p.name}</b> (${p.phone})<br>
-          💰 ₹${p.amount} – ${p.mode}<br>
-          📅 ${new Date(p.date).toLocaleString()}<br>
-          Plan: ${p.plan}<br>
-<button onclick="downloadReceiptImage('${d.id}')">📸 Image</button>
-          <button onclick="window.open('${waUrl}','_blank')">📲 WhatsApp</button>
-          <button class="del" onclick="deletePayment('${d.id}')">🗑 Delete</button>
+        <div style="border-bottom:1px solid rgba(255,255,255,0.05); padding:16px 0; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <b style="font-size:1.05rem; color:#fff;">${p.name}</b> (${p.phone})<br>
+            <span class="small">Plan: ${p.plan} • ₹${p.amount} (${p.mode})</span><br>
+            <span class="small" style="font-size:0.75rem;">Date: ${new Date(p.date).toLocaleString()}</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <button class="small" onclick="downloadReceiptImage('${d.id}')">📸 Image</button>
+            <button class="small ok" onclick="window.open('${waUrl}','_blank')"><i class="fab fa-whatsapp"></i> Receipt</button>
+            <button class="small del" onclick="deletePayment('${d.id}')">🗑 Delete</button>
+          </div>
         </div>
       `;
     });
@@ -955,118 +1465,107 @@ Thank you 💪`;
     cashAmt.innerText = cash;
     bankAmt.innerText = bank;
 
-    payList.innerHTML = h || "No data";
+    payList.innerHTML = h || '<p class="small">No collection matches found.</p>';
   });
 }
 
-function deleteUser(phone){
-  if(!confirm("Delete user?")) return;
-
-  db.collection("users").doc(phone).delete();
-
-  db.collection("attendance").where("phone","==",phone).get().then(s=>{
-    s.forEach(d=>db.collection("attendance").doc(d.id).delete());
+function deletePayment(id){
+  if(!confirm("Are you sure you want to delete this payment log?")) return;
+  db.collection("payments").doc(id).delete().then(() => {
+    alert("Log deleted.");
+    loadPaymentHistory();
+    loadTodayCollection();
   });
-
-  db.collection("payments").where("phone","==",phone).get().then(s=>{
-    s.forEach(d=>db.collection("payments").doc(d.id).delete());
-  });
-
-  alert("✅ User + All data deleted");
 }
+
 function downloadReceiptImage(id){
   db.collection("payments").doc(id).get().then(doc=>{
     if(!doc.exists){
-      alert("Receipt not found");
+      alert("Receipt transaction missing.");
       return;
     }
 
     let p = doc.data();
-
     let div = document.createElement("div");
     div.innerHTML = `
-      <div id="receiptBox" style="padding:20px;font-family:Arial;background:#fff">
-        <h2 style="text-align:center">FITNESSTIME PRO GYM</h2>
-        <hr>
-        Name: ${p.name}<br>
-        Phone: ${p.phone}<br>
-        Plan: ${p.plan}<br>
-        Amount: ₹${p.amount}<br>
-        Mode: ${p.mode}<br>
-        Date: ${new Date(p.date).toLocaleString()}<br>
-        <hr>
-        Thank You 💪
+      <div id="receiptBox" style="padding:30px; font-family: 'Outfit', sans-serif; background:#080914; color:#fff; width:340px; border-radius:18px; border:2px solid rgba(59,130,246,0.3);">
+        <h2 style="text-align:center; margin:0 0 4px; font-family:'Playfair Display'; font-size:1.6rem; color:#fff;">FITNESSTIME</h2>
+        <p style="text-align:center; font-size:0.8rem; color:#94a3b8; margin:0 0 16px;">Premium Gym Receipt</p>
+        <hr style="border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;">
+        <p style="margin:6px 0;"><b>Name:</b> ${p.name}</p>
+        <p style="margin:6px 0;"><b>Phone:</b> ${p.phone}</p>
+        <p style="margin:6px 0;"><b>Plan:</b> ${p.plan}</p>
+        <p style="margin:6px 0;"><b>Amount Paid:</b> ₹${p.amount}</p>
+        <p style="margin:6px 0;"><b>Mode:</b> ${p.mode}</p>
+        <p style="margin:6px 0;"><b>Date:</b> ${new Date(p.date).toLocaleString()}</p>
+        <hr style="border-top:1px solid rgba(255,255,255,0.1); margin:12px 0;">
+        <p style="text-align:center; font-weight:700; margin:0; color:#10b981;">THANK YOU 💪</p>
       </div>
     `;
     document.body.appendChild(div);
 
-    html2canvas(document.getElementById("receiptBox")).then(canvas=>{
+    html2canvas(document.getElementById("receiptBox"), {backgroundColor: null}).then(canvas=>{
       let link = document.createElement("a");
-      link.download = "receipt.png";
+      link.download = `receipt_${p.name}.png`;
       link.href = canvas.toDataURL();
       link.click();
-
       div.remove();
     });
   });
 }
+
 function adminLogout(){
   localStorage.removeItem("admin");
   window.location.href = "admin-login.html";
 }
- // ================= HOLD USER =================
+
+/* FREEZE SUBSCRIPTION (ON HOLD) */
 function holdUser(phone){
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists) return;
-
     let u = doc.data();
 
     if(!u.planExpiry){
-      alert("No active plan");
+      alert("This member does not have an active plan to put on hold.");
       return;
     }
-
     if(u.hold === true){
-      alert("User already on HOLD");
+      alert("Membership is already frozen.");
       return;
     }
 
-    let remaining = Math.ceil(
-      (new Date(u.planExpiry) - new Date()) / 86400000
-    );
-
+    let remaining = Math.ceil((new Date(u.planExpiry) - new Date()) / 86400000);
     if(remaining <= 0){
-      alert("Plan already expired");
+      alert("This membership has already expired.");
       return;
     }
 
     db.collection("users").doc(phone).update({
-      hold:true,
-      holdDate:new Date().toISOString(),
-      remainingDays:remaining,
-      planExpiry:null   // ⭐ freeze expiry
+      hold: true,
+      holdDate: new Date().toISOString(),
+      remainingDays: remaining,
+      planExpiry: null
+    }).then(() => {
+      alert("⏸ Membership successfully frozen and set on HOLD.");
+      loadUsers();
     });
-
-    alert("⏸ User put on HOLD");
   });
 }
 
-// ================= RESUME USER =================
+/* UNFREEZE SUBSCRIPTION */
 function resumeUser(phone){
   db.collection("users").doc(phone).get().then(doc=>{
     if(!doc.exists) return;
-
     let u = doc.data();
 
     if(!u.hold){
-      alert("User not on HOLD");
+      alert("Membership is not currently frozen.");
       return;
     }
 
     let days = u.remainingDays || 0;
-
     if(days <= 0){
-      alert("No remaining days");
+      alert("No remaining frozen days logged.");
       return;
     }
 
@@ -1074,17 +1573,17 @@ function resumeUser(phone){
     newExp.setDate(newExp.getDate() + days);
 
     db.collection("users").doc(phone).update({
-      hold:false,
-      remainingDays:0,
-      planExpiry:newExp.toISOString()
+      hold: false,
+      remainingDays: 0,
+      planExpiry: newExp.toISOString()
+    }).then(() => {
+      alert("▶ Membership successfully resumed! Plan has been extended.");
+      loadUsers();
     });
-
-    alert("▶ User resumed. Plan continued");
   });
 }
 
-
- function loadPaymentPlans(){
+function loadPaymentPlans(){
   db.collection("plans").get().then(snap=>{
     let h = '<option value="">Select Plan</option>';
     snap.forEach(d=>{
@@ -1096,6 +1595,87 @@ function resumeUser(phone){
     document.getElementById("pay_plan").innerHTML = h;
   });
 }
+
+/* CLASS BOOKINGS */
+function addBooking(){
+  let phone = bookingPhone.value.trim();
+  let service = bookingService.value;
+  let date = bookingDate.value;
+  let time = bookingTime.value;
+
+  if(!phone || !service || !date || !time){
+    alert("Please fill booking parameters completely.");
+    return;
+  }
+
+  db.collection("bookings").add({
+    phone: phone,
+    service: service,
+    date: date,
+    time: time,
+    createdAt: new Date().toISOString()
+  }).then(()=>{
+    alert("Booking saved successfully!");
+    bookingPhone.value = bookingService.value = bookingDate.value = bookingTime.value = "";
+    loadBookings();
+  });
+}
+
+function loadBookings(){
+  db.collection("bookings").orderBy("createdAt","desc").get().then(snap=>{
+    let h = "";
+    snap.forEach(d=>{
+      let b = d.data();
+      h += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px; border-radius:16px;">
+          <b>${b.service}</b><br>
+          <span class="small">Client: ${b.phone} • Scheduled: ${b.date} ${b.time}</span>
+        </div>`;
+    });
+    bookingList.innerHTML = h || '<p class="small">No active bookings scheduled.</p>';
+  });
+}
+
+/* PROMO OFFERS */
+function saveOfferBanner(){
+  let title = bannerTitle.value.trim();
+  let subtitle = bannerSubtitle.value.trim();
+  let image = bannerUrl.value.trim();
+  
+  if(!title || !subtitle){
+    alert("Title and description are required.");
+    return;
+  }
+  
+  db.collection("offers").add({
+    title: title,
+    subtitle: subtitle,
+    image: image,
+    createdAt: new Date().toISOString()
+  }).then(()=>{
+    bannerTitle.value = bannerSubtitle.value = bannerUrl.value = "";
+    loadOfferBanners();
+    alert("Promotional offer published!");
+  });
+}
+
+function loadOfferBanners(){
+  db.collection("offers").orderBy("createdAt","desc").get().then(snap=>{
+    let h = "";
+    snap.forEach(d=>{
+      let o = d.data();
+      h += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:16px; border-radius:18px;">
+          <b>${o.title}</b><br>
+          <span class="small">${o.subtitle}</span><br>
+          ${o.image ? `<img src="${o.image}" style="max-width:100%; border-radius:14px; margin-top:10px;">` : ''}
+        </div>`;
+    });
+    offerList.innerHTML = h || '<p class="small">No active offer banners today.</p>';
+  });
+}
+
+/* TODAY DUELS COLLECTIONS TOTAL */
 function loadTodayCollection(){
   let today = new Date().toISOString().substr(0,10);
 
@@ -1109,8 +1689,8 @@ function loadTodayCollection(){
       let dte = p.date.substr(0,10);
       if(dte !== today) return;
 
-      if(p.mode==="Cash") cash+=p.amount;
-      else bank+=p.amount;
+      if(p.mode === "Cash") cash += p.amount;
+      else bank += p.amount;
     });
 
     todayCash.innerText=cash;
@@ -1118,116 +1698,120 @@ function loadTodayCollection(){
     todayTotal.innerText=cash+bank;
   });
 }
+
 function showInside(id){
-  // hide settings
+  ["attendance","payments","paymentHistory","qr","whatsapp","bookings","offerBanners","requests","paymentConfigBox"].forEach(x=>{
+    let el = document.getElementById(x);
+    if(el) el.classList.add("hidden");
+  });
   document.getElementById("settings").classList.add("hidden");
-
-  // show selected
   document.getElementById(id).classList.remove("hidden");
-}
-let currentPTUser = null;
 
-/* OPEN PT PROFILE */
+  if(id === "bookings") loadBookings();
+  if(id === "offerBanners") loadOfferBanners();
+  if(id === "paymentConfigBox") loadPaymentConfig();
+}
+
+/* PT PROFILE EDITOR */
+let currentPTUser = null;
 function openPTProfile(phone){
   currentPTUser = phone;
- showTab("ptProfile", document.querySelector(".nav button.active"));
+  showTab("ptProfile", null);
 
   db.collection("users").doc(phone).get().then(d=>{
     let u=d.data()||{};
-    pt_name.innerText=u.name||"-";
-    pt_phone.innerText=u.phone||"-";
-    pt_goal.innerText=u.goal||"-";
-    pt_diet.value=u.dietPlan||"";
-    pt_note.value=u.trainerNote||"";
-    pt_weekly.value=u.weeklySessions||0;
-   pt_img.src = u.photoURL || "https://via.placeholder.com/80";
+    pt_name.innerText = u.name||"-";
+    pt_phone.innerText = u.phone||"-";
+    pt_goal.innerText = u.goal||"-";
+    pt_diet.value = u.dietPlan||"";
+    pt_note.value = u.trainerNote||"";
+    pt_weekly.value = u.weeklySessions||0;
+    pt_img.src = u.photoURL || "https://via.placeholder.com/80?text=Gym";
   });
 
   db.collection("workouts").doc(phone).get().then(d=>{
     if(d.exists){
-      pt_workout.value=d.data().text||"";
-      pt_status.innerHTML="Workout assigned ✔️";
+      pt_workout.value = d.data().text||"";
+      pt_status.innerHTML = '<span style="color:var(--accent);"><i class="fa fa-circle-check"></i> Workout program loaded</span>';
     }else{
-      pt_status.innerHTML="No workout";
+      pt_workout.value = "";
+      pt_status.innerHTML = '<span style="color:var(--text-muted);">No workout program assigned yet</span>';
     }
   });
 }
 
-/* SAVE PT PROFILE */
 function savePTProfile(){
   if(!currentPTUser) return;
 
   db.collection("users").doc(currentPTUser).update({
-    dietPlan:pt_diet.value,
-    trainerNote:pt_note.value,
-    weeklySessions:+pt_weekly.value
+    dietPlan: pt_diet.value,
+    trainerNote: pt_note.value,
+    weeklySessions: +pt_weekly.value
+  }).then(() => {
+    alert("PT Profile saved successfully ✅");
   });
-
-  alert("PT Profile saved ✅");
 }
 
-/* SAVE WORKOUT */
 function saveWorkout(){
   if(!currentPTUser) return;
 
   db.collection("workouts").doc(currentPTUser).set({
-    text:pt_workout.value,
-    updated:new Date().toISOString()
+    text: pt_workout.value,
+    updated: new Date().toISOString()
+  }).then(() => {
+    alert("Workout program updated and assigned 💪");
+    openPTProfile(currentPTUser);
   });
-
-  alert("Workout assigned 💪");
 }
 
-/* INIT */
+function loadPaymentConfig() {
+  db.collection("settings").doc("paymentConfig").get().then(doc => {
+    if (doc.exists) {
+      let data = doc.data();
+      cfg_upi.value = data.upiId || "";
+      cfg_holder.value = data.holderName || "";
+      cfg_bank.value = data.bankName || "";
+      cfg_acc.value = data.accountNo || "";
+      cfg_ifsc.value = data.ifsc || "";
+    }
+  });
+}
+
+function savePaymentConfig() {
+  let upi = cfg_upi.value.trim();
+  let holder = cfg_holder.value.trim();
+  let bank = cfg_bank.value.trim();
+  let acc = cfg_acc.value.trim();
+  let ifsc = cfg_ifsc.value.trim();
+  
+  if (!upi || !holder) {
+    alert("UPI ID and Account Holder Name are required.");
+    return;
+  }
+  
+  db.collection("settings").doc("paymentConfig").set({
+    upiId: upi,
+    holderName: holder,
+    bankName: bank,
+    accountNo: acc,
+    ifsc: ifsc
+  }).then(() => {
+    alert("Payment details successfully updated! ✅");
+    showInside('settings');
+  }).catch(err => {
+    alert("Firestore error saving configuration.");
+  });
+}
+
+/* INITIAL SETUP ON LAUNCH */
 loadPlanOptions();
 loadUsers();
 loadRequests();
 loadPlans();
 loadWhatsAppList();
 loadPaymentPlans();
- loadTodayCollection();
+loadTodayCollection();
+loadPaymentConfig();
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

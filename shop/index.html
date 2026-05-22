@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Simple Shop — Demo</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <h1>Shop Demo</h1>
+      <nav>
+        <button id="viewProductsBtn" class="nav-btn active">Products</button>
+        <button id="viewCartBtn" class="nav-btn">Cart (<span id="cartCount">0</span>)</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    <section id="productsSection">
+      <div id="productsGrid" class="grid">Loading products...</div>
+    </section>
+
+    <section id="cartSection" class="hidden">
+      <h2>Your Cart</h2>
+      <div id="cartList">Cart is empty</div>
+      <div id="cartTotal" class="cart-total">Total: ₹0</div>
+      <button id="checkoutBtn" class="primary" disabled>Checkout</button>
+    </section>
+
+    <section id="checkoutSection" class="hidden">
+      <h2>Checkout</h2>
+      <form id="checkoutForm">
+        <label>Name<input id="custName" required></label>
+        <label>Phone<input id="custPhone" required></label>
+        <label>Address<textarea id="custAddress" required></textarea></label>
+        <div class="cart-total">Payable: ₹<span id="payable">0</span></div>
+        <button type="submit" class="primary">Place Order (Demo)</button>
+        <button type="button" id="backToCart">Back</button>
+      </form>
+    </section>
+
+    <section id="thanksSection" class="hidden">
+      <h2>Thank you!</h2>
+      <p>Your order has been placed (demo). Order ID: <span id="orderId"></span></p>
+      <button id="shopMore">Shop more</button>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">Simple Shop Demo • No real payments • Extend as needed</div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

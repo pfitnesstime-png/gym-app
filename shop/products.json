@@ -1,0 +1,6 @@
+[
+  {"id":"p1","name":"Protein Powder (1kg)","price":2499,"desc":"Whey protein for muscle recovery."},
+  {"id":"p2","name":"Gym Towel","price":299,"desc":"Soft quick-dry towel."},
+  {"id":"p3","name":"Resistance Band Set","price":799,"desc":"3 levels of resistance."},
+  {"id":"p4","name":"Water Bottle","price":399,"desc":"1L stainless steel bottle."}
+]
