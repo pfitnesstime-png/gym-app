@@ -539,7 +539,7 @@ td {
     </select>
     
     <button class="ok" onclick="updateUser()"><i class="fa fa-save"></i> Save Profile Modifications</button>
-    <button class="del" onclick="showTab('users',document.querySelectorAll('.nav button')[1])" style="margin-top:10px;">
+    <button class="del" onclick="showTab('users',document.querySelectorAll('.nav button')[2])" style="margin-top:10px;">
       Cancel
     </button>
   </div>
@@ -639,7 +639,7 @@ td {
       <button class="btn-primary" onclick="showInside('whatsapp')" style="margin-top:0;"><i class="fa fa-whatsapp"></i> WhatsApp Alerts</button>
       <button class="btn-primary" onclick="showInside('bookings')" style="margin-top:0;"><i class="fa fa-clock"></i> Bookings Management</button>
       <button class="btn-primary" onclick="showInside('offerBanners')" style="margin-top:0;"><i class="fa fa-images"></i> Offer Banners</button>
-      <button class="btn-primary" onclick="showInside('requests')" style="margin-top:0;"><i class="fa fa-inbox"></i> Signup Requests</button>
+      <button class="btn-primary" onclick="showTab('requests', document.querySelectorAll('.nav button')[1])" style="margin-top:0;"><i class="fa fa-inbox"></i> Signup Requests</button>
       <button class="btn-primary" onclick="showInside('paymentConfigBox')" style="margin-top:0;"><i class="fa fa-gears"></i> Payment Settings</button>
       <button class="btn-primary" onclick="showInside('broadcasterBox')" style="margin-top:0;"><i class="fa fa-bullhorn"></i> Global Broadcaster</button>
     </div>
@@ -833,6 +833,11 @@ td {
 <div class="nav">
   <button class="active" onclick="showTab('addUser',this)">
     <i class="fa fa-user-plus"></i>Add
+  </button>
+
+  <button onclick="showTab('requests',this)" style="position: relative;">
+    <i class="fa fa-inbox"></i>Requests
+    <span id="requestsCountBadge" class="hidden" style="position: absolute; top: 6px; right: 18%; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-weight: 800;">0</span>
   </button>
 
   <button onclick="showTab('users',this)">
@@ -1117,9 +1122,11 @@ function deleteUser(phone){
 function loadRequests(){
   db.collection("users").onSnapshot(s=>{
     let h="";
+    let pendingCount = 0;
     s.forEach(d=>{
       let u=d.data();
       if(u.planStatus === "pending_approval"){
+        pendingCount++;
         let badgeColor = "var(--primary)";
         let badgeBg = "rgba(59, 130, 246, 0.12)";
         let badgeBorder = "rgba(59, 130, 246, 0.3)";
@@ -1142,6 +1149,18 @@ function loadRequests(){
           </div>`;
       }
     });
+    
+    // Update badge counter
+    const badge = document.getElementById("requestsCountBadge");
+    if(badge) {
+      if(pendingCount > 0) {
+        badge.innerText = pendingCount;
+        badge.classList.remove("hidden");
+      } else {
+        badge.classList.add("hidden");
+      }
+    }
+    
     reqList.innerHTML=h||'<p class="small" style="text-align:center; padding: 20px; color:var(--text-muted);">No pending membership approval requests.</p>';
   });
 }
@@ -1244,7 +1263,7 @@ function updateUser(){
   if(oldPhone === newPhone){
     db.collection("users").doc(oldPhone).update(data).then(()=>{
       alert("User updated successfully ✅");
-      showTab("users", document.querySelectorAll(".nav button")[1]);
+      showTab("users", document.querySelectorAll(".nav button")[2]);
     });
     return;
   }
@@ -1258,7 +1277,7 @@ function updateUser(){
       return db.collection("users").doc(oldPhone).delete();
     }).then(() => {
       alert("User updated (Phone code transfer completed) ✅");
-      showTab("users", document.querySelectorAll(".nav button")[1]);
+      showTab("users", document.querySelectorAll(".nav button")[2]);
     });
   });
 }

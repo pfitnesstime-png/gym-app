@@ -487,7 +487,7 @@ button.btn-primary:hover {
     
     <input id="r_amount" type="text" placeholder="Plan amount preview" readonly style="margin-top: 14px; font-weight: 700; color: var(--emerald);">
     
-    <button class="btn-primary" onclick="initiateRegisterOTP()"><i class="fa fa-user-plus"></i> Complete & Verify OTP</button>
+    <button class="btn-primary" onclick="initiateRegisterOTP()"><i class="fa fa-user-plus"></i> Complete Registration</button>
     
     <div class="divider">or continue with</div>
     
@@ -711,15 +711,9 @@ function initiateLoginOTP() {
       let userData = doc.data();
       let savedPass = userData.password || "1234";
       if (password === savedPass) {
-        // Trigger OTP verification
-        otpFlowType = 'login';
-        otpTargetPhone = phone;
-        otpPhoneText.innerText = `+91 ${phone.slice(0,5)} ${phone.slice(5)}`;
-        otpOverlay.classList.remove("hidden");
-        // Reset OTP input boxes
-        document.querySelectorAll('.otp-box').forEach(b => b.value = '');
-        document.querySelectorAll('.otp-box')[0].focus();
-        startOtpCountdown();
+        // Direct login without OTP!
+        localStorage.setItem("gymPhone", phone);
+        window.location.replace("app.html");
       } else {
         alert("Incorrect password!");
       }
@@ -758,14 +752,8 @@ function initiateRegisterOTP() {
       return;
     }
 
-    // Trigger OTP
-    otpFlowType = 'register';
-    otpTargetPhone = phone;
-    otpPhoneText.innerText = `+91 ${phone.slice(0,5)} ${phone.slice(5)}`;
-    otpOverlay.classList.remove("hidden");
-    document.querySelectorAll('.otp-box').forEach(b => b.value = '');
-    document.querySelectorAll('.otp-box')[0].focus();
-    startOtpCountdown();
+    // Direct registration without OTP!
+    completeUserRegistration();
   });
 }
 
