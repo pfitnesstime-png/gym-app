@@ -642,6 +642,8 @@ td {
       <button class="btn-primary" onclick="showTab('requests', document.querySelectorAll('.nav button')[1])" style="margin-top:0;"><i class="fa fa-inbox"></i> Signup Requests</button>
       <button class="btn-primary" onclick="showInside('paymentConfigBox')" style="margin-top:0;"><i class="fa fa-gears"></i> Payment Settings</button>
       <button class="btn-primary" onclick="showInside('broadcasterBox')" style="margin-top:0;"><i class="fa fa-bullhorn"></i> Global Broadcaster</button>
+      <button class="btn-primary" onclick="showInside('trainersConfigBox')" style="margin-top:0;"><i class="fa fa-dumbbell"></i> Manage Trainers</button>
+      <button class="btn-primary" onclick="showInside('adminConfigBox')" style="margin-top:0;"><i class="fa fa-key"></i> Admin Credentials</button>
     </div>
   </div>
 
@@ -666,6 +668,45 @@ td {
     <input id="cfg_ifsc" placeholder="e.g. FDRL0001234">
     
     <button class="ok" onclick="savePaymentConfig()" style="margin-top: 24px;"><i class="fa fa-save"></i> Save Payment Config</button>
+    <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 10px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
+  </div>
+
+  <!-- TRAINERS MANAGEMENT BOX -->
+  <div class="card hidden" id="trainersConfigBox">
+    <h3>🏋️ Manage Gym Trainers</h3>
+    <p class="small" style="margin-bottom: 20px;">Register new fitness coaches and staff trainers to grant them dashboard and session QR access.</p>
+    
+    <div class="form-grid">
+      <input id="trn_name" placeholder="Trainer's Full Name (e.g. Coach Rohan)">
+      <input id="trn_username" placeholder="Login Username (e.g. rohan_fit)">
+    </div>
+    <div class="form-grid">
+      <input id="trn_password" type="password" placeholder="Set Login Password">
+      <input id="trn_phone" placeholder="Trainer's Phone Number (Optional)">
+    </div>
+    
+    <button class="btn-primary" onclick="addNewTrainer()"><i class="fa fa-plus"></i> Register New Trainer</button>
+    
+    <hr>
+    
+    <h4>Registered Staff Trainers</h4>
+    <div id="adminTrainersList" style="display:flex; flex-direction:column; gap:12px; margin-top: 14px;">Loading trainers...</div>
+    
+    <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 20px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
+  </div>
+
+  <!-- ADMIN CREDENTIALS CONFIGURATION -->
+  <div class="card hidden" id="adminConfigBox">
+    <h3>🔐 Admin Credentials Settings</h3>
+    <p class="small" style="margin-bottom: 20px;">Update the secure username and password used to authorize access into the Admin Console.</p>
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted);">Admin Username:</label>
+    <input id="cfg_admin_user" placeholder="default: admin">
+    
+    <label style="font-weight: 600; font-size: 0.9rem; color: var(--text-muted); margin-top: 14px; display: block;">New Password:</label>
+    <input id="cfg_admin_pass" type="password" placeholder="default: 1234">
+    
+    <button class="ok" onclick="saveAdminConfig()" style="margin-top: 24px;"><i class="fa fa-save"></i> Update Credentials</button>
     <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 10px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
   </div>
 
@@ -870,7 +911,7 @@ function showTab(id, btn){
   [
     "addUser","requests","users","editUser","plans",
     "attendance","qr","whatsapp","payments",
-    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox"
+    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox"
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
@@ -1808,7 +1849,7 @@ function loadTodayCollection(){
 }
 
 function showInside(id){
-  ["attendance","payments","paymentHistory","qr","whatsapp","bookings","offerBanners","requests","paymentConfigBox","broadcasterBox"].forEach(x=>{
+  ["attendance","payments","paymentHistory","qr","whatsapp","bookings","offerBanners","requests","paymentConfigBox","broadcasterBox","trainersConfigBox","adminConfigBox"].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
   });
@@ -1819,6 +1860,8 @@ function showInside(id){
   if(id === "offerBanners") loadOfferBanners();
   if(id === "paymentConfigBox") loadPaymentConfig();
   if(id === "broadcasterBox") loadActiveAnnouncements();
+  if(id === "trainersConfigBox") loadAdminTrainers();
+  if(id === "adminConfigBox") loadAdminConfig();
 }
 
 /* PT PROFILE EDITOR */
@@ -2061,6 +2104,92 @@ function deleteAnnouncement(id) {
   });
 }
 
+/* DYNAMIC TRAINERS MANAGEMENT HANDLERS */
+function addNewTrainer() {
+  let name = trn_name.value.trim();
+  let username = trn_username.value.trim().toLowerCase();
+  let password = trn_password.value.trim();
+  let phoneVal = trn_phone.value.trim();
+  
+  if (!name || !username || !password) {
+    alert("Full Name, Username and Password are required to register a trainer.");
+    return;
+  }
+  
+  db.collection("trainers").doc(username).set({
+    name: name,
+    username: username,
+    password: password,
+    phone: phoneVal,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    alert("🏋️ Trainer successfully registered!");
+    trn_name.value = trn_username.value = trn_password.value = trn_phone.value = "";
+    loadAdminTrainers();
+  });
+}
+
+function loadAdminTrainers() {
+  db.collection("trainers").orderBy("createdAt", "desc").get().then(snap => {
+    let h = '';
+    snap.forEach(doc => {
+      let t = doc.data();
+      h += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px 18px; border-radius:16px; display:flex; justify-content:space-between; align-items:center;">
+          <div>
+            <b style="font-size:1.05rem; color:#fff;">${t.name}</b> (${t.username})<br>
+            <span class="small">Password: ${t.password} ${t.phone ? '• Phone: ' + t.phone : ''}</span>
+          </div>
+          <button class="del small" onclick="deleteTrainer('${t.username}')" style="margin-top:0;">🗑 Delete</button>
+        </div>
+      `;
+    });
+    document.getElementById("adminTrainersList").innerHTML = h || '<p class="small">No staff trainers registered yet.</p>';
+  });
+}
+
+function deleteTrainer(username) {
+  if (!confirm(`Are you sure you want to retract access for trainer ${username}?`)) return;
+  db.collection("trainers").doc(username).delete().then(() => {
+    alert("Trainer profile successfully deleted.");
+    loadAdminTrainers();
+  });
+}
+
+/* DYNAMIC ADMIN PASSWORD HANDLERS */
+function loadAdminConfig() {
+  db.collection("settings").doc("adminCredentials").get().then(doc => {
+    if (doc.exists) {
+      let data = doc.data();
+      cfg_admin_user.value = data.username || "admin";
+      cfg_admin_pass.value = data.password || "1234";
+    } else {
+      cfg_admin_user.value = "admin";
+      cfg_admin_pass.value = "1234";
+    }
+  });
+}
+
+function saveAdminConfig() {
+  let user = cfg_admin_user.value.trim();
+  let pass = cfg_admin_pass.value.trim();
+  
+  if (!user || !pass) {
+    alert("Both Admin Username and Password are required.");
+    return;
+  }
+  
+  db.collection("settings").doc("adminCredentials").set({
+    username: user,
+    password: pass
+  }).then(() => {
+    alert("🔐 Admin login credentials successfully updated! ✅");
+    showInside('settings');
+  }).catch(err => {
+    alert("Firestore error saving credentials.");
+  });
+}
+
 /* INITIAL SETUP ON LAUNCH */
 loadPlanOptions();
 loadUsers();
@@ -2071,6 +2200,8 @@ loadPaymentPlans();
 loadTodayCollection();
 loadPaymentConfig();
 loadDashboardMetrics();
+loadAdminTrainers();
+loadAdminConfig();
 </script>
 </body>
 </html>
