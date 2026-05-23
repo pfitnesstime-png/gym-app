@@ -689,9 +689,28 @@ footer {
       <option value="ml">മലയാളം</option>
       <option value="hi">हिन्दी</option>
     </select>
+    <button id="btnInstallApp" onclick="triggerPWAInstall()" style="display:none; background:linear-gradient(135deg,#059669,#047857); color:white; border:none; padding:10px 18px; border-radius:14px; font-weight:700; font-size:0.85rem; cursor:pointer; box-shadow:0 4px 12px rgba(5,150,105,0.3); width:auto; margin:0; transition:all 0.3s ease;">
+      📲 Install App
+    </button>
     <a href="login.html" class="nav-btn" id="btnMemberPortal">Member Portal</a>
   </div>
 </header>
+
+<!-- PWA Install Instructions Modal -->
+<div id="pwaModal" style="display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(8,9,20,0.92); backdrop-filter:blur(20px); z-index:9998; align-items:center; justify-content:center; padding:24px;">
+  <div style="background:rgba(17,20,38,0.95); border:1px solid rgba(148,163,184,0.15); border-radius:28px; padding:32px; max-width:400px; width:100%; text-align:center;">
+    <div style="font-size:3rem; margin-bottom:12px;">📲</div>
+    <h3 style="font-family:'Playfair Display',serif; color:#fff; margin:0 0 8px; font-size:1.5rem;">Install Fitnesstime App</h3>
+    <p style="color:#94a3b8; font-size:0.9rem; line-height:1.6; margin-bottom:20px;">Phone home screen-ൽ app install ചെയ്യൂ:</p>
+    <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); border-radius:16px; padding:16px; text-align:left; margin-bottom:20px;">
+      <p style="color:#f1f5f9; font-size:0.88rem; margin:0 0 10px;"><b>Android Chrome:</b></p>
+      <p style="color:#94a3b8; font-size:0.85rem; margin:0 0 6px;">1️⃣ Browser-ൽ menu (⋮) click ചെയ്യൂ</p>
+      <p style="color:#94a3b8; font-size:0.85rem; margin:0 0 6px;">2️⃣ <b>"Add to Home screen"</b> select ചെയ്യൂ</p>
+      <p style="color:#94a3b8; font-size:0.85rem; margin:0;">3️⃣ <b>"Add"</b> click ചെയ്യൂ ✅</p>
+    </div>
+    <button onclick="document.getElementById('pwaModal').style.display='none'" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8); color:#fff; border:none; padding:14px 24px; border-radius:14px; font-weight:700; cursor:pointer; width:100%; margin:0;">OK, Got it!</button>
+  </div>
+</div>
 
 <!-- HERO SECTION -->
 <div class="hero-section">
@@ -1038,26 +1057,53 @@ if ('serviceWorker' in navigator) {
 let deferredPrompt;
 const banner = document.getElementById('pwaInstallBanner');
 const installBtn = document.getElementById('pwaInstallBtn');
+const navInstallBtn = document.getElementById('btnInstallApp');
+
+// Show nav install button always on mobile
+function isMobile() {
+  return /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+}
+
+// Always show install button on mobile after 2 seconds
+if (isMobile()) {
+  setTimeout(() => {
+    if (navInstallBtn) navInstallBtn.style.display = 'block';
+  }, 2000);
+}
 
 window.addEventListener('beforeinstallprompt', (e) => {
   e.preventDefault();
   deferredPrompt = e;
-  banner.style.display = 'flex';
+  // Show both banner and nav button
+  if (banner) banner.style.display = 'flex';
+  if (navInstallBtn) navInstallBtn.style.display = 'block';
 });
+
+// Trigger install - works on desktop with prompt, shows instructions on mobile
+function triggerPWAInstall() {
+  if (deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      if (banner) banner.style.display = 'none';
+      if (navInstallBtn) navInstallBtn.style.display = 'none';
+    });
+  } else {
+    // Show manual instructions modal for mobile
+    const modal = document.getElementById('pwaModal');
+    if (modal) modal.style.display = 'flex';
+  }
+}
 
 if (installBtn) {
   installBtn.addEventListener('click', async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      deferredPrompt = null;
-      banner.style.display = 'none';
-    }
+    triggerPWAInstall();
   });
 }
 
 window.addEventListener('appinstalled', () => {
-  banner.style.display = 'none';
+  if (banner) banner.style.display = 'none';
+  if (navInstallBtn) navInstallBtn.style.display = 'none';
   deferredPrompt = null;
 });
 </script>
