@@ -1,51 +1,235 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Login – Fitnesstime Console</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
-body{
-  font-family:Arial;
-  background:#f1f5f9;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  height:100vh
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --surface-soft: rgba(26, 30, 56, 0.85);
+  --text: #f1f5f9;
+  --muted: #94a3b8;
+  --accent: #3b82f6; /* Blue Admin accent */
+  --gold: #d97706; /* Luxury Gold */
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
 }
-.box{
-  background:#fff;
-  padding:20px;
-  width:300px;
-  border-radius:10px;
-  box-shadow:0 0 10px #ccc
+
+* {
+  box-sizing: border-box;
 }
-input,button{
-  width:100%;
-  padding:10px;
-  margin-top:10px
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
 }
-button{
-  background:#2563eb;
-  color:#fff;
-  border:none
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 55%, #02040a 100%);
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.page {
+  width: min(450px, 100%);
+}
+
+.hero {
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.hero strong {
+  display: block;
+  font-family: 'Playfair Display', serif;
+  font-size: 2.2rem;
+  color: #fff;
+  letter-spacing: -0.01em;
+  margin-bottom: 6px;
+  background: linear-gradient(135deg, #ffffff 40%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero span {
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border: 1px solid var(--border);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+
+.card-top {
+  padding: 32px 32px 0;
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.15), transparent 70%);
+  text-align: center;
+}
+
+.card-top h1 {
+  margin: 0;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  letter-spacing: -0.01em;
+}
+
+.card-top p {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.card-body {
+  padding: 32px;
+}
+
+.form-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-size: .85rem;
+  color: var(--muted);
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+input {
+  width: 100%;
+  padding: 14px 18px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  font-size: 0.95rem;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.35);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+button {
+  width: 100%;
+  padding: 15px;
+  border: none;
+  border-radius: 16px;
+  background: linear-gradient(135deg, var(--accent) 0%, #1e40af 100%);
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(59, 130, 246, 0.35);
+}
+
+.tip {
+  margin-top: 20px;
+  padding: 14px;
+  border-radius: 16px;
+  background: rgba(217, 119, 6, 0.08);
+  border: 1px solid rgba(217, 119, 6, 0.2);
+  color: #fef3c7;
+  font-size: 0.85rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+.tip strong {
+  color: var(--gold);
+}
+
+.footer {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.footer a {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.footer a:hover {
+  color: #fff;
 }
 </style>
 </head>
-
 <body>
 
-<div class="box">
-  <h3>🔐 Admin Login</h3>
-  <input id="username" placeholder="Username">
-  <input id="password" type="password" placeholder="Password">
-  <button onclick="loginAdmin()">Login</button>
+<div class="page">
+  <div class="hero">
+    <strong>Fitnesstime Admin</strong>
+    <span>Secure gate for console controllers.</span>
+  </div>
+  
+  <div class="card">
+    <div class="card-top">
+      <h1>Console Access</h1>
+      <p>Log in using admin credentials to unlock panels.</p>
+    </div>
+    
+    <div class="card-body">
+      <div class="form-group">
+        <label for="username">Admin Username</label>
+        <input id="username" placeholder="admin" autocomplete="username">
+      </div>
+      
+      <div class="form-group">
+        <label for="password">Password</label>
+        <input id="password" type="password" placeholder="••••" autocomplete="current-password">
+      </div>
+      
+      <button onclick="loginAdmin()">Authorize Access</button>
+      
+      <div class="tip">
+        💡 Demo Access Details:&nbsp;<strong>admin</strong> / <strong>1234</strong>
+      </div>
+      
+      <div class="footer">
+        <a href="index.html"><i class="fa fa-arrow-left"></i> Return to Homepage</a>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
 function loginAdmin(){
-  let u = document.getElementById("username").value.trim();
-  let p = document.getElementById("password").value.trim();
+  const u = document.getElementById("username").value.trim();
+  const p = document.getElementById("password").value.trim();
 
   const ADMIN_USER = "admin";
   const ADMIN_PASS = "1234";
@@ -53,8 +237,8 @@ function loginAdmin(){
   if(u === ADMIN_USER && p === ADMIN_PASS){
     localStorage.setItem("admin","true");
     window.location.href = "admin.html";
-  }else{
-    alert("❌ Wrong username or password");
+  } else {
+    alert("❌ Incorrect username or password!");
   }
 }
 </script>
