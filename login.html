@@ -446,12 +446,7 @@ button.btn-primary:hover {
     
     <button class="btn-primary" onclick="initiateLoginOTP()"><i class="fa fa-right-to-bracket"></i> Login securely</button>
     
-    <div class="divider">or continue with</div>
-    
-    <button class="google-btn" onclick="openGooglePrompt('login')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
-      Sign in with Google
-    </button>
+
     
     <span class="toggle-link" onclick="showRegister()">New member? Register here</span>
     <span class="toggle-link" onclick="showForgot()" style="margin-top: 10px;">Forgot password?</span>
@@ -495,12 +490,7 @@ button.btn-primary:hover {
     
     <button class="btn-primary" onclick="initiateRegisterOTP()"><i class="fa fa-user-plus"></i> Complete Registration</button>
     
-    <div class="divider">or continue with</div>
-    
-    <button class="google-btn" onclick="openGooglePrompt('register')">
-      <img src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
-      Sign up with Google
-    </button>
+
     
     <span class="toggle-link" onclick="showLogin()">Already registered? Login here</span>
   </div>
@@ -541,40 +531,7 @@ button.btn-primary:hover {
   </div>
 </div>
 
-<!-- GOOGLE PROMPT OVERLAY -->
-<div class="google-overlay hidden" id="googleOverlay">
-  <div class="google-card" id="googlePromptBox">
-    <img class="google-logo" src="https://upload.wikimedia.org/wikipedia/commons/c/c1/Google_%22G%22_logo.svg" alt="Google">
-    <h4>Sign in with Google</h4>
-    <p>to continue to <b>Fitnesstime Gym</b></p>
-    
-    <div class="google-accounts">
-      <!-- Account 1 -->
-      <div class="google-account-item" onclick="selectGoogleAccount('Zuhair K.', 'zuhair@gmail.com')">
-        <img src="https://via.placeholder.com/32" alt="Avatar">
-        <div>
-          <h5>Zuhair K.</h5>
-          <p>zuhair@gmail.com</p>
-        </div>
-      </div>
-      <!-- Account 2 -->
-      <div class="google-account-item" onclick="selectGoogleAccount('Guest Account', 'guest.fit@gmail.com')">
-        <img src="https://via.placeholder.com/32" alt="Avatar">
-        <div>
-          <h5>Guest Account</h5>
-          <p>guest.fit@gmail.com</p>
-        </div>
-      </div>
-    </div>
-    <button onclick="closeGooglePrompt()" style="background: none; border: 1px solid #dadce0; color: #5f6368; font-size: 0.85rem; padding: 10px 18px; margin-top: 0; width: auto;">Cancel</button>
-  </div>
 
-  <div class="google-card hidden" id="googleSpinnerBox">
-    <div class="spinner"></div>
-    <h4 style="margin-top: 20px;">Signing in...</h4>
-    <p style="margin-bottom: 0;">Unlocking secure credentials</p>
-  </div>
-</div>
 
 <!-- Firebase & Compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -831,64 +788,7 @@ function completeUserRegistration() {
   });
 }
 
-/* GOOGLE LOGIN MOCK SIMULATOR */
-function openGooglePrompt(type) {
-  otpFlowType = type;
-  googlePromptBox.classList.remove("hidden");
-  googleSpinnerBox.classList.add("hidden");
-  googleOverlay.classList.remove("hidden");
-}
 
-function closeGooglePrompt() {
-  googleOverlay.classList.add("hidden");
-}
-
-function selectGoogleAccount(name, email) {
-  googlePromptBox.classList.add("hidden");
-  googleSpinnerBox.classList.remove("hidden");
-
-  // Spin for 1.8 seconds to look fully professional, then auto log in
-  setTimeout(() => {
-    closeGooglePrompt();
-    let phoneNum = '9876543210'; // Demo seed number for Google OAuth
-    
-    db.collection("users").doc(phoneNum).get().then(doc => {
-      if (doc.exists) {
-        localStorage.setItem("gymPhone", phoneNum);
-        window.location.replace("app.html");
-      } else {
-        // Register Google User dynamically
-        db.collection("users").doc(phoneNum).set({
-          name: name,
-          phone: phoneNum,
-          password: "google_oauth_protected",
-          email: email,
-          age: "25",
-          gender: "Male",
-          weight: "72",
-          height: "175",
-          goal: "Maintain fitness",
-          currentPlan: "Basic",
-          planStatus: "active",
-          planExpiry: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // pre-activate 30 days basic plan for smooth google oauth testing!
-          paymentStatus: "paid",
-          requestedPlan: "Basic",
-          requestedDays: 30,
-          requestedPrice: 1500,
-          paymentMode: "UPI",
-          progressPhotos: [],
-          waterIntake: 3,
-          trainerNote: "Google User logged in successfully",
-          rewardPoints: 100,
-          bookingRequests: []
-        }).then(() => {
-          localStorage.setItem("gymPhone", phoneNum);
-          window.location.replace("app.html");
-        });
-      }
-    });
-  }, 1800);
-}
 
 /* PASSWORD RESET ASSISTANCE EXPLICIT LOG */
 function forgotPassword() {
