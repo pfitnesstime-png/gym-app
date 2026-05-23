@@ -3,14 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>Fitnesstime – Member Dashboard</title>
+<title>Fitnesstime – Member App</title>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
 <style>
 :root {
   --bg: #080914;
@@ -21,15 +21,32 @@
   --primary: #3b82f6;
   --primary-glow: rgba(59, 130, 246, 0.45);
   --primary-soft: rgba(59, 130, 246, 0.12);
-  --accent: #10b981;
+  --accent: #10b981; /* Default Active Emerald */
+  --gold: #d97706; /* Luxury Gold */
   --border: rgba(148, 163, 184, 0.12);
   --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
   --red: #ef4444;
 }
 
+/* Light / Gold Luxury Theme */
+.theme-gold {
+  --bg: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-hover: rgba(241, 245, 249, 0.9);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --primary: #b45309; /* Luxury Dark Gold */
+  --primary-glow: rgba(217, 119, 6, 0.3);
+  --primary-soft: rgba(217, 119, 6, 0.08);
+  --accent: #b45309;
+  --border: rgba(15, 23, 42, 0.08);
+  --shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
 * {
   box-sizing: border-box;
   font-family: 'Outfit', sans-serif;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
 }
 
 body {
@@ -41,18 +58,26 @@ body {
   overflow-x: hidden;
 }
 
+body.theme-gold {
+  background: radial-gradient(circle at top, #fef3c7 0%, #f8fafc 60%, #f1f5f9 100%);
+}
+
 header {
   background: rgba(8, 9, 20, 0.5);
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 20px 24px;
+  padding: 16px 24px;
   border-bottom: 1px solid var(--border);
   backdrop-filter: blur(15px);
   -webkit-backdrop-filter: blur(15px);
   position: sticky;
   top: 0;
   z-index: 900;
+}
+
+body.theme-gold header {
+  background: rgba(255, 255, 255, 0.6);
 }
 
 header h3 {
@@ -66,21 +91,31 @@ header h3 {
   -webkit-text-fill-color: transparent;
 }
 
+body.theme-gold header h3 {
+  background: linear-gradient(135deg, #0f172a 40%, #b45309 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 header .actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-header i {
+header i, header select {
   color: var(--text-muted);
-  font-size: 1.15rem;
+  font-size: 1.05rem;
   transition: all 0.3s ease;
-  padding: 10px;
+  padding: 8px;
   border-radius: 50%;
   background: var(--primary-soft);
   cursor: pointer;
   border: 1px solid rgba(59, 130, 246, 0.15);
+}
+
+body.theme-gold header i {
+  border-color: rgba(217, 119, 6, 0.15);
 }
 
 header i:hover {
@@ -90,29 +125,48 @@ header i:hover {
   transform: scale(1.05);
 }
 
+/* Announcement Banner */
+.announcement-bar {
+  background: linear-gradient(90deg, #b45309 0%, #d97706 100%);
+  color: white;
+  padding: 10px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-align: center;
+  position: relative;
+  z-index: 850;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* Card System */
 .card {
   background: var(--surface);
   backdrop-filter: blur(25px);
   -webkit-backdrop-filter: blur(25px);
-  margin: 24px 16px;
-  padding: 26px;
+  margin: 20px 16px;
+  padding: 24px;
   border-radius: 28px;
   box-shadow: var(--shadow);
   border: 1px solid var(--border);
-  transition: border-color 0.3s ease, transform 0.3s ease;
-}
-
-.card:hover {
-  border-color: rgba(59, 130, 246, 0.25);
 }
 
 .card h3 {
   margin-top: 0;
   margin-bottom: 20px;
   font-family: 'Playfair Display', serif;
-  font-size: 1.7rem;
+  font-size: 1.6rem;
   font-weight: 800;
   background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+body.theme-gold .card h3 {
+  background: linear-gradient(135deg, #0f172a 40%, #b45309 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -124,20 +178,23 @@ header i:hover {
 input, textarea, select {
   width: 100%;
   padding: 14px 18px;
-  margin-bottom: 16px;
+  margin-bottom: 14px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: 16px;
-  color: #fff;
+  color: var(--text);
   font-size: 0.95rem;
-  transition: all 0.3s ease;
+  outline: none;
+}
+
+body.theme-gold input, body.theme-gold textarea, body.theme-gold select {
+  background: rgba(15, 23, 42, 0.02);
+  border-color: rgba(15, 23, 42, 0.08);
 }
 
 input:focus, textarea:focus, select:focus {
-  outline: none;
   border-color: var(--primary);
   box-shadow: 0 0 15px var(--primary-glow);
-  background: rgba(255, 255, 255, 0.06);
 }
 
 button {
@@ -146,26 +203,21 @@ button {
   margin-top: 10px;
   border: none;
   border-radius: 18px;
-  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
   color: #fff;
   font-weight: 700;
-  font-size: 1rem;
-  letter-spacing: 0.5px;
+  font-size: 0.95rem;
   cursor: pointer;
-  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.25);
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
   transition: transform 0.2s ease, box-shadow 0.2s ease, filter 0.2s ease;
 }
 
 button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(59, 130, 246, 0.4);
-  filter: brightness(1.1);
+  transform: translateY(-1px);
+  box-shadow: 0 12px 25px var(--primary-glow);
 }
 
-button:active {
-  transform: translateY(0);
-}
-
+/* Nav Bar */
 .nav {
   position: fixed;
   bottom: 20px;
@@ -181,6 +233,11 @@ button:active {
   border: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1000;
   padding: 6px;
+}
+
+body.theme-gold .nav {
+  background: rgba(255, 255, 255, 0.9);
+  border-color: rgba(15, 23, 42, 0.06);
 }
 
 .nav button {
@@ -202,346 +259,400 @@ button:active {
 }
 
 .nav button:hover {
-  transform: none;
-  color: #fff;
-  box-shadow: none;
   background: rgba(255, 255, 255, 0.03);
+  color: var(--text);
+  transform: none;
 }
 
 .nav button i {
-  font-size: 19px;
-  margin-bottom: 6px;
-  transition: transform 0.3s ease;
+  font-size: 18px;
+  margin-bottom: 4px;
 }
 
-.nav button:hover i {
-  transform: translateY(-2px);
-}
-
-.activeNav {
+.nav button.activeNav {
   color: #fff !important;
-  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
-  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, rgba(59, 130, 246, 0.05) 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.25) !important;
 }
 
-#reader {
-  width: 100%;
-  border-radius: 22px;
-  overflow: hidden;
-  min-height: 320px;
-  background: #000;
-  border: 2px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 0 35px rgba(0, 0, 0, 0.7);
-}
-
-img {
-  border-radius: 18px;
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 16px;
-}
-
-.small {
-  color: var(--text-muted);
-  font-size: 14px;
-  line-height: 1.6;
+body.theme-gold .nav button.activeNav {
+  color: var(--primary) !important;
+  background: rgba(217, 119, 6, 0.08) !important;
+  border: 1px solid rgba(217, 119, 6, 0.2) !important;
 }
 
 .progress-row {
   display: flex;
-  gap: 16px;
-  flex-wrap: wrap;
-  margin-top: 14px;
-  margin-bottom: 14px;
+  justify-content: space-between;
+  margin: 14px 0;
+  font-size: 0.9rem;
 }
 
 .progress-row div {
-  flex: 1;
-  min-width: 120px;
-  background: rgba(255, 255, 255, 0.03);
-  padding: 16px;
-  border-radius: 20px;
   text-align: center;
-  border: 1px solid var(--border);
-  transition: background 0.3s, transform 0.3s;
+  flex: 1;
+  border-right: 1px solid var(--border);
 }
 
-.progress-row div:hover {
-  background: rgba(255, 255, 255, 0.06);
-  transform: translateY(-2px);
+.progress-row div:last-child {
+  border-right: none;
 }
 
-.progress-row div b {
+.progress-row b {
   display: block;
-  font-size: 0.85rem;
-  text-transform: uppercase;
+  font-size: 0.75rem;
   color: var(--text-muted);
-  margin-bottom: 6px;
-  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
-.progress-row div span {
+.progress-row span {
   font-size: 1.15rem;
   font-weight: 800;
-  color: #fff;
-}
-
-/* Water Tracker Design */
-.water-tracker-container {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  padding: 24px;
-  border-radius: 24px;
-  text-align: center;
-}
-
-.btn-water {
-  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
-  box-shadow: 0 8px 20px rgba(6, 182, 212, 0.25);
-  font-size: 0.95rem;
-  margin-top: 12px;
-}
-
-.btn-water:hover {
-  box-shadow: 0 12px 24px rgba(6, 182, 212, 0.4);
-}
-
-.btn-water-reset {
-  background: rgba(239, 68, 68, 0.08);
-  border: 1px solid rgba(239, 68, 68, 0.2);
-  color: #f87171;
-  font-weight: 600;
-  box-shadow: none;
-  font-size: 0.8rem;
-  padding: 8px 12px;
-  width: auto;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-top: 12px;
-}
-
-.btn-water-reset:hover {
-  background: rgba(239, 68, 68, 0.18);
-  box-shadow: none;
-}
-
-.water-glass-svg {
-  filter: drop-shadow(0 10px 20px rgba(59, 130, 246, 0.15));
-}
-
-.stat-box {
-  background: rgba(255, 255, 255, 0.02);
-  border: 1px solid var(--border);
-  padding: 20px;
-  border-radius: 24px;
-  text-align: center;
-  height: 100%;
-}
-
-.stat-box .title {
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.5px;
-  margin-bottom: 6px;
-}
-
-.stat-box .val {
-  font-size: 1.8rem;
-  font-weight: 800;
-  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-}
-
-.photo-item {
-  position: relative;
-  width: calc(33.333% - 10px);
-  margin-bottom: 10px;
-  border-radius: 16px;
-  overflow: hidden;
-  border: 1px solid var(--border);
-}
-
-.photo-item img {
-  width: 100%;
-  height: 110px;
-  object-fit: cover;
-  display: block;
+  color: var(--text);
 }
 
 hr {
   border: none;
   border-top: 1px solid var(--border);
-  margin: 24px 0;
+  margin: 20px 0;
 }
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
-}
-::-webkit-scrollbar-track {
-  background: #080914;
-}
-::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,0.1);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(255,255,255,0.2);
-}
-
-/* Secure Locked Payment overlay */
-#paymentLockOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
-  z-index: 10000;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  overflow-y: auto;
-  padding: 20px;
-  box-sizing: border-box;
-}
-
-.lock-card {
-  background: rgba(17, 20, 38, 0.9);
-  backdrop-filter: blur(25px);
-  -webkit-backdrop-filter: blur(25px);
-  padding: 30px;
-  border-radius: 28px;
-  max-width: 480px;
-  width: 100%;
+/* Water glass SVG */
+.water-tracker-container {
+  background: rgba(255,255,255,0.01);
   border: 1px solid var(--border);
-  box-shadow: 0 50px 100px rgba(0,0,0,0.6);
+  padding: 16px;
+  border-radius: 20px;
   text-align: center;
 }
 
-.lock-card h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.8rem;
-  margin-top: 0;
+.btn-water {
+  background: linear-gradient(135deg, #06b6d4 0%, #3b82f6 100%);
+  margin-top: 8px;
+  font-size: 0.9rem;
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.btn-water-reset {
+  background: none;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.8rem;
+  padding: 8px;
+  margin-top: 6px;
+  border-radius: 12px;
+}
+
+/* Calories Progress Ring Container */
+.diet-tracker-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.ring-box {
+  background: rgba(255, 255, 255, 0.01);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 16px;
+  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.progress-ring-svg {
+  transform: rotate(-90deg);
+}
+
+.progress-ring-circle-bg {
+  fill: transparent;
+  stroke: rgba(255,255,255,0.03);
+}
+
+body.theme-gold .progress-ring-circle-bg {
+  stroke: rgba(15,23,42,0.03);
+}
+
+.progress-ring-circle {
+  fill: transparent;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 251.2;
+  transition: stroke-dashoffset 0.5s ease;
+  stroke-linecap: round;
+}
+
+.ring-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  margin-top: 10px;
+}
+
+.ring-text h4 {
+  margin: 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+}
+
+.ring-text p {
+  margin: 0;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+/* Weight progress dynamic chart */
+.chart-box {
+  background: rgba(255,255,255,0.01);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 14px;
+  margin-top: 16px;
+}
+
+/* Supplements store cards */
+.store-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.store-card {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.store-card:hover {
+  transform: translateY(-2px);
+  border-color: var(--primary);
+}
+
+.store-card h5 {
+  margin: 6px 0 2px;
+  font-size: 0.9rem;
+  color: #fff;
+}
+
+body.theme-gold .store-card h5 {
+  color: #0f172a;
+}
+
+.store-card p {
+  margin: 0 0 8px;
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.store-card .price {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--accent);
   margin-bottom: 10px;
+}
+
+.store-card button {
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  border-radius: 12px;
+  margin-top: 0;
+}
+
+/* Lead list cards */
+.lead-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.01);
+  border: 1px solid var(--border);
+  margin-bottom: 8px;
+}
+
+.lead-item.top3 {
+  border-color: rgba(217, 119, 6, 0.25);
+  background: linear-gradient(90deg, rgba(217,119,6,0.05) 0%, transparent 100%);
+}
+
+.lead-rank {
+  font-weight: 800;
+  font-size: 1.1rem;
+  width: 24px;
+}
+
+/* Grid columns & lists */
+.stat-box {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 14px 18px;
+  border-radius: 16px;
+}
+
+.stat-box .title {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.stat-box .val {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.countdown-bar {
+  background: rgba(239, 68, 68, 0.08);
+  border: 1px solid rgba(239, 68, 68, 0.2);
+  padding: 12px 18px;
+  border-radius: 16px;
+  color: #f87171;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 0.9rem;
+}
+
+.countdown-bar.success {
+  background: rgba(16, 185, 129, 0.08);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+/* Popups & Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(8, 9, 20, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+.modal-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 32px;
+  padding: 30px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+.modal-card h4 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  margin-top: 0;
+  margin-bottom: 16px;
   background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
 
-.payment-badge {
-  display: inline-block;
-  padding: 6px 14px;
-  border-radius: 12px;
-  font-size: 0.85rem;
-  font-weight: 800;
-  border: 1px solid;
-  margin-bottom: 20px;
-}
-
-.badge-pending {
-  background: rgba(245, 158, 11, 0.1);
-  color: orange;
-  border-color: rgba(245, 158, 11, 0.3);
-}
-
-.badge-unpaid {
-  background: rgba(239, 68, 68, 0.1);
-  color: #f87171;
-  border-color: rgba(239, 68, 68, 0.3);
-}
-
-.pay-mode-btn {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 14px;
-  border-radius: 16px;
-  font-weight: 700;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 100%;
-  border: none;
-  margin-top: 14px;
-}
-
-.btn-upi {
-  background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
-  box-shadow: 0 10px 20px rgba(2, 132, 199, 0.25);
-  color: white;
-}
-
-.btn-upi:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(2, 132, 199, 0.4);
-}
-
-.btn-cash {
-  background: linear-gradient(135deg, #059669 0%, #047857 100%);
-  box-shadow: 0 10px 20px rgba(5, 150, 105, 0.25);
-  color: white;
-}
-
-.btn-cash:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 30px rgba(5, 150, 105, 0.4);
-}
-
-.btn-sec {
-  background: rgba(255,255,255,0.03);
+/* Interactive Workout Checklist */
+.exercise-log-card {
+  background: rgba(255,255,255,0.01);
   border: 1px solid var(--border);
-  color: var(--text-muted);
+  border-radius: 20px;
+  padding: 16px;
+  margin-bottom: 14px;
 }
 
-.btn-sec:hover {
-  background: rgba(255,255,255,0.08);
+.exercise-log-card h5 {
+  margin: 0 0 10px;
+  font-size: 1.05rem;
   color: #fff;
 }
 
-.qr-box {
-  background: white;
-  padding: 14px;
-  border-radius: 20px;
-  display: inline-block;
-  margin: 18px 0;
-  border: 2px solid rgba(255,255,255,0.1);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+body.theme-gold .exercise-log-card h5 {
+  color: #0f172a;
 }
 
-.qr-box img {
-  display: block;
-  width: 160px;
-  height: 160px;
+.set-row {
+  display: grid;
+  grid-template-columns: 1fr 2fr 2fr 1fr;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
 }
 
-.bank-details {
-  text-align: left;
-  background: rgba(255,255,255,0.02);
-  border: 1px solid var(--border);
-  padding: 16px;
-  border-radius: 18px;
+.set-row input {
+  padding: 8px 10px;
+  margin-bottom: 0;
   font-size: 0.85rem;
-  margin-top: 16px;
-  line-height: 1.5;
+  border-radius: 8px;
 }
 
-.bank-details b {
-  color: var(--primary);
+.check-circle {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.check-circle.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
 }
 </style>
 </head>
 <body>
+
+<!-- Header Actions -->
+<header>
+  <h3 onclick="showTab('home')" style="cursor: pointer;">🏋️ Fitnesstime</h3>
+  <div class="actions">
+    <!-- Language select -->
+    <select id="appLang" onchange="switchLanguage(this.value)" style="margin-bottom: 0; padding: 6px 12px; width: auto; font-size: 0.8rem; border-radius: 10px; background: rgba(255,255,255,0.03);">
+      <option value="en">English</option>
+      <option value="ml">മലയാളം</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+    <!-- Theme Selector -->
+    <i class="fa fa-circle-half-stroke" onclick="toggleTheme()" title="Toggle Theme"></i>
+    <!-- Profile -->
+    <i class="fa fa-user" onclick="openProfile()" title="My Profile"></i>
+    <!-- Logout -->
+    <i class="fa fa-sign-out-alt" onclick="logout()" title="Log out" style="color: var(--red);"></i>
+  </div>
+</header>
+
+<!-- Global Announcements Box (Live) -->
+<div id="announcementBox" class="announcement-bar hidden">
+  <i class="fa fa-bullhorn"></i> <span id="announcementMsg">-</span>
+</div>
+
 <!-- Locked Payment overlay -->
-<div id="paymentLockOverlay" class="hidden">
-  <div class="lock-card">
+<div id="paymentLockOverlay" class="hidden" style="position: fixed; top:0; left:0; right:0; bottom:0; background:rgba(8,9,20,0.95); backdrop-filter:blur(25px); z-index:3000; display:flex; align-items:center; justify-content:center; padding:20px;">
+  <div class="card" style="width:100%; max-width:460px; text-align:center; padding:30px; border-radius:28px;">
     <div style="font-size: 3rem; margin-bottom: 10px;">🔒</div>
     <h3 id="lockTitle">Membership Locked</h3>
     <div id="lockBadgeContainer"></div>
@@ -549,7 +660,6 @@ hr {
       Choose a payment method below to activate your premium subscription plan.
     </p>
 
-    <!-- PLAN OVERVIEW -->
     <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 18px; padding: 14px 20px; margin-bottom: 20px; text-align: left;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase;">Selected Subscription</span>
       <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 4px;">
@@ -560,10 +670,10 @@ hr {
 
     <!-- SELECTION CONTAINER -->
     <div id="paymentSelectionBox">
-      <button class="pay-mode-btn btn-upi" onclick="selectPaymentMethod('UPI')">
+      <button class="pay-mode-btn btn-upi" onclick="selectPaymentMethod('UPI')" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);">
         <i class="fa-solid fa-mobile-screen-button"></i> Pay via UPI App / GPay
       </button>
-      <button class="pay-mode-btn btn-cash" onclick="selectPaymentMethod('Cash')">
+      <button class="pay-mode-btn btn-cash" onclick="selectPaymentMethod('Cash')" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
         <i class="fa-solid fa-money-bill-wave"></i> Pay Cash at Gym Desk
       </button>
     </div>
@@ -572,17 +682,15 @@ hr {
     <div id="upiInstructionsBox" class="hidden">
       <hr>
       <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 12px;">Scan the QR code or click pay below using GPay / any UPI app to transfer the plan amount.</p>
-      
-      <div class="qr-box">
-        <img id="upiQrImg" src="" alt="Dynamic GPay QR">
+      <div style="background: white; padding: 14px; border-radius: 20px; display: inline-block; margin: 10px 0;">
+        <img id="upiQrImg" src="" alt="GPay QR" style="display: block; width: 150px; height: 150px;">
       </div>
-      
-      <a id="upiDeepLink" href="" class="pay-mode-btn btn-upi" style="text-decoration: none; margin-top: 10px;">
+      <a id="upiDeepLink" href="" class="pay-mode-btn btn-upi" style="text-decoration: none; margin-top: 10px; display: block; padding: 12px; background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); border-radius: 14px; font-weight: 700; color: #fff;">
         <i class="fa-solid fa-bolt"></i> Pay with GPay / UPI App
       </a>
 
       <!-- Bank details transfer options -->
-      <div class="bank-details">
+      <div style="text-align: left; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 18px; font-size: 0.85rem; margin-top: 16px; line-height: 1.5;">
         <div style="text-align: center; font-weight: 700; margin-bottom: 8px; color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem;">Direct Bank Transfer Details</div>
         <div><b>Bank Name:</b> <span id="bankNameField">-</span></div>
         <div><b>Account Name:</b> <span id="bankHolderField">-</span></div>
@@ -590,107 +698,165 @@ hr {
         <div><b>IFSC Code:</b> <span id="bankIfscField">-</span></div>
       </div>
 
-      <button class="pay-mode-btn btn-cash" onclick="submitUPIPaymentNotification()" style="margin-top: 16px;">
+      <button class="pay-mode-btn btn-cash" onclick="submitUPIPaymentNotification()" style="margin-top: 16px; background: linear-gradient(135deg, #059669 0%, #047857 100%);">
         <i class="fa-solid fa-circle-check"></i> I Have Paid Online (Notify Admin)
       </button>
-      
-      <button class="pay-mode-btn btn-sec" onclick="cancelPaymentSelection()" style="margin-top: 10px;">
-        <i class="fa-solid fa-arrow-left"></i> Change Payment Method
-      </button>
+      <button onclick="cancelPaymentSelection()" style="background: none; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px;">Change Mode</button>
     </div>
 
     <!-- CASH CONFIRMATION BOX -->
     <div id="cashConfirmationBox" class="hidden">
       <hr>
       <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">
-        Confirm cash booking: please pay ₹<span id="cashPriceText">0</span> to the gym front desk. Your profile will be activated instantly upon payment.
+        Confirm cash booking: please pay ₹<span id="cashPriceText">0</span> to the gym front desk to unlock your dashboard.
       </p>
-      <button class="pay-mode-btn btn-cash" onclick="submitCashPaymentNotification()">
+      <button class="pay-mode-btn btn-cash" onclick="submitCashPaymentNotification()" style="background: linear-gradient(135deg, #059669 0%, #047857 100%);">
         <i class="fa-solid fa-check"></i> Confirm Cash Payment Booking
       </button>
-      <button class="pay-mode-btn btn-sec" onclick="cancelPaymentSelection()" style="margin-top: 10px;">
-        <i class="fa-solid fa-arrow-left"></i> Change Payment Method
-      </button>
+      <button onclick="cancelPaymentSelection()" style="background: none; border: 1px solid var(--border); color: var(--text-muted); margin-top: 10px;">Change Mode</button>
     </div>
 
-    <!-- CHANGE PLAN SELECTOR -->
-    <div id="changePlanBox" style="margin-top: 24px;">
-      <select id="lockChangePlanSelect" onchange="lockScreenChangePlan()" style="margin-top: 0; padding: 10px; font-size: 0.85rem; border-radius: 12px; color: white;">
+    <div id="changePlanBox" style="margin-top: 20px;">
+      <select id="lockChangePlanSelect" onchange="lockScreenChangePlan()" style="margin-bottom: 0;">
         <option value="">-- Change Subscription Plan --</option>
       </select>
     </div>
-
     <hr>
-    <button class="pay-mode-btn btn-sec" onclick="logout()" style="margin-top: 10px;">
-      <i class="fa-solid fa-right-from-bracket"></i> Logout Account
-    </button>
+    <button onclick="logout()" style="background: var(--red); color: white;"><i class="fa-solid fa-right-from-bracket"></i> Logout Account</button>
   </div>
 </div>
 
-<header>
-  <h3>🏋️ Fitnesstime</h3>
-  <div class="actions">
-    <i class="fa fa-user" onclick="openProfile()" title="My Profile"></i>
-    <i class="fa fa-sign-out-alt" onclick="logout()" title="Log out"></i>
-  </div>
-</header>
-
-<div class="container" style="max-width: 700px; margin: 0 auto; padding: 0 16px 20px;">
-  <!-- Home Tab -->
+<div class="container" style="max-width: 600px; margin: 0 auto; padding: 0 8px 30px;">
+  
+  <!-- Tab 1: HOME -->
   <div class="card" id="home">
     <h3 id="welcome">Welcome</h3>
+    
+    <!-- Membership Countdown Bar -->
+    <div id="countdownContainer" class="countdown-bar hidden">
+      ⏳ <span id="countdownText">Remaining: --</span>
+    </div>
+
     <p style="margin: -10px 0 20px; color: var(--text-muted);">
-      <b>Status:</b> 
+      <b id="lblStatus">Status:</b> 
       <span id="statusText" style="padding: 4px 10px; border-radius: 8px; font-size: 0.85rem; font-weight: 800; background: var(--primary-soft); color: var(--primary); border: 1px solid rgba(59, 130, 246, 0.2);">
         Loading...
       </span>
     </p>
     
     <div class="progress-row">
-      <div><b>Plan</b><span id="planName">-</span></div>
-      <div><b>Expiry</b><span id="expiry">-</span></div>
-      <div><b>Remaining</b><span id="remain">0</span></div>
+      <div><b id="lblPlan">Plan</b><span id="planName">-</span></div>
+      <div><b id="lblExpiry">Expiry</b><span id="expiry">-</span></div>
+      <div><b id="lblRemaining">Remaining</b><span id="remain">0</span></div>
     </div>
     
     <hr>
     
     <div class="progress-row">
-      <div><b>Used</b><span id="used">0</span></div>
-      <div><b>Last Logged</b><span id="last">-</span></div>
-      <div><b>Assigned Trainer</b><span id="trainer">-</span></div>
+      <div><b id="lblUsed">Used</b><span id="used">0</span></div>
+      <div><b id="lblLastLogged">Last Logged</b><span id="last">-</span></div>
+      <div><b id="lblTrainer">Assigned Trainer</b><span id="trainer">-</span></div>
     </div>
   </div>
 
-  <!-- Scan Tab -->
-  <div class="card hidden" id="scan">
-    <h3>Scan Attendance QR</h3>
-    <p class="small" style="margin-bottom: 20px;">Scan the physical dynamic QR code at the gym desk to record your attendance today.</p>
-    <div id="reader"></div>
-  </div>
-
-  <!-- Workout Tab -->
+  <!-- Tab 2: WORKOUT -->
   <div class="card hidden" id="workout">
-    <h3>Workout Programs</h3>
-    <div id="workoutBox" class="small" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 20px; white-space: pre-wrap; font-size: 0.95rem;">
+    <h3 id="lblWorkoutTitle">Workout Section</h3>
+    <p class="small" style="color: var(--text-muted); margin-top: -10px; margin-bottom: 20px;">View and track assigned schedules or generate customized regimes instantly using AI.</p>
+    
+    <div id="workoutBox" class="small" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 18px; border-radius: 20px; margin-bottom: 16px;">
       Loading workout...
     </div>
-    <p class="small" style="margin-top: 14px;"><i class="fab fa-youtube" style="color: red; margin-right: 6px;"></i>Tutorial links will be active once a workout plan is generated.</p>
+
+    <!-- Active Sets & Reps Logger -->
+    <div class="exercise-log-card">
+      <h5 id="lblActiveWorkoutLogger">Gym Practice Logger</h5>
+      <select id="trackerMuscle" onchange="loadTrackerMuscleExercises()">
+        <option value="">-- Choose Muscle Zone --</option>
+        <option value="Chest">Chest Zone</option>
+        <option value="Back">Back Zone</option>
+        <option value="Legs">Legs & Quads</option>
+      </select>
+      
+      <div id="trackerExercisesContainer"></div>
+      
+      <button onclick="saveActiveWorkoutSession()" style="background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); margin-top: 10px; display: none;" id="btnSaveActiveWorkout">
+        <i class="fa fa-circle-check"></i> Save Active Practice Log
+      </button>
+    </div>
+
+    <!-- Workout logs timeline history -->
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 18px;">
+      <h5 id="lblTimelineTitle">Workout Practice History</h5>
+      <div id="workoutLogsTimeline" style="display: flex; flex-direction: column; gap: 10px; margin-top: 14px;">
+        Loading logs timeline...
+      </div>
+    </div>
   </div>
 
-  <!-- Diet Tab -->
+  <!-- Tab 3: DIET -->
   <div class="card hidden" id="diet">
-    <h3>Diet & Body Stats</h3>
-    <p><b>Your Personalized Diet Plan:</b></p>
-    <div id="dietPlan" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 20px; border-radius: 20px; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.6;">
+    <h3 id="lblDietTitle">Diet & Nutrition</h3>
+    <p style="margin-top: -10px; color: var(--text-muted); font-size: 0.9rem;">Log food items, count protein limits, and request intelligent AI diets.</p>
+    
+    <div id="dietPlan" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 18px; border-radius: 20px; margin-bottom: 20px; font-size: 0.95rem; line-height: 1.6;">
       Loading diet plan...
     </div>
+
+    <button onclick="openAICoachWizard()" style="background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); margin-bottom: 20px;"><i class="fa fa-wand-magic-sparkles"></i> AI Workout & Diet Generator</button>
+
+    <!-- Calories & Protein Tracker Grid -->
+    <div class="diet-tracker-grid">
+      <!-- Calorie SVG progress ring -->
+      <div class="ring-box">
+        <svg class="progress-ring-svg" width="100" height="100">
+          <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40" stroke-width="8"></circle>
+          <circle id="calProgressRing" class="progress-ring-circle" cx="50" cy="50" r="40" stroke-width="8" stroke="#3b82f6"></circle>
+        </svg>
+        <div class="ring-text">
+          <h4 id="calLoggedVal">0</h4>
+          <p id="lblCalLeft">Logged</p>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">Target: 2000 kcal</p>
+      </div>
+
+      <!-- Protein progress bar -->
+      <div class="ring-box">
+        <svg class="progress-ring-svg" width="100" height="100">
+          <circle class="progress-ring-circle-bg" cx="50" cy="50" r="40" stroke-width="8"></circle>
+          <circle id="protProgressRing" class="progress-ring-circle" cx="50" cy="50" r="40" stroke-width="8" stroke="#10b981"></circle>
+        </svg>
+        <div class="ring-text">
+          <h4 id="protLoggedVal">0g</h4>
+          <p id="lblProtLeft">Protein</p>
+        </div>
+        <p style="font-size:0.75rem; color:var(--text-muted); margin-top:8px;">Target: 150g</p>
+      </div>
+    </div>
+
+    <!-- Calories Food Logger -->
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-top: 16px;">
+      <h5 style="margin: 0 0 10px; color:#fff;" id="lblFoodLoggerTitle">Daily Food Logger</h5>
+      <input id="foodName" placeholder="Food Name (e.g. Scrambled Eggs)">
+      <div class="grid-2">
+        <input id="foodCals" type="number" placeholder="Calories (kcal)">
+        <input id="foodProts" type="number" placeholder="Protein (grams)">
+      </div>
+      <button onclick="logDailyFoodItem()" style="padding: 10px; font-size: 0.9rem; border-radius: 12px; margin-top: 0;"><i class="fa fa-plus"></i> Add Item Log</button>
+      
+      <!-- Food log list items -->
+      <div id="foodLogList" style="margin-top: 14px; display: flex; flex-direction: column; gap: 8px;"></div>
+      <button onclick="resetFoodLogs()" class="btn-water-reset" style="width: 100%; border-color: rgba(239, 68, 68, 0.2); color: #f87171;"><i class="fa fa-rotate-left"></i> Reset Daily Log</button>
+    </div>
+
+    <hr>
     
     <div class="grid-2">
-      <!-- Water intake Visual SVG -->
+      <!-- Water intake visual SVG -->
       <div class="water-tracker-container">
-        <p style="font-weight: 600; margin-top: 0; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;">Daily Hydration</p>
+        <p style="font-weight: 600; margin-top: 0; color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase;" id="lblHydration">Daily Hydration</p>
         
-        <svg class="water-glass-svg" viewBox="0 0 100 150" width="80" height="120" style="display: block; margin: 0 auto 12px;">
+        <svg viewBox="0 0 100 150" width="80" height="120" style="display: block; margin: 0 auto 12px;">
           <defs>
             <linearGradient id="waterGrad" x1="0" y1="1" x2="0" y2="0">
               <stop offset="0%" stop-color="#06b6d4" />
@@ -700,68 +866,160 @@ hr {
               <path d="M 23 22 L 31 133 C 32 138, 36 140, 40 140 L 60 140 C 64 140, 68 138, 69 133 L 77 22 Z" />
             </clipPath>
           </defs>
-          <!-- Background Glow -->
           <path d="M 20 20 L 30 135 C 31 140, 35 142, 40 142 L 60 142 C 65 142, 69 140, 70 135 L 80 20 Z" fill="rgba(255, 255, 255, 0.03)" />
-          <!-- Water with clip path -->
           <g clip-path="url(#glassClip)">
             <rect id="waterRect" x="0" y="140" width="100" height="150" fill="url(#waterGrad)" style="transition: all 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);" />
           </g>
-          <!-- Glass Outline -->
           <path d="M 20 20 L 30 135 C 31 140, 35 142, 40 142 L 60 142 C 65 142, 69 140, 70 135 L 80 20" fill="none" stroke="rgba(255, 255, 255, 0.25)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
-          <!-- Shine highlight -->
-          <path d="M 25 30 L 32 125" fill="none" stroke="rgba(255, 255, 255, 0.12)" stroke-width="2" stroke-linecap="round" />
         </svg>
         
         <p id="waterCount" style="font-size: 1.15rem; font-weight: 800; margin: 4px 0;">0 / 8 glasses</p>
         <button onclick="incrementWater()" class="btn-water"><i class="fa-solid fa-glass-water"></i> Add Glass</button>
-        <button onclick="resetWater()" class="btn-water-reset"><i class="fa-solid fa-rotate-left"></i> Reset Intake</button>
+        <button onclick="resetWater()" class="btn-water-reset"><i class="fa-solid fa-rotate-left"></i> Reset Water</button>
       </div>
       
       <!-- Body Fat / BMI Stats -->
       <div style="display: flex; flex-direction: column; gap: 14px;">
         <div class="stat-box">
-          <div class="title">Body Mass Index (BMI)</div>
+          <div class="title">BMI Index</div>
           <div class="val" id="bmiValue">-</div>
         </div>
         <div class="stat-box">
-          <div class="title">Est. Body Fat %</div>
+          <div class="title">Body Fat %</div>
           <div class="val" id="fatValue">-</div>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- History Tab -->
-  <div class="card hidden" id="attendance">
-    <h3>Attendance History</h3>
-    <div id="attList" style="display: flex; flex-direction: column; gap: 10px;">
-      Loading attendance...
+  <!-- Tab 4: STORE -->
+  <div class="card hidden" id="store">
+    <h3 id="lblStoreTitle">Supplement Store</h3>
+    <p class="small" style="color:var(--text-muted); margin-top:-10px; margin-bottom: 20px;">Purchase high-performance shakers, protein blends, and resistance targets.</p>
+    
+    <div id="storeCheckoutNotification" class="countdown-bar success hidden" style="margin-bottom: 14px;">
+      🛒 Order processed successfully! desk check-out logged.
+    </div>
+
+    <div class="store-grid" id="storeGrid"></div>
+
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 18px; border-radius: 20px; margin-top: 20px;" id="cartPanel">
+      <h5 style="margin:0 0 10px; color:#fff;" id="lblCartTitle">Gym Cart (Items: <span id="cartCountVal">0</span>)</h5>
+      <div id="cartItemsList" style="display:flex; flex-direction:column; gap:8px;"></div>
+      <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.1rem; margin-top:16px; padding-top:12px; border-top:1px solid var(--border);">
+        <span id="lblTotalCart">Total Cost:</span>
+        <span style="color:var(--accent);">₹<span id="cartTotalVal">0</span></span>
+      </div>
+      <button onclick="checkoutStoreCart()" style="background: linear-gradient(135deg, var(--gold) 0%, #b45309 100%); margin-top: 16px;" id="btnCheckoutCart"><i class="fa fa-shopping-bag"></i> Checkout Supplement Order</button>
     </div>
   </div>
 
-  <!-- Progress Photos Tab -->
+  <!-- Tab 5: LEADERBOARD -->
+  <div class="card hidden" id="leaderboard">
+    <h3 id="lblLeaderboardTitle">Gym Leaderboard</h3>
+    <p class="small" style="color:var(--text-muted); margin-top:-10px; margin-bottom: 20px;">Rankings based on physical check-in counts or accumulated welcome points!</p>
+    
+    <div id="leaderboardList" style="display: flex; flex-direction: column; gap: 8px;">
+      Loading Rankings...
+    </div>
+  </div>
+
+  <!-- Tab 6: HISTORY (ATTENDANCE) -->
+  <div class="card hidden" id="attendance">
+    <h3 id="lblHistoryTitle">Check-in History</h3>
+    <div id="attList" style="display: flex; flex-direction: column; gap: 10px;">
+      Loading check-ins...
+    </div>
+  </div>
+
+  <!-- Tab 7: PROGRESS (PHOTOS / MEASUREMENTS) -->
   <div class="card hidden" id="progress">
-    <h3>Progress Tracker</h3>
-    <p class="small" style="margin-bottom: 20px;">Upload visual progress logs. Your trainer can view these photos directly on their dashboard.</p>
+    <h3 id="lblProgressTitle">Progress Tracker</h3>
+    <p class="small" style="margin-bottom: 20px;">Upload before/after weight records and visual progress logs.</p>
+    
+    <!-- Dynamic SVG Line Chart -->
+    <div class="chart-box">
+      <h5 style="margin: 0 0 10px; font-size: 0.9rem; color: var(--text-muted);" id="lblWeightChart">Weight Progress Graph</h5>
+      <div id="weightChartContainer" style="width: 100%; height: 160px;">
+        <svg id="weightChartSvg" style="width: 100%; height: 100%;" viewBox="0 0 400 160"></svg>
+      </div>
+    </div>
+
+    <!-- Body measurements log -->
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); padding: 18px; border-radius: 20px; margin-top: 16px;">
+      <h5 style="margin:0 0 10px; color:#fff;" id="lblMeasurementsTitle">Body Measurements Log</h5>
+      <div class="grid-2">
+        <input id="logWeight" type="number" placeholder="Weight (kg)">
+        <input id="logChest" type="number" placeholder="Chest (cm)">
+      </div>
+      <div class="grid-2">
+        <input id="logWaist" type="number" placeholder="Waist (cm)">
+        <input id="logBiceps" type="number" placeholder="Biceps (cm)">
+      </div>
+      <button onclick="saveBodyMeasurements()" style="padding:10px; font-size:0.9rem; border-radius:12px; margin-top:0;"><i class="fa fa-save"></i> Save Measurement Log</button>
+    </div>
+
+    <hr>
+    
     <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 20px;" id="progressList">
       Loading photos...
     </div>
     
-    <hr>
-    
-    <label for="progressPhoto" style="display: block; font-weight: 600; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);">Choose progress file:</label>
+    <label for="progressPhoto" style="display: block; font-weight: 600; margin-bottom: 10px; font-size: 0.9rem; color: var(--text-muted);" id="lblChooseProgress">Choose progress file:</label>
     <input type="file" id="progressPhoto" accept="image/*" style="padding: 10px 14px;">
     <button onclick="uploadPhoto()"><i class="fa fa-cloud-upload-alt" style="margin-right: 8px;"></i>Upload Progress Photo</button>
   </div>
 
-  <!-- Profile Page -->
+  <!-- Tab 8: PROFILE PAGE -->
   <div class="card hidden" id="profilePage">
     <center>
-      <img id="profileImg" src="https://via.placeholder.com/110" width="110" height="110" style="border: 3px solid var(--primary); box-shadow: 0 0 20px var(--primary-glow); object-fit: cover;">
+      <img id="profileImg" src="https://via.placeholder.com/110" width="110" height="110" style="border: 3px solid var(--primary); border-radius: 50%; box-shadow: 0 0 20px var(--primary-glow); object-fit: cover;">
       <h3 id="profName" style="margin-top: 14px; margin-bottom: 2px;">My Profile</h3>
       <p id="pfPhone" style="color: var(--text-muted); font-size: 0.9rem; margin-top: 0; margin-bottom: 20px;">-</p>
     </center>
+    
     <hr>
+
+    <!-- Referral System & points card -->
+    <div style="background: linear-gradient(135deg, rgba(217, 119, 6, 0.08) 0%, transparent 100%); border: 1px solid rgba(217, 119, 6, 0.25); border-radius: 20px; padding: 18px; margin-bottom: 16px;">
+      <h5 style="margin: 0 0 8px; color: var(--gold); font-size: 1rem;"><i class="fa fa-gift"></i> Referral & Reward Points</h5>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin: 0 0 14px;">Refer local friends (+100 points reward!) and get flat discounts on pricing packages.</p>
+      
+      <div style="display:flex; justify-content:space-between; font-weight:800; font-size:1.05rem; margin-bottom: 10px;">
+        <span id="lblRewardBalance">Reward Balance:</span>
+        <span style="color:var(--gold);"><span id="refPointsVal">100</span> Points</span>
+      </div>
+      <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.9rem; align-items:center; background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:10px;">
+        <span id="lblReferralCode">Your Referral Code:</span>
+        <b id="refCodeText" style="color:#fff; font-size:1.05rem; letter-spacing:0.5px;">FIT-USER-1234</b>
+      </div>
+      <button onclick="shareReferralCodeWhatsApp()" style="background:#25d366; margin-top:12px; padding:10px; font-size:0.9rem; border-radius:12px;"><i class="fab fa-whatsapp"></i> Share on WhatsApp</button>
+    </div>
+
+    <!-- Step Challenge card -->
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 20px;">
+      <h5 style="margin:0 0 8px; color:#fff;" id="lblStepTitle">Daily Step Challenge</h5>
+      <p style="font-size:0.85rem; color:var(--text-muted); margin:0 0 14px;">Enter logged steps to complete the standard 10,000 steps tracker.</p>
+      <input id="logSteps" type="number" placeholder="Enter steps (e.g. 8500)">
+      <button onclick="saveDailySteps()" style="padding:10px; font-size:0.9rem; border-radius:12px; margin-top:0;"><i class="fa fa-plus"></i> Save Step Log</button>
+    </div>
+
+    <!-- Personal trainer / Yoga Slot booking card -->
+    <div style="background: rgba(255,255,255,0.01); border: 1px solid var(--border); border-radius: 20px; padding: 18px; margin-bottom: 20px;">
+      <h5 style="margin: 0 0 8px; color: var(--primary);" id="lblSlotBookingTitle"><i class="fa fa-calendar-plus"></i> Slot Booking Target</h5>
+      <select id="bookClass">
+        <option value="">-- Choose Slot Class --</option>
+        <option value="Personal Training">Personal Training (Coaching Rohan)</option>
+        <option value="Zumba Class">Zumba Session (Instructor Sarah)</option>
+        <option value="Yoga Class">Zen Yoga Workshop (Guru Dev)</option>
+      </select>
+      <div class="grid-2">
+        <input id="bookDate" type="date">
+        <input id="bookTime" type="time">
+      </div>
+      <button onclick="submitTrainerBookingRequest()" style="padding: 10px; font-size: 0.9rem; border-radius: 12px; margin-top:0;"><i class="fa fa-calendar-check"></i> Book Class Slot</button>
+    </div>
+
     <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
       <p style="margin: 0; display: flex; justify-content: space-between;"><b style="color: var(--text-muted);">Name:</b> <span id="pfName" style="font-weight: 600;">-</span></p>
       <p style="margin: 0; display: flex; justify-content: space-between;"><b style="color: var(--text-muted);">Age:</b> <span id="pfAge" style="font-weight: 600;">-</span></p>
@@ -770,7 +1028,6 @@ hr {
       <p style="margin: 0; display: flex; justify-content: space-between;"><b style="color: var(--text-muted);">Fitness Goal:</b> <span id="pfGoal" style="font-weight: 600;">-</span></p>
       <p style="margin: 0; display: flex; justify-content: space-between;"><b style="color: var(--text-muted);">Weekly Committed Sessions:</b> <span id="pfWeekly" style="font-weight: 600;">0</span></p>
       
-      <!-- Locked read-only views for Diet Plan and Trainer Notes -->
       <div style="background: rgba(255,255,255,0.02); border: 1px solid var(--border); border-radius: 18px; padding: 16px; margin-top: 10px;">
         <p style="margin: 0 0 8px; font-weight: 600; color: var(--primary);">📋 Prescribed Diet Plan</p>
         <span id="pfDiet" style="font-size: 0.9rem; line-height: 1.5; color: var(--text); display: block;">-</span>
@@ -784,7 +1041,6 @@ hr {
     
     <button onclick="editProfile()"><i class="fa fa-edit" style="margin-right: 8px;"></i>Update My Profile Details</button>
     
-    <!-- Edit profile dialog box (Securely locked: removed inputs for pDiet and pTrainerNote) -->
     <div id="editBox" class="hidden">
       <hr>
       <h4 style="margin-top: 0; font-family: 'Playfair Display', serif; font-size: 1.3rem;">Edit Personal Details</h4>
@@ -802,9 +1058,54 @@ hr {
         <input id="pGoal" placeholder="Fitness Goal">
       </div>
       
-      <!-- Secure: Removed Diet and Trainer Note input boxes completely from Member Profile edits -->
-      
       <button onclick="saveProfile()"><i class="fa fa-save" style="margin-right: 8px;"></i>Save Changes</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- MORE NAV OPTIONS MODAL -->
+<div class="modal-overlay hidden" id="moreOptionsModal" onclick="closeMoreOptionsModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <h4 id="lblMoreOptions">App Console Menu</h4>
+    
+    <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+      <button onclick="triggerAppMenuOption('scan')" style="margin-top:0;"><i class="fa fa-camera"></i> QR Check-in</button>
+      <button onclick="triggerAppMenuOption('attendance')" style="margin-top:0;"><i class="fa fa-calendar-check"></i> History Logs</button>
+      <button onclick="triggerAppMenuOption('progress')" style="margin-top:0;"><i class="fa fa-chart-line"></i> Weight & Charts</button>
+      <button onclick="triggerAppMenuOption('profilePage')" style="margin-top:0;"><i class="fa fa-user-gear"></i> My Profile</button>
+    </div>
+    
+    <button onclick="closeMoreOptionsModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); margin-top:20px;">Close Menu</button>
+  </div>
+</div>
+
+<!-- AI FITNESS COACH WIZARD MODAL -->
+<div class="modal-overlay hidden" id="aiWizardOverlay">
+  <div class="modal-card">
+    <h4 style="color:var(--gold);"><i class="fa fa-wand-magic-sparkles"></i> AI Health Coach Wizard</h4>
+    <p class="small" style="color:var(--text-muted); margin-top:-10px; margin-bottom:16px;">Generates optimized daily muscle splits and calorie frameworks instantly based on your current physical variables.</p>
+    
+    <div id="aiWizardLoader" class="hidden" style="text-align:center; padding:30px;">
+      <div class="spinner" style="width:30px; height:30px; border:3px solid rgba(255,255,255,0.1); border-top-color:var(--gold); border-radius:50%; animation:spin 0.8s linear infinite; margin: 0 auto;"></div>
+      <p style="margin-top:14px; font-weight:600;" id="lblAICalculating">Analyzing body fat & calculating muscle thresholds...</p>
+    </div>
+    
+    <div id="aiWizardContent">
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px; border-radius:16px;">
+          <b style="color:var(--gold);">📋 AI Workout Program Suggestion:</b>
+          <pre id="aiWorkoutResult" style="white-space:pre-wrap; font-size:0.85rem; margin-top:8px; line-height:1.5;"></pre>
+        </div>
+        
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px; border-radius:16px;">
+          <b style="color:var(--gold);">🍎 AI Diet Plan Recommendation:</b>
+          <pre id="aiDietResult" style="white-space:pre-wrap; font-size:0.85rem; margin-top:8px; line-height:1.5;"></pre>
+        </div>
+      </div>
+      
+      <button onclick="applyAIProgramSuggestions()" style="background:linear-gradient(135deg, var(--gold) 0%, #b45309 100%); margin-top:20px;" id="btnApplyAI"><i class="fa fa-check"></i> Apply to My Active Dashboard</button>
+      <button onclick="closeAICoachWizard()" style="background:none; border:1px solid var(--border); color:var(--text-muted); margin-top:10px;">Cancel</button>
     </div>
   </div>
 </div>
@@ -812,14 +1113,14 @@ hr {
 <!-- Nav Bar -->
 <div class="nav">
   <button id="navHome" class="activeNav" onclick="showTab('home')"><i class="fa fa-house"></i>Home</button>
-  <button id="navScan" onclick="showTab('scan')"><i class="fa fa-camera"></i>Scan</button>
   <button id="navWorkout" onclick="showTab('workout')"><i class="fa fa-dumbbell"></i>Workout</button>
   <button id="navDiet" onclick="showTab('diet')"><i class="fa fa-apple-whole"></i>Diet</button>
-  <button id="navAttendance" onclick="showTab('attendance')"><i class="fa fa-calendar-check"></i>History</button>
-  <button id="navProgress" onclick="showTab('progress')"><i class="fa fa-camera"></i>Progress</button>
+  <button id="navStore" onclick="showTab('store')"><i class="fa fa-shopping-bag"></i>Store</button>
+  <button id="navLeaderboard" onclick="showTab('leaderboard')"><i class="fa fa-trophy"></i>Leaderboard</button>
+  <button onclick="openMoreOptionsModal()"><i class="fa fa-ellipsis"></i>More</button>
 </div>
 
-<!-- Firebase and Libraries -->
+<!-- Firebase & compat libraries -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
@@ -836,10 +1137,73 @@ firebase.initializeApp({
 const db = firebase.firestore();
 const storage = firebase.storage();
 const phone = localStorage.getItem("gymPhone");
-if(!phone) location.href = "index.html";
+
+if(!phone) {
+  window.location.replace("login.html");
+}
 
 let isProcessingScan = false;
+let currentTheme = localStorage.getItem('appTheme') || 'midnight'; // 'midnight' or 'gold'
+if (currentTheme === 'gold') {
+  document.body.classList.add('theme-gold');
+}
 
+function toggleTheme() {
+  if (currentTheme === 'midnight') {
+    document.body.classList.add('theme-gold');
+    currentTheme = 'gold';
+  } else {
+    document.body.classList.remove('theme-gold');
+    currentTheme = 'midnight';
+  }
+  localStorage.setItem('appTheme', currentTheme);
+}
+
+// Expire Countdown clock ticking
+let expiryCountdownTimer = null;
+function startExpiryCountdown(expiryStr) {
+  if (!expiryStr) {
+    document.getElementById('countdownContainer').classList.add('hidden');
+    return;
+  }
+  const el = document.getElementById('countdownContainer');
+  const textEl = document.getElementById('countdownText');
+  el.classList.remove('hidden');
+
+  clearInterval(expiryCountdownTimer);
+  expiryCountdownTimer = setInterval(() => {
+    const diff = new Date(expiryStr) - new Date();
+    if (diff <= 0) {
+      clearInterval(expiryCountdownTimer);
+      el.className = "countdown-bar";
+      textEl.innerText = "Membership Status: EXPIRED";
+      return;
+    }
+    el.className = "countdown-bar success";
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const secs = Math.floor((diff % (1000 * 60)) / 1000);
+    
+    textEl.innerText = `Remaining validity: ${days}d : ${hours}h : ${mins}m : ${secs}s`;
+  }, 1000);
+}
+
+// Broadcaster Announcements
+function listenToAnnouncements() {
+  db.collection("announcements").orderBy("timestamp", "desc").limit(1).onSnapshot(snap => {
+    if (!snap.empty) {
+      let data = snap.docs[0].data();
+      document.getElementById("announcementMsg").innerText = data.text || "-";
+      document.getElementById("announcementBox").classList.remove("hidden");
+    } else {
+      document.getElementById("announcementBox").classList.add("hidden");
+    }
+  });
+}
+listenToAnnouncements();
+
+// Default values seeder for payments
 let paymentConfig = {
   upiId: "fitnesstime@okaxis",
   holderName: "Fitnesstime Gym",
@@ -896,29 +1260,25 @@ function lockScreenChangePlan() {
       paymentMode: ""
     }).then(() => {
       alert("Subscription plan successfully changed!");
-      loadHome(); // reload details and render correct screen state
+      loadHome();
     });
   }
 }
 
 function showPaymentLockScreen(u) {
   paymentLockOverlay.classList.remove("hidden");
-  
-  // Set Plan details
   lockPlanName.innerText = u.requestedPlan || "No plan selected";
   lockPlanPrice.innerText = "₹" + (u.requestedPrice || 0);
   cashPriceText.innerText = u.requestedPrice || 0;
   
-  // Set Status Badge
   let statusHTML = "";
   let msgHTML = "";
   
   if (u.planStatus === "pending_approval") {
-    statusHTML = `<span class="payment-badge badge-pending"><i class="fa fa-clock"></i> Pending Approval</span>`;
+    statusHTML = `<span class="payment-badge" style="background:rgba(217,119,6,0.15); color:var(--gold); border:1px solid rgba(217,119,6,0.3); padding:6px 14px; border-radius:99px; font-weight:700;"><i class="fa fa-clock"></i> Pending Approval</span>`;
     
     if (u.paymentMode === "UPI" && u.paymentStatus === "paid_pending_approval") {
       msgHTML = "⏱️ Verification in progress. Please wait for the administrator to verify and approve your online UPI payment.";
-      // Hide selection, upi/cash screens
       paymentSelectionBox.classList.add("hidden");
       upiInstructionsBox.classList.add("hidden");
       cashConfirmationBox.classList.add("hidden");
@@ -928,17 +1288,12 @@ function showPaymentLockScreen(u) {
       paymentSelectionBox.classList.add("hidden");
       upiInstructionsBox.classList.add("hidden");
       cashConfirmationBox.classList.add("hidden");
-      // Show change plan button and switch payment mode in case they change their mind
       changePlanBox.classList.remove("hidden");
-      
-      // Show switch to UPI option
-      msgHTML += `<br><br><button class="pay-mode-btn btn-upi" onclick="selectPaymentMethod('UPI')" style="margin-top: 14px; font-size: 0.9rem; padding: 10px;"><i class="fa-solid fa-mobile-screen-button"></i> Switch & Pay via UPI Online</button>`;
+      msgHTML += `<br><br><button class="pay-mode-btn btn-upi" onclick="selectPaymentMethod('UPI')" style="margin-top: 14px; font-size: 0.9rem; padding: 10px; background:linear-gradient(135deg, #0284c7 0%, #0369a1 100%);"><i class="fa-solid fa-mobile-screen-button"></i> Switch & Pay via UPI Online</button>`;
     }
   } else {
-    // Unpaid or initial state
-    statusHTML = `<span class="payment-badge badge-unpaid"><i class="fa fa-circle-exclamation"></i> Payment Required</span>`;
+    statusHTML = `<span class="payment-badge" style="background:rgba(239,68,68,0.15); color:var(--red); border:1px solid rgba(239,68,68,0.3); padding:6px 14px; border-radius:99px; font-weight:700;"><i class="fa fa-circle-exclamation"></i> Payment Required</span>`;
     msgHTML = "Choose a payment method below to activate your premium subscription plan.";
-    
     paymentSelectionBox.classList.remove("hidden");
     upiInstructionsBox.classList.add("hidden");
     cashConfirmationBox.classList.add("hidden");
@@ -959,23 +1314,18 @@ function selectPaymentMethod(mode) {
     upiInstructionsBox.classList.remove("hidden");
     cashConfirmationBox.classList.add("hidden");
     
-    // Populate Bank Details visually
     bankNameField.innerText = paymentConfig.bankName || "-";
     bankHolderField.innerText = paymentConfig.holderName || "-";
     bankAccField.innerText = paymentConfig.accountNo || "-";
     bankIfscField.innerText = paymentConfig.ifsc || "-";
     
-    // Fetch dynamic price
     db.collection("users").doc(phone).get().then(doc => {
       let u = doc.data();
       let price = u.requestedPrice || 0;
       let plan = u.requestedPlan || "Gym Plan";
       
-      // Build GPay deep link
       const upiUrl = `upi://pay?pa=${paymentConfig.upiId}&pn=${encodeURIComponent(paymentConfig.holderName)}&am=${price}&cu=INR&tn=${encodeURIComponent(plan + " Subscription")}`;
       upiDeepLink.href = upiUrl;
-      
-      // Build QR Code Image url using api.qrserver.com
       const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${encodeURIComponent(upiUrl)}`;
       upiQrImg.src = qrUrl;
     });
@@ -1019,24 +1369,11 @@ function submitUPIPaymentNotification() {
 
 function logout(){
   localStorage.removeItem("gymPhone");
-  location.href = "index.html";
+  location.href = "login.html";
 }
 
 function openProfile(){
-  ['home','scan','workout','diet','attendance','progress'].forEach(id=>{
-    const el = document.getElementById(id);
-    if(el) el.classList.add('hidden');
-  });
-  const profilePage = document.getElementById('profilePage');
-  if(profilePage) profilePage.classList.remove('hidden');
-  
-  // Highlight profile icon by removing other nav highlighting
-  ['navHome','navScan','navWorkout','navDiet','navAttendance','navProgress'].forEach(id=>{
-    const btn = document.getElementById(id);
-    if(btn) btn.classList.remove('activeNav');
-  });
-  
-  loadProfile();
+  showTab('profilePage');
 }
 
 function loadProfile(){
@@ -1054,6 +1391,69 @@ function loadProfile(){
     pfNote.innerText = u.trainerNote||'No custom remarks from your trainer yet.';
     profName.innerText = u.name||'My Profile';
     if(u.photoURL) profileImg.src = u.photoURL;
+
+    // Load referral code and reward points details
+    refPointsVal.innerText = u.rewardPoints || 0;
+    
+    // Auto generate code if missing
+    let code = u.referralCode || `FIT-${phone.slice(6)}-${u.name ? u.name.slice(0,2).toUpperCase() : 'USER'}`;
+    refCodeText.innerText = code;
+    if(!u.referralCode) {
+      db.collection('users').doc(phone).update({ referralCode: code });
+    }
+  });
+}
+
+function shareReferralCodeWhatsApp() {
+  let code = refCodeText.innerText;
+  let msg = `Hi! Join Fitnesstime Gym with my referral code: *${code}* and secure direct discounts and reward welcome points instantly. Register here: https://fitnesstime.com/login`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, '_blank');
+}
+
+function saveDailySteps() {
+  let steps = Number(logSteps.value);
+  if(!steps || steps <= 0) {
+    alert("Please enter a valid step count.");
+    return;
+  }
+  db.collection('users').doc(phone).get().then(doc => {
+    let currentSteps = doc.data()?.rewardPoints || 0;
+    // Add reward points for steps! e.g. +10 points for target completion
+    let addPoints = steps >= 10000 ? 20 : 5;
+    db.collection('users').doc(phone).update({
+      dailySteps: steps,
+      rewardPoints: currentSteps + addPoints
+    }).then(() => {
+      alert(`🏃 Step count saved! Gained +${addPoints} points.`);
+      logSteps.value = '';
+      loadProfile();
+      loadLeaderboard();
+    });
+  });
+}
+
+function submitTrainerBookingRequest() {
+  let service = bookClass.value;
+  let date = bookDate.value;
+  let time = bookTime.value;
+
+  if(!service || !date || !time) {
+    alert("Please complete all details to book a class.");
+    return;
+  }
+
+  db.collection("bookings").add({
+    phone: phone,
+    service: service,
+    date: date,
+    time: time,
+    timestamp: new Date().toISOString(),
+    status: "pending"
+  }).then(() => {
+    alert("📅 Class slot booking requested! Admin will contact you once approved.");
+    bookClass.value = '';
+    bookDate.value = '';
+    bookTime.value = '';
   });
 }
 
@@ -1139,6 +1539,7 @@ function loadHome(){
     
     dietPlan.innerText = u.dietPlan || 'No custom diet plan assigned yet.';
     calculateBodyStats(u.weight, u.height, u.age, u.gender);
+    startExpiryCountdown(u.planExpiry);
   });
 }
 
@@ -1153,9 +1554,7 @@ function calculateBodyStats(weight, height, age, gender){
   }
   let bmi = (weight / ((height/100)*(height/100))).toFixed(1);
   
-  // Calculate dynamic body fat % based on gender:
-  // Male = 1, Female = 0
-  let genValue = 1; // Default fallback to Male standard
+  let genValue = 1; 
   if (gender) {
     let lowerG = gender.toLowerCase().trim();
     if (lowerG === 'female') {
@@ -1170,6 +1569,7 @@ function calculateBodyStats(weight, height, age, gender){
   fatValue.innerText = fat + '%';
 }
 
+/* WORKOUT TRACKER FUNCTIONS */
 function loadWorkout(){
   db.collection('workouts').doc(phone).get().then(doc=>{
     if(!doc.exists){
@@ -1179,6 +1579,554 @@ function loadWorkout(){
     const data = doc.data();
     workoutBox.innerHTML = `<pre style="white-space:pre-wrap;font-size:15px;line-height:1.5;margin:0;font-family:inherit;">${data.text}</pre><p class="small" style="margin-top:15px;margin-bottom:0;"><b>Video:</b> <a href="https://www.youtube.com/results?search_query=${encodeURIComponent(data.text.split('\n')[0]||'workout')}" target="_blank" style="color:var(--primary); font-weight:600; text-decoration:none;"><i class="fab fa-youtube"></i> Watch custom tutorial</a></p>`;
   });
+  loadWorkoutTimelineHistory();
+}
+
+// Muscle Exercise Pre-loaded List
+const trackerMuscleList = {
+  Chest: [
+    {name: "Flat Barbell Bench Press", sets: 3},
+    {name: "Incline DB Bench Press", sets: 3},
+    {name: "Pec Deck Flys", sets: 3}
+  ],
+  Back: [
+    {name: "Lat Pulldowns (Wide-grip)", sets: 3},
+    {name: "Bent-over Barbell Rows", sets: 3},
+    {name: "One-arm Dumbbell Rows", sets: 3}
+  ],
+  Legs: [
+    {name: "Barbell Back Squats", sets: 3},
+    {name: "Leg Press (Machine)", sets: 3},
+    {name: "Standing Calf Raises", sets: 3}
+  ]
+};
+
+function loadTrackerMuscleExercises() {
+  const zone = trackerMuscle.value;
+  const container = document.getElementById("trackerExercisesContainer");
+  const saveBtn = document.getElementById("btnSaveActiveWorkout");
+
+  if (!zone) {
+    container.innerHTML = '';
+    saveBtn.style.display = 'none';
+    return;
+  }
+  saveBtn.style.display = 'block';
+
+  let list = trackerMuscleList[zone] || [];
+  let html = '';
+
+  list.forEach((ex, exIdx) => {
+    html += `
+      <div class="exercise-log-card" style="background:rgba(255,255,255,0.02); padding:12px; margin-top:10px;">
+        <h5 style="margin: 0 0 10px; font-size: 0.95rem; color:#fff;">${ex.name}</h5>
+        <div style="font-size: 0.75rem; color: var(--text-muted); display: grid; grid-template-columns: 1fr 2fr 2fr 1fr; gap: 8px; margin-bottom: 6px; text-align: center; font-weight: 700;">
+          <span>Set</span>
+          <span>Weight (kg)</span>
+          <span>Reps Count</span>
+          <span>Done</span>
+        </div>
+    `;
+
+    for (let s = 1; s <= ex.sets; s++) {
+      html += `
+        <div class="set-row">
+          <span style="font-weight: 700; font-size: 0.85rem; text-align:center;">${s}</span>
+          <input type="number" class="set-weight-input-${exIdx}" placeholder="kg" value="20">
+          <input type="number" class="set-reps-input-${exIdx}" placeholder="reps" value="12">
+          <div style="display:flex; justify-content:center;">
+            <div class="check-circle" onclick="this.classList.toggle('checked'); verifyAllSetsDone();" id="chk_${exIdx}_${s}">
+              <i class="fa fa-check" style="font-size:0.75rem;"></i>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    html += `</div>`;
+  });
+
+  container.innerHTML = html;
+}
+
+function verifyAllSetsDone() {
+  // Can alert or highlight
+}
+
+function saveActiveWorkoutSession() {
+  const zone = trackerMuscle.value;
+  if (!zone) return;
+
+  let list = trackerMuscleList[zone] || [];
+  let workoutDetails = [];
+  let totalSets = 0;
+
+  list.forEach((ex, exIdx) => {
+    let exerciseLog = {name: ex.name, sets: []};
+    for (let s = 1; s <= ex.sets; s++) {
+      let weightEl = document.querySelectorAll(`.set-weight-input-${exIdx}`)[s-1];
+      let repsEl = document.querySelectorAll(`.set-reps-input-${exIdx}`)[s-1];
+      let checkEl = document.getElementById(`chk_${exIdx}_${s}`);
+
+      if (checkEl.classList.contains("checked")) {
+        exerciseLog.sets.push({
+          setNo: s,
+          weight: Number(weightEl.value) || 0,
+          reps: Number(repsEl.value) || 0
+        });
+        totalSets++;
+      }
+    }
+    if (exerciseLog.sets.length > 0) {
+      workoutDetails.push(exerciseLog);
+    }
+  });
+
+  if (workoutDetails.length === 0) {
+    alert("Please check off at least one set to save!");
+    return;
+  }
+
+  // Save to workoutHistory
+  db.collection("workoutHistory").add({
+    phone: phone,
+    muscleGroup: zone,
+    exercises: workoutDetails,
+    date: new Date().toISOString().slice(0,10),
+    timestamp: new Date().toISOString()
+  }).then(() => {
+    alert("💪 Gym practice logs saved successfully to your timeline!");
+    // Reset tracker selection
+    trackerMuscle.value = '';
+    loadTrackerMuscleExercises();
+    loadWorkoutTimelineHistory();
+  });
+}
+
+function loadWorkoutTimelineHistory() {
+  db.collection("workoutHistory").where("phone", "==", phone).orderBy("timestamp", "desc").limit(5).get().then(snap => {
+    const box = document.getElementById("workoutLogsTimeline");
+    if (!box) return;
+
+    if (snap.empty) {
+      box.innerHTML = '<p class="small" style="color:var(--text-muted);">No workout practices logged yet. Log a muscle set above!</p>';
+      return;
+    }
+
+    let html = '';
+    snap.forEach(doc => {
+      let data = doc.data();
+      let exerciseHtml = '';
+      
+      data.exercises.forEach(ex => {
+        let setLogs = ex.sets.map(s => `${s.weight}kg x ${s.reps}`).join(' | ');
+        exerciseHtml += `<div style="font-size:0.85rem; color:var(--text-muted); margin-top:4px;"><b>${ex.name}:</b> ${setLogs}</div>`;
+      });
+
+      html += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); border-radius:14px; padding:12px 16px;">
+          <div style="display:flex; justify-content:space-between; font-weight:700; font-size:0.9rem; color:var(--gold);">
+            <span>${data.muscleGroup} Training</span>
+            <span style="font-size:0.75rem; color:var(--text-muted);">${data.date}</span>
+          </div>
+          ${exerciseHtml}
+        </div>
+      `;
+    });
+
+    box.innerHTML = html;
+  });
+}
+
+/* DIET FOOD & PROGRESS RINGS LOGS */
+let dailyEatenList = [];
+function loadDietProgress() {
+  db.collection("users").doc(phone).get().then(doc => {
+    if(!doc.exists) return;
+    let data = doc.data();
+    dailyEatenList = data.todayFoodLog || [];
+    
+    let totalCals = 0;
+    let totalProts = 0;
+    let html = '';
+
+    dailyEatenList.forEach(item => {
+      totalCals += item.calories;
+      totalProts += item.protein;
+      html += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:8px 14px; border-radius:12px; display:flex; justify-content:space-between; font-size:0.85rem;">
+          <span>${item.name}</span>
+          <span style="color:var(--text-muted); font-weight:700;">${item.calories} kcal • ${item.protein}g P</span>
+        </div>
+      `;
+    });
+
+    foodLogList.innerHTML = html || '<p class="small" style="color:var(--text-muted); margin:0;">No food logged today.</p>';
+
+    // Update values
+    calLoggedVal.innerText = totalCals;
+    protLoggedVal.innerText = totalProts + "g";
+
+    // Progress rings: radius is 40, circumference is 2 * PI * R = 251.2
+    const circ = 251.2;
+    
+    // Calorie ring (Target 2000)
+    let pctCal = Math.min(totalCals / 2000, 1);
+    calProgressRing.style.strokeDashoffset = circ - (pctCal * circ);
+
+    // Protein ring (Target 150)
+    let pctProt = Math.min(totalProts / 150, 1);
+    protProgressRing.style.strokeDashoffset = circ - (pctProt * circ);
+  });
+}
+
+function logDailyFoodItem() {
+  let name = foodName.value.trim();
+  let cals = Number(foodCals.value);
+  let prots = Number(foodProts.value);
+
+  if(!name || !cals) {
+    alert("Please enter Food Name and Calories count!");
+    return;
+  }
+
+  const newItem = {
+    name: name,
+    calories: cals,
+    protein: prots || 0,
+    timestamp: new Date().toISOString()
+  };
+
+  db.collection("users").doc(phone).update({
+    todayFoodLog: firebase.firestore.FieldValue.arrayUnion(newItem)
+  }).then(() => {
+    foodName.value = '';
+    foodCals.value = '';
+    foodProts.value = '';
+    loadDietProgress();
+  });
+}
+
+function resetFoodLogs() {
+  if(confirm("Confirm reset of today's food log statistics?")) {
+    db.collection("users").doc(phone).update({
+      todayFoodLog: []
+    }).then(() => {
+      loadDietProgress();
+    });
+  }
+}
+
+/* MOCK AI WIZARD LOGIC */
+function openAICoachWizard() {
+  aiWizardOverlay.classList.remove("hidden");
+  aiWizardLoader.classList.remove("hidden");
+  aiWizardContent.classList.add("hidden");
+
+  // Spin for 1.5s then show results using pure expert rules!
+  setTimeout(() => {
+    db.collection("users").doc(phone).get().then(doc => {
+      let u = doc.data() || {};
+      let goal = (u.goal || "Weight loss").toLowerCase();
+      let weight = Number(u.weight) || 70;
+      let height = Number(u.height) || 170;
+      let gender = u.gender || "Male";
+
+      // Workout Heuristics
+      let workouts = "";
+      if (goal.includes("muscle") || goal.includes("bulk") || goal.includes("strength")) {
+        workouts = 
+`🏋️ AI Bulk & Power Program:
+• Day 1: Chest Zone (Bench Press, Incline DB Press)
+• Day 2: Back Zone (Heavy Pulldowns, Deadlifts)
+• Day 3: Quads Zone (Squats, Calves)
+• Repeat: 3 Sets x 8 Reps (Focus progressive overload)`;
+      } else {
+        workouts =
+`🏃 AI Metabolic Lean Program:
+• Day 1: Cardio HIIT & Chest (Rowing, Dumbbell Flies)
+• Day 2: Hypertrophy Back Zone (Cable Rows, Lat Pulldowns)
+• Day 3: Legs Interval Target (Squats, Leg Press)
+• Repeat: 3 Sets x 15 Reps (Metabolic conditioning)`;
+      }
+
+      // Diet Heuristics
+      let targetCals = goal.includes("bulk") ? Math.round(weight * 35) : Math.round(weight * 24);
+      let targetProt = Math.round(weight * 2);
+      let diet =
+`🍎 AI Daily Diet Setup:
+• Target Energy: ${targetCals} kcal
+• Protein intake: ${targetProt}g
+• Hydration target: 3.5 Litres
+• Breakfast: Oats + 4 Egg whites + Almonds
+• Lunch: Grilled chicken (150g) + Brown rice + Brocolli
+• Dinner: Baked Fish or Paneer + Green Salad`;
+
+      aiWorkoutResult.innerText = workouts;
+      aiDietResult.innerText = diet;
+      
+      aiWizardLoader.classList.add("hidden");
+      aiWizardContent.classList.remove("hidden");
+      
+      // Store suggestion payload
+      window.aiWorkoutSuggestion = workouts;
+      window.aiDietSuggestion = diet;
+    });
+  }, 1500);
+}
+
+function closeAICoachWizard() {
+  aiWizardOverlay.classList.add("hidden");
+}
+
+function applyAIProgramSuggestions() {
+  db.collection("users").doc(phone).update({
+    dietPlan: window.aiDietSuggestion
+  }).then(() => {
+    return db.collection("workouts").doc(phone).set({
+      text: window.aiWorkoutSuggestion,
+      updated: new Date().toISOString()
+    });
+  }).then(() => {
+    alert("🔮 Expert AI Program successfully applied as your active dashboard workouts & diets!");
+    closeAICoachWizard();
+    loadHome();
+    loadWorkout();
+  });
+}
+
+/* SUPPLEMENT STORE OR CART MOCKS */
+const supplementProducts = [
+  {id: "p1", name: "Whey Protein Powder (1kg)", price: 2499, desc: "Ultra-pure isolate for deep muscle recovery."},
+  {id: "p2", name: "Modern Gym Towel", price: 299, desc: "Quick-dry microfiber soft towel."},
+  {id: "p3", name: "Heavy Resistance Bands", price: 799, desc: "3 elastic levels for home hypertrophy."},
+  {id: "p4", name: "Steel Water Bottle (1L)", price: 399, desc: "Stainless double-wall cooling bottle."}
+];
+
+let activeStoreCart = [];
+function renderSupplementStore() {
+  const grid = document.getElementById("storeGrid");
+  if(!grid) return;
+
+  grid.innerHTML = supplementProducts.map(p => `
+    <div class="store-card">
+      <div>
+        <div style="font-size:2.2rem;">${p.name.includes("Protein") ? "🥛" : p.name.includes("Towel") ? "🧣" : p.name.includes("Bands") ? "🎗️" : "🍼"}</div>
+        <h5>${p.name}</h5>
+        <p>${p.desc}</p>
+      </div>
+      <div>
+        <div class="price">₹${p.price}</div>
+        <button onclick="addSupplementToCart('${p.id}')"><i class="fa fa-cart-plus"></i> Add Cart</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function addSupplementToCart(id) {
+  let prod = supplementProducts.find(x => x.id === id);
+  if(!prod) return;
+
+  activeStoreCart.push(prod);
+  updateStoreCartUI();
+}
+
+function removeSupplementFromCart(index) {
+  activeStoreCart.splice(index, 1);
+  updateStoreCartUI();
+}
+
+function updateStoreCartUI() {
+  cartCountVal.innerText = activeStoreCart.length;
+  let total = activeStoreCart.reduce((acc, x) => acc + x.price, 0);
+  cartTotalVal.innerText = total;
+
+  let html = '';
+  activeStoreCart.forEach((item, idx) => {
+    html += `
+      <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(0,0,0,0.2); padding:8px 12px; border-radius:10px; font-size:0.8rem;">
+        <span>${item.name}</span>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <b style="color:var(--accent);">₹${item.price}</b>
+          <i class="fa fa-trash" style="color:var(--red); cursor:pointer; padding:0;" onclick="removeSupplementFromCart(${idx})"></i>
+        </div>
+      </div>
+    `;
+  });
+
+  cartItemsList.innerHTML = html || '<p class="small" style="color:var(--text-muted); margin:0;">Cart is empty.</p>';
+}
+
+function checkoutStoreCart() {
+  if(activeStoreCart.length === 0) {
+    alert("Please add at least one item to cart first!");
+    return;
+  }
+
+  let total = cartTotalVal.innerText;
+  if(confirm(`Process cart checkout for ₹${total}? Order will be ready at the front desk counter.`)) {
+    activeStoreCart = [];
+    updateStoreCartUI();
+    storeCheckoutNotification.classList.remove("hidden");
+    setTimeout(() => {
+      storeCheckoutNotification.classList.add("hidden");
+    }, 4000);
+  }
+}
+
+/* DYNAMIC SVG WEIGHT progress line graph */
+function loadWeightLogsAndRenderChart() {
+  db.collection("users").doc(phone).get().then(doc => {
+    if (!doc.exists) return;
+    let data = doc.data();
+    let weightHistory = data.weightHistory || [];
+
+    // Fallback if empty to draw a beautiful progress preview
+    if (weightHistory.length === 0) {
+      // Seed pre-loaded weight metrics for visual beauty!
+      weightHistory = [
+        {weight: Number(data.weight || 78) + 4, date: "05-01"},
+        {weight: Number(data.weight || 78) + 2, date: "05-10"},
+        {weight: Number(data.weight || 78), date: "05-23"}
+      ];
+    }
+
+    renderWeightChartSvg(weightHistory);
+  });
+}
+
+function renderWeightChartSvg(data) {
+  const svg = document.getElementById("weightChartSvg");
+  if(!svg) return;
+
+  if (data.length === 0) {
+    svg.innerHTML = '';
+    return;
+  }
+
+  // Draw chart based on points: width=400, height=160
+  const width = 400;
+  const height = 160;
+  const padding = 25;
+
+  let maxW = Math.max(...data.map(x => x.weight)) + 2;
+  let minW = Math.min(...data.map(x => x.weight)) - 2;
+  if (maxW === minW) { maxW += 5; minW -= 5; }
+
+  let xStep = (width - padding * 2) / Math.max(data.length - 1, 1);
+  let yRatio = (height - padding * 2) / (maxW - minW);
+
+  let points = [];
+  data.forEach((p, idx) => {
+    let x = padding + (idx * xStep);
+    let y = height - padding - ((p.weight - minW) * yRatio);
+    points.push({x, y, label: p.weight + "k", date: p.date});
+  });
+
+  let polylinePath = points.map(p => `${p.x},${p.y}`).join(' ');
+
+  let html = `
+    <!-- Grid backgrounds -->
+    <line x1="${padding}" y1="${padding}" x2="${width - padding}" y2="${padding}" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+    <line x1="${padding}" y1="${height / 2}" x2="${width - padding}" y2="${height / 2}" stroke="rgba(255,255,255,0.03)" stroke-width="1" />
+    <line x1="${padding}" y1="${height - padding}" x2="${width - padding}" y2="${height - padding}" stroke="rgba(255,255,255,0.06)" stroke-width="1.5" />
+  `;
+
+  // Draw smooth progress line path
+  html += `<polyline fill="none" stroke="var(--primary)" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" points="${polylinePath}" />`;
+
+  // Draw glowing data markers & text labels
+  points.forEach(p => {
+    html += `
+      <circle cx="${p.x}" cy="${p.y}" r="5" fill="#fff" stroke="var(--primary)" stroke-width="2" style="filter: drop-shadow(0px 0px 4px var(--primary));" />
+      <text x="${p.x}" y="${p.y - 10}" fill="#fff" font-size="9" text-anchor="middle" font-weight="700">${p.label}</text>
+      <text x="${p.x}" y="${height - 6}" fill="var(--text-muted)" font-size="8" text-anchor="middle">${p.date}</text>
+    `;
+  });
+
+  svg.innerHTML = html;
+}
+
+function saveBodyMeasurements() {
+  let w = Number(logWeight.value);
+  let c = Number(logChest.value);
+  let wa = Number(logWaist.value);
+  let b = Number(logBiceps.value);
+
+  if(!w) {
+    alert("Weight (kg) is mandatory to track progression charts!");
+    return;
+  }
+
+  const todayStr = new Date().toISOString().slice(5,10); // MM-DD
+  const weightRecord = {
+    weight: w,
+    date: todayStr,
+    timestamp: new Date().toISOString()
+  };
+
+  db.collection("users").doc(phone).update({
+    weight: w,
+    chest: c || 0,
+    waist: wa || 0,
+    biceps: b || 0,
+    weightHistory: firebase.firestore.FieldValue.arrayUnion(weightRecord)
+  }).then(() => {
+    alert("📊 Body stats and weights updated successfully!");
+    logWeight.value = '';
+    logChest.value = '';
+    logWaist.value = '';
+    logBiceps.value = '';
+    loadProfile();
+    loadWeightLogsAndRenderChart();
+  });
+}
+
+/* LEADERBOARD Active Ranks */
+function loadLeaderboard() {
+  db.collection("users").orderBy("rewardPoints", "desc").limit(8).get().then(snap => {
+    const list = document.getElementById("leaderboardList");
+    if(!list) return;
+
+    let html = '';
+    let rank = 1;
+    snap.forEach(doc => {
+      let u = doc.data();
+      if(u.phone && u.name) {
+        let topClass = rank <= 3 ? 'top3' : '';
+        let rankBadge = rank === 1 ? '🥇' : rank === 2 ? '🥈' : rank === 3 ? '🥉' : rank;
+        html += `
+          <div class="lead-item ${topClass}">
+            <div style="display:flex; align-items:center; gap:12px;">
+              <span class="lead-rank">${rankBadge}</span>
+              <div>
+                <strong style="color:#fff;">${u.name}</strong><br>
+                <small style="color:var(--text-muted); font-size:0.75rem;">Plan: ${u.currentPlan || 'Basic'}</small>
+              </div>
+            </div>
+            <div style="text-align:right; font-weight:800; color:var(--gold);">
+              ${u.rewardPoints || 0} pts
+            </div>
+          </div>
+        `;
+        rank++;
+      }
+    });
+
+    list.innerHTML = html || '<p class="small">No active scoreboard records.</p>';
+  });
+}
+
+/* MORE APP OPTIONS MODAL NAVIGATION */
+function openMoreOptionsModal() {
+  moreOptionsModal.classList.remove("hidden");
+}
+function closeMoreOptionsModal() {
+  moreOptionsModal.classList.add("hidden");
+}
+function triggerAppMenuOption(tab) {
+  closeMoreOptionsModal();
+  showTab(tab);
 }
 
 function loadAttendance(){
@@ -1204,8 +2152,8 @@ function loadProgressPhotos(){
     let photos = doc.data()?.progressPhotos || [];
     progressList.innerHTML = photos.length 
       ? photos.map(url => `
-          <div class="photo-item">
-            <img src="${url}">
+          <div class="photo-item" style="width: calc(50% - 6px); height: 160px; border-radius: 14px; overflow: hidden; border:1px solid var(--border); background:#000;">
+            <img src="${url}" style="width:100%; height:100%; object-fit:cover;">
           </div>
         `).join('') 
       : '<p class="small" style="width: 100%;">No progress photos uploaded yet.</p>';
@@ -1234,7 +2182,6 @@ function updateWaterUI(count) {
   const target = 8;
   const pct = Math.min(count / target, 1);
   const waterRect = document.getElementById('waterRect');
-  // Water starts at y=140 when empty, y=22 when full inside clip path
   const yVal = 140 - (pct * 118);
   if(waterRect) {
     waterRect.setAttribute('y', yVal);
@@ -1272,12 +2219,12 @@ function loadWater(){
 
 let qr=null;
 function showTab(tab){
-  ['home','scan','workout','diet','attendance','progress','profilePage'].forEach(id=>{
+  ['home','workout','diet','store','leaderboard','attendance','progress','profilePage','scan'].forEach(id=>{
     let el = document.getElementById(id);
     if(el) el.classList.add('hidden');
   });
   
-  ['navHome','navScan','navWorkout','navDiet','navAttendance','navProgress'].forEach(id=>{
+  ['navHome','navWorkout','navDiet','navStore','navLeaderboard'].forEach(id=>{
     let btn = document.getElementById(id);
     if(btn) btn.classList.remove('activeNav');
   });
@@ -1298,12 +2245,25 @@ function showTab(tab){
   } else if(qr){
     qr.stop().then(()=>{qr.clear();qr=null;}).catch(err => console.log('Camera stop error: ', err));
   }
+
+  // Reload logs dynamically
+  if(tab === 'workout') {
+    loadWorkout();
+  }
+  if(tab === 'diet') {
+    loadDietProgress();
+  }
+  if(tab === 'progress') {
+    loadWeightLogsAndRenderChart();
+  }
+  if(tab === 'profilePage') {
+    loadProfile();
+  }
 }
 
 function onScanSuccess(text){
   if (isProcessingScan) return;
   
-  // Date format YYYY-MM-DD
   const today = new Date();
   const yyyy = today.getFullYear();
   const mm = String(today.getMonth() + 1).padStart(2, '0');
@@ -1327,13 +2287,11 @@ function onScanSuccess(text){
       return;
     }
     
-    // Add to session log
     db.collection('ptSessions').add({
       phone: phone,
       date: todayStr,
       time: new Date().toLocaleTimeString()
     }).then(() => {
-      // Deduct session from user profile
       return db.collection('users').doc(phone).update({
         usedSessions: (u.usedSessions || 0) + 1,
         remainingSessions: (u.remainingSessions || 0) - 1,
@@ -1353,15 +2311,143 @@ function onScanSuccess(text){
   });
 }
 
-// Initial Load
+/* DYNAMIC APP DICTIONARY TRANSLATIONS */
+const appDictionary = {
+  en: {
+    lblStatus: "Status:",
+    lblPlan: "Plan",
+    lblExpiry: "Expiry",
+    lblRemaining: "Remaining",
+    lblUsed: "Used",
+    lblLastLogged: "Last Logged",
+    lblTrainer: "Assigned Trainer",
+    lblWorkoutTitle: "Workout Section",
+    lblActiveWorkoutLogger: "Gym Practice Logger",
+    lblTimelineTitle: "Workout Practice History",
+    lblDietTitle: "Diet & Nutrition",
+    lblCalLeft: "Logged",
+    lblProtLeft: "Protein",
+    lblFoodLoggerTitle: "Daily Food Logger",
+    lblHydration: "Daily Hydration",
+    lblStoreTitle: "Supplement Store",
+    lblCartTitle: "Gym Cart",
+    lblTotalCart: "Total Cost:",
+    btnCheckoutCart: "Checkout Supplement Order",
+    lblLeaderboardTitle: "Gym Leaderboard",
+    lblHistoryTitle: "Check-in History",
+    lblProgressTitle: "Progress Tracker",
+    lblWeightChart: "Weight Progress Graph",
+    lblMeasurementsTitle: "Body Measurements Log",
+    lblChooseProgress: "Choose progress file:",
+    lblRewardBalance: "Reward Balance:",
+    lblReferralCode: "Your Referral Code:",
+    lblStepTitle: "Daily Step Challenge",
+    lblSlotBookingTitle: "Slot Booking Target",
+    lblMoreOptions: "App Console Menu"
+  },
+  ml: {
+    lblStatus: "സ്റ്റാറ്റസ്:",
+    lblPlan: "പാക്കേജ്",
+    lblExpiry: "വാലിഡിറ്റി",
+    lblRemaining: "ബാക്കിയുള്ളവ",
+    lblUsed: "ഉപയോഗിച്ചവ",
+    lblLastLogged: "കഴിഞ്ഞ ഹാജർ",
+    lblTrainer: "ട്രെയിനർ",
+    lblWorkoutTitle: "വർക്കൗട്ട് ലോഗ്",
+    lblActiveWorkoutLogger: "വർക്കൗട്ട് ലോഗർ ടൂൾ",
+    lblTimelineTitle: "വർക്കൗട്ട് ലോഗ് ഹിസ്റ്ററി",
+    lblDietTitle: "ഡയറ്റും ന്യൂട്രീഷനും",
+    lblCalLeft: "കലോറി",
+    lblProtLeft: "പ്രോട്ടീൻ",
+    lblFoodLoggerTitle: "ഭക്ഷണ ലോഗർ",
+    lblHydration: "കുടിവെള്ള കണക്ക്",
+    lblStoreTitle: "സപ്ലിമെന്റ് സ്റ്റോർ",
+    lblCartTitle: "ജിം കാർട്ട്",
+    lblTotalCart: "ആകെ വില:",
+    btnCheckoutCart: "സപ്ലിമെന്റുകൾ ഓർഡർ ചെയ്യുക",
+    lblLeaderboardTitle: "ജിം ലീഡർബോർഡ്",
+    lblHistoryTitle: "ഹാജർ ഹിസ്റ്ററി",
+    lblProgressTitle: "പ്രോഗ്രസ്സ് ട്രാക്കർ",
+    lblWeightChart: "വെയ്റ്റ് പ്രോഗ്രസ് ഗ്രാഫ്",
+    lblMeasurementsTitle: "ശരീര അളവുകൾ",
+    lblChooseProgress: "ഫയൽ തിരഞ്ഞെടുക്കുക:",
+    lblRewardBalance: "റിവാർഡ് പോയിന്റ്സ്:",
+    lblReferralCode: "നിങ്ങളുടെ റഫറൽ കോഡ്:",
+    lblStepTitle: "ഡെയ്‌ലി സ്റ്റെപ്പ് ചലഞ്ച്",
+    lblSlotBookingTitle: "സെഷൻ ബുക്കിങ് ഫോം",
+    lblMoreOptions: "ജിം കൺസോൾ മെനു"
+  },
+  hi: {
+    lblStatus: "स्थिति:",
+    lblPlan: "योजना",
+    lblExpiry: "वैधता",
+    lblRemaining: "शेष सत्र",
+    lblUsed: "उपयोग किया",
+    lblLastLogged: "पिछली उपस्थिति",
+    lblTrainer: "प्रशिक्षक",
+    lblWorkoutTitle: "वर्कआउट शेड्यूल",
+    lblActiveWorkoutLogger: "वर्कआउट लॉग टूल",
+    lblTimelineTitle: "वर्कआउट इतिहास",
+    lblDietTitle: "आहार और पोषण",
+    lblCalLeft: "कैलोरी",
+    lblProtLeft: "प्रोटीन",
+    lblFoodLoggerTitle: "दैनिक खाद्य लॉगर",
+    lblHydration: "दैनिक जल स्तर",
+    lblStoreTitle: "सप्लीमेंट स्टोर",
+    lblCartTitle: "जिम कार्ट",
+    lblTotalCart: "कुल लागत:",
+    btnCheckoutCart: "ऑर्डर सबमिट करें",
+    lblLeaderboardTitle: "जिम लीडरबोर्ड",
+    lblHistoryTitle: "उपस्थिति लॉग",
+    lblProgressTitle: "प्रगति ट्रैकर",
+    lblWeightChart: "वजन प्रगति ग्राफ",
+    lblMeasurementsTitle: "शरीर की माप लॉग",
+    lblChooseProgress: "प्रगति चित्र चुनें:",
+    lblRewardBalance: "इनाम अंक:",
+    lblReferralCode: "आपका रेफरल कोड:",
+    lblStepTitle: "दैनिक कदम चुनौती",
+    lblSlotBookingTitle: "स्लॉट बुकिंग फॉर्म",
+    lblMoreOptions: "कंसोल मेनू"
+  }
+};
+
+function switchLanguage(lang) {
+  const dictionarySet = appDictionary[lang] || appDictionary.en;
+  for (let key in dictionarySet) {
+    const el = document.getElementById(key);
+    if(el) {
+      if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = dictionarySet[key];
+      } else {
+        el.innerText = dictionarySet[key];
+      }
+    }
+  }
+}
+
+// Initial triggers
 fetchPaymentConfig().then(() => {
   loadLockScreenPlans();
   loadHome();
 });
+loadProfile();
 loadWorkout();
 loadAttendance();
 loadProgressPhotos();
 loadWater();
+loadDietProgress();
+renderSupplementStore();
+loadLeaderboard();
+loadWeightLogsAndRenderChart();
 </script>
+
+<!-- SCAN MODAL SUB ELEMENT (Hidden target template) -->
+<div class="hidden">
+  <div id="scan">
+    <h3>Scan Attendance QR</h3>
+    <div id="reader"></div>
+  </div>
+</div>
+
 </body>
 </html>

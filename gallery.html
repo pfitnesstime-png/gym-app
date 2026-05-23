@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnesstime – Luxury Gallery</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #d97706; /* Luxury Gold */
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --emerald: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Header & Nav */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(8, 9, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+header nav {
+  display: flex;
+  gap: 28px;
+}
+
+header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+header nav a:hover, header nav a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+header .nav-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+header .nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+}
+
+/* Page Hero */
+.hero {
+  padding: 160px 24px 40px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Filter Controls */
+.filter-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 40px;
+  padding: 0 24px;
+}
+
+.filter-btn {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 10px 24px;
+  border-radius: 99px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.filter-btn:hover, .filter-btn.active {
+  background: var(--primary-soft);
+  color: #fff;
+  border-color: var(--primary);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+/* Gallery Grid */
+.gallery-section {
+  padding: 0 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.gallery-item {
+  background: var(--surface);
+  border-radius: 24px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  height: 260px;
+  position: relative;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.gallery-item:hover {
+  transform: translateY(-4px);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: var(--shadow);
+}
+
+.gallery-item:hover img {
+  transform: scale(1.06);
+}
+
+.gallery-item .overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(0deg, rgba(8, 9, 20, 0.8) 0%, transparent 80%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 24px;
+}
+
+.gallery-item:hover .overlay {
+  opacity: 1;
+}
+
+.gallery-item .overlay h4 {
+  margin: 0 0 4px;
+  font-size: 1.25rem;
+  font-family: 'Playfair Display', serif;
+  color: #fff;
+}
+
+.gallery-item .overlay span {
+  font-size: 0.85rem;
+  color: var(--primary);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Modal Viewer */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(4, 5, 12, 0.95);
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  padding: 24px;
+}
+
+.modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.modal-content {
+  max-width: 900px;
+  max-height: 80vh;
+  position: relative;
+}
+
+.modal-content img {
+  max-width: 100%;
+  max-height: 80vh;
+  border-radius: 16px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--shadow);
+}
+
+.modal-close {
+  position: absolute;
+  top: -50px;
+  right: 0;
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.modal-close:hover {
+  transform: scale(1.1);
+}
+
+@media (max-width: 768px) {
+  header nav {
+    display: none;
+  }
+  .filter-tabs {
+    flex-wrap: wrap;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">🏋️ Fitnesstime</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="membership.html">Membership</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="gallery.html" class="active">Gallery</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <a href="login.html" class="nav-btn">Member Portal</a>
+</header>
+
+<div class="hero">
+  <h1>Visual Sanctuary Gallery</h1>
+  <p>Step inside our premium facility layouts. Inspect our cardiovascular deck, massive strength floor, custom yoga sanctuaries, and high-performance equipment zones.</p>
+</div>
+
+<div class="filter-tabs">
+  <button class="filter-btn active" onclick="filterGallery('all')">All Facility</button>
+  <button class="filter-btn" onclick="filterGallery('strength')">Strength Deck</button>
+  <button class="filter-btn" onclick="filterGallery('cardio')">Cardio Zone</button>
+  <button class="filter-btn" onclick="filterGallery('studios')">Group Studios</button>
+</div>
+
+<div class="gallery-section">
+  <div class="gallery-grid" id="galleryGrid">
+    <!-- Item 1 -->
+    <div class="gallery-item" data-category="strength" onclick="openModal('https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1540497077202-7c8a3999166f?q=80&w=600&auto=format&fit=crop" alt="Heavy Lifting Deck">
+      <div class="overlay">
+        <h4>Heavy Strength Deck</h4>
+        <span>Strength Floor</span>
+      </div>
+    </div>
+
+    <!-- Item 2 -->
+    <div class="gallery-item" data-category="cardio" onclick="openModal('https://images.unsplash.com/photo-1571731956622-9a03285577e8?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1571731956622-9a03285577e8?q=80&w=600&auto=format&fit=crop" alt="Row of Treadmills">
+      <div class="overlay">
+        <h4>Premium Cardiovascular Deck</h4>
+        <span>Cardio Zone</span>
+      </div>
+    </div>
+
+    <!-- Item 3 -->
+    <div class="gallery-item" data-category="studios" onclick="openModal('https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1518611012118-696072aa579a?q=80&w=600&auto=format&fit=crop" alt="Yoga Studio">
+      <div class="overlay">
+        <h4>Zen Yoga Studio</h4>
+        <span>Group Studios</span>
+      </div>
+    </div>
+
+    <!-- Item 4 -->
+    <div class="gallery-item" data-category="strength" onclick="openModal('https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=600&auto=format&fit=crop" alt="Dumbbells rack">
+      <div class="overlay">
+        <h4>Olympic Free Weights Rack</h4>
+        <span>Strength Floor</span>
+      </div>
+    </div>
+
+    <!-- Item 5 -->
+    <div class="gallery-item" data-category="studios" onclick="openModal('https://images.unsplash.com/photo-1524594152303-9fd13543dd6e?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1524594152303-9fd13543dd6e?q=80&w=600&auto=format&fit=crop" alt="Spin Class">
+      <div class="overlay">
+        <h4>Zumba & Spin Studio</h4>
+        <span>Group Studios</span>
+      </div>
+    </div>
+
+    <!-- Item 6 -->
+    <div class="gallery-item" data-category="cardio" onclick="openModal('https://images.unsplash.com/photo-1578762560072-b56c4c1347a5?q=80&w=800&auto=format&fit=crop')">
+      <img src="https://images.unsplash.com/photo-1578762560072-b56c4c1347a5?q=80&w=600&auto=format&fit=crop" alt="Cross Trainer Zone">
+      <div class="overlay">
+        <h4>High-Metabolism HIIT Deck</h4>
+        <span>Cardio Zone</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Overlay viewer -->
+<div class="modal" id="galleryModal" onclick="closeModal()">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <img id="modalImg" src="" alt="Full Screen Facility View">
+  </div>
+</div>
+
+<script>
+function filterGallery(category) {
+  // Update button active states
+  const buttons = document.querySelectorAll('.filter-btn');
+  buttons.forEach(btn => btn.classList.remove('active'));
+  event.target.classList.add('active');
+
+  const items = document.querySelectorAll('.gallery-item');
+  items.forEach(item => {
+    if (category === 'all' || item.getAttribute('data-category') === category) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
+}
+
+function openModal(src) {
+  const modal = document.getElementById('galleryModal');
+  const img = document.getElementById('modalImg');
+  img.src = src;
+  modal.classList.add('active');
+}
+
+function closeModal() {
+  const modal = document.getElementById('galleryModal');
+  modal.classList.remove('active');
+}
+</script>
+
+</body>
+</html>

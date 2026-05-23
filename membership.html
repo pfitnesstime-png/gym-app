@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnesstime – Memberships & Pricing</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #d97706; /* Luxury Gold */
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --emerald: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Header & Nav */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(8, 9, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+header nav {
+  display: flex;
+  gap: 28px;
+}
+
+header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+header nav a:hover, header nav a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+header .nav-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+header .nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+}
+
+/* Page Hero */
+.hero {
+  padding: 160px 24px 60px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Pricing Grid */
+.pricing-section {
+  padding: 40px 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  margin-bottom: 60px;
+}
+
+.price-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  text-align: center;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.price-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: var(--shadow);
+}
+
+.price-card.featured {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(17, 20, 38, 0.75) 100%);
+}
+
+.price-card.featured::after {
+  content: 'MOST POPULAR';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: white;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 99px;
+  letter-spacing: 1px;
+}
+
+.price-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.price-card .duration {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.price-card .cost {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--emerald);
+  margin-bottom: 30px;
+}
+
+.price-card .cost span {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.price-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+  text-align: left;
+}
+
+.price-card ul li {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-card ul li i {
+  color: var(--emerald);
+}
+
+.price-card .btn-buy {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: block;
+}
+
+.price-card .btn-buy:hover {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
+}
+
+.price-card.featured .btn-buy {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+}
+
+.price-card.featured .btn-buy:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  box-shadow: 0 12px 30px var(--primary-glow);
+}
+
+/* Feature Comparison Table */
+.comparison-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  margin-top: 60px;
+}
+
+.comparison-card h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 800;
+  margin-top: 0;
+  margin-bottom: 30px;
+  text-align: center;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 16px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+
+th {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: #fff;
+}
+
+th:first-child, td:first-child {
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+td {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+td i {
+  font-size: 1.1rem;
+}
+
+td i.fa-check {
+  color: var(--emerald);
+}
+
+td i.fa-xmark {
+  color: #ef4444;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+  header {
+    padding: 0 20px;
+  }
+  header nav {
+    display: none;
+  }
+  .hero h1 {
+    font-size: 2.4rem;
+  }
+  .comparison-card {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">🏋️ Fitnesstime</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="membership.html" class="active">Membership</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <a href="login.html" class="nav-btn">Member Portal</a>
+</header>
+
+<div class="hero">
+  <h1>Choose Your Strength Plan</h1>
+  <p>Premium tiers custom-fitted for your metabolic objectives. From base physical guidance to elite 1-on-1 athletic coaching, step into your ultimate form today.</p>
+</div>
+
+<div class="pricing-section">
+  <div class="pricing-grid">
+    <!-- BASIC -->
+    <div class="price-card">
+      <div>
+        <h3>Basic Plan</h3>
+        <div class="duration">30 Days Membership</div>
+        <div class="cost">₹1,500<span>/mo</span></div>
+        <ul>
+          <li><i class="fa-solid fa-circle-check"></i> Standard Cardio & Gym Floor</li>
+          <li><i class="fa-solid fa-circle-check"></i> Modern Strength Machines</li>
+          <li><i class="fa-solid fa-circle-check"></i> Locker & Shower Access</li>
+          <li><i class="fa-solid fa-circle-xmark" style="color: #ef4444;"></i> Custom Diet Schedules</li>
+          <li><i class="fa-solid fa-circle-xmark" style="color: #ef4444;"></i> Personal Trainer Booking</li>
+        </ul>
+      </div>
+      <a href="login.html?plan=Basic&days=30&price=1500" class="btn-buy">Choose Basic Plan</a>
+    </div>
+
+    <!-- STANDARD -->
+    <div class="price-card featured">
+      <div>
+        <h3>Standard Plan</h3>
+        <div class="duration">60 Days Membership</div>
+        <div class="cost">₹2,800<span>/pkg</span></div>
+        <ul>
+          <li><i class="fa-solid fa-circle-check"></i> All Cardio & Strength Floors</li>
+          <li><i class="fa-solid fa-circle-check"></i> Dedicated Strength Coaches</li>
+          <li><i class="fa-solid fa-circle-check"></i> Custom Diet & Macros Plans</li>
+          <li><i class="fa-solid fa-circle-check"></i> Locker & Shower Access</li>
+          <li><i class="fa-solid fa-circle-xmark" style="color: #ef4444;"></i> Personal Trainer Sessions</li>
+        </ul>
+      </div>
+      <a href="login.html?plan=Standard&days=60&price=2800" class="btn-buy">Choose Standard Plan</a>
+    </div>
+
+    <!-- PREMIUM -->
+    <div class="price-card">
+      <div>
+        <h3>Premium Plan</h3>
+        <div class="duration">90 Days Membership</div>
+        <div class="cost">₹3,900<span>/pkg</span></div>
+        <ul>
+          <li><i class="fa-solid fa-circle-check"></i> Unlimited Gym Access</li>
+          <li><i class="fa-solid fa-circle-check"></i> Dedicated Strength Coaches</li>
+          <li><i class="fa-solid fa-circle-check"></i> Custom Diet & Diet Recommendations</li>
+          <li><i class="fa-solid fa-circle-check"></i> 1-on-1 Personal Trainer Booking</li>
+          <li><i class="fa-solid fa-circle-check"></i> Sauna & Recovery Spa Access</li>
+        </ul>
+      </div>
+      <a href="login.html?plan=Premium&days=90&price=3900" class="btn-buy">Choose Premium Plan</a>
+    </div>
+  </div>
+
+  <!-- Comparison Matrix -->
+  <div class="comparison-card">
+    <h2>Feature Comparison Matrix</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>Fitness Benefits</th>
+          <th>Basic</th>
+          <th>Standard</th>
+          <th>Premium</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Modern Gym Floor Access</td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>Advanced Cardio Zone</td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>Locker Room & Luxury Showers</td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>Customized Meal & Macros Tracker</td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>Expert Trainer Consultation</td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>1-on-1 PT Session Booking</td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+        <tr>
+          <td>Sauna & Luxury Spa Access</td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-xmark"></i></td>
+          <td><i class="fa-solid fa-check"></i></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+</body>
+</html>

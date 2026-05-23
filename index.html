@@ -3,12 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Fitnesstime Gym – Register / Login</title>
+<title>Fitnesstime Gym – Premium Fitness Sanctuary</title>
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
 :root {
@@ -20,9 +21,10 @@
   --primary: #3b82f6;
   --primary-glow: rgba(59, 130, 246, 0.45);
   --primary-soft: rgba(59, 130, 246, 0.12);
-  --accent: #10b981;
+  --accent: #d97706; /* Luxury Gold */
   --border: rgba(148, 163, 184, 0.12);
   --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --emerald: #10b981;
 }
 
 * {
@@ -30,8 +32,9 @@
 }
 
 html, body {
-  min-height: 100%;
   margin: 0;
+  padding: 0;
+  min-height: 100%;
   scroll-behavior: smooth;
 }
 
@@ -42,93 +45,495 @@ body {
   overflow-x: hidden;
 }
 
-.container {
-  padding: 0 16px 60px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
+/* Header Navbar */
 header {
-  padding: 60px 24px 30px;
-  text-align: center;
-}
-
-header h2 {
-  margin: 0;
-  font-size: 3rem;
-  font-weight: 800;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #ffffff 30%, #a5b4fc 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  font-family: 'Playfair Display', serif;
-}
-
-header p {
-  margin: 16px auto 0;
-  color: var(--text-muted);
-  max-width: 600px;
-  line-height: 1.8;
-  font-size: 1.1rem;
-  font-weight: 300;
-}
-
-.small-note {
-  font-size: 0.9rem;
-  color: var(--primary);
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  font-weight: 600;
-}
-
-.card {
-  background: var(--surface);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(8, 9, 20, 0.6);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  margin: 30px auto;
-  padding: 40px;
-  border-radius: 28px;
-  max-width: 580px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-  transition: transform 0.3s ease, border-color 0.3s ease;
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
 }
 
-.card:hover {
-  border-color: rgba(59, 130, 246, 0.25);
-}
-
-.card h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
-  font-size: 1.6rem;
-  color: #fff;
+header .logo {
   font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+header nav {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+}
+
+header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
   font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+header nav a:hover, header nav a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+.right-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Translation Dropdown widget */
+.lang-selector {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  outline: none;
+  font-family: inherit;
+}
+
+.lang-selector option {
+  background: #0d0f21;
+}
+
+header .nav-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+header .nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 180px 24px 100px;
+  text-align: center;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.05) 0%, transparent 60%);
+  position: relative;
+}
+
+.hero-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: url('https://images.unsplash.com/photo-1517838277536-f5f99be501cd?q=80&w=1200&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center;
+  opacity: 0.08;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-section h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.8rem;
+  font-weight: 800;
+  line-height: 1.2;
+  margin: 0 auto 20px;
+  max-width: 900px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
   letter-spacing: -0.01em;
 }
 
-#plansSection {
-  max-width: 900px;
+.hero-section p {
+  color: var(--text-muted);
+  font-size: 1.2rem;
+  line-height: 1.8;
+  max-width: 680px;
+  margin: 0 auto 36px;
+  font-weight: 300;
 }
 
-input, textarea, button, select {
-  width: 100%;
-  padding: 16px 20px;
-  margin-top: 16px;
-  border-radius: 18px;
+.hero-ctas {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+
+.hero-ctas a {
+  padding: 14px 28px;
+  border-radius: 16px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+
+.btn-main {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  box-shadow: 0 10px 25px rgba(217, 119, 6, 0.3);
+}
+
+.btn-main:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 30px rgba(217, 119, 6, 0.45);
+}
+
+.btn-secondary {
+  background: rgba(255, 255, 255, 0.03);
   border: 1px solid var(--border);
-  font-size: 15px;
-  font-family: inherit;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Dynamic Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 24px;
+  max-width: 1000px;
+  margin: 60px auto 0;
+  padding: 0 24px;
+}
+
+.stat-item {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 20px;
+  text-align: center;
+}
+
+.stat-item h3 {
+  margin: 0 0 6px;
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+.stat-item p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+}
+
+/* Features Grid */
+.section-title {
+  text-align: center;
+  padding: 60px 24px 20px;
+}
+
+.section-title h2 {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin: 0 0 10px;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.section-title p {
+  color: var(--text-muted);
+  font-size: 1.05rem;
+  max-width: 600px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.features-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.feature-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 24px;
+  padding: 30px;
+  border: 1px solid var(--border);
+  transition: all 0.3s ease;
+}
+
+.feature-card:hover {
+  border-color: rgba(59, 130, 246, 0.3);
+  transform: translateY(-4px);
+}
+
+.feature-icon {
+  background: var(--primary-soft);
+  color: var(--primary);
+  width: 54px;
+  height: 54px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.4rem;
+  margin-bottom: 20px;
+  border: 1px solid rgba(59, 130, 246, 0.2);
+}
+
+.feature-card h3 {
+  margin: 0 0 10px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.4rem;
+  color: white;
+}
+
+.feature-card p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+}
+
+/* Pricing Grid */
+.pricing-section {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.price-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  text-align: center;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.price-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(217, 119, 6, 0.35);
+  box-shadow: var(--shadow);
+}
+
+.price-card.featured {
+  border-color: rgba(59, 130, 246, 0.35);
+  background: linear-gradient(180deg, rgba(59, 130, 246, 0.03) 0%, rgba(17, 20, 38, 0.75) 100%);
+  position: relative;
+}
+
+.price-card.featured::after {
+  content: 'RECOMMENDED';
+  position: absolute;
+  top: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: white;
+  padding: 6px 16px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  border-radius: 99px;
+  letter-spacing: 1px;
+}
+
+.price-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin: 0 0 8px;
+  color: #fff;
+}
+
+.price-card .duration {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  margin-bottom: 24px;
+}
+
+.price-card .cost {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--emerald);
+  margin-bottom: 30px;
+}
+
+.price-card .cost span {
+  font-size: 1rem;
+  color: var(--text-muted);
+  font-weight: 400;
+}
+
+.price-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 40px;
+  text-align: left;
+}
+
+.price-card ul li {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-bottom: 14px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.price-card ul li i {
+  color: var(--emerald);
+}
+
+.price-card .btn-buy {
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 14px 24px;
+  border-radius: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 100%;
+  font-size: 0.95rem;
+  text-decoration: none;
+  display: block;
+}
+
+.price-card .btn-buy:hover {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  border-color: transparent;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.3);
+}
+
+.price-card.featured .btn-buy {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  border-color: transparent;
+  box-shadow: 0 8px 20px rgba(59, 130, 246, 0.2);
+}
+
+.price-card.featured .btn-buy:hover {
+  background: linear-gradient(135deg, #2563eb 0%, #1e40af 100%);
+  box-shadow: 0 12px 30px var(--primary-glow);
+}
+
+/* Contact Firestore section */
+.contact-section {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 60px 24px 100px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.contact-info h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: white;
+  margin-top: 0;
+  margin-bottom: 20px;
+}
+
+.contact-info p {
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+  margin-bottom: 30px;
+}
+
+.contact-info .item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 20px;
+}
+
+.contact-info .item i {
+  color: var(--accent);
+  font-size: 1.2rem;
+  width: 24px;
+}
+
+.contact-info .item span {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.contact-form {
+  background: var(--surface);
+  border-radius: 28px;
+  padding: 36px;
+  border: 1px solid var(--border);
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 15px 18px;
+  margin-top: 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+  font-size: 0.95rem;
   background: rgba(255, 255, 255, 0.03);
   color: #fff;
   outline: none;
-  transition: border-color 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+  font-family: inherit;
+  transition: all 0.25s ease;
 }
 
-input:focus, textarea:focus, select:focus {
+input:focus, textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.15);
+  box-shadow: 0 0 10px var(--primary-glow);
   background: rgba(255, 255, 255, 0.05);
 }
 
@@ -136,261 +541,282 @@ input::placeholder, textarea::placeholder {
   color: var(--text-muted);
 }
 
-select {
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 18px center;
-  background-size: 18px;
-}
-
-select option {
-  background: #0d0f21;
-  color: #fff;
-}
-
-textarea {
-  resize: vertical;
-  min-height: 110px;
-}
-
 button {
-  background: linear-gradient(135deg, var(--primary) 0%, #1e40af 100%);
-  color: #fff;
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
   border: none;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  box-shadow: 0 8px 24px rgba(59, 130, 246, 0.2);
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-  letter-spacing: 0.5px;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.2);
+  margin-top: 20px;
 }
 
 button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 12px 30px var(--primary-glow);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.35);
 }
 
-button:active {
-  transform: translateY(0);
+/* Legal Footer */
+footer {
+  background: rgba(8, 9, 20, 0.7);
+  backdrop-filter: blur(15px);
+  border-top: 1px solid var(--border);
+  padding: 60px 40px 30px;
 }
 
-.link {
-  display: block;
-  margin-top: 22px;
-  text-align: center;
-  color: var(--primary);
-  font-weight: 600;
-  cursor: pointer;
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+.footer-grid {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 40px;
+  margin-bottom: 40px;
+}
+
+.footer-logo h3 {
+  margin: 0 0 14px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.footer-logo p {
+  color: var(--text-muted);
   font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 320px;
+  margin: 0;
 }
 
-.link:hover {
-  color: #60a5fa;
-  text-shadow: 0 0 8px rgba(96, 165, 250, 0.4);
-}
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.footer-links {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
-  margin-top: 24px;
-}
-
-.footer-links button {
-  background: rgba(255, 255, 255, 0.02);
-  color: var(--text);
-  border: 1px solid var(--border);
-  box-shadow: none;
-}
-
-.footer-links button:hover {
-  background: rgba(255, 255, 255, 0.06);
-  border-color: rgba(255, 255, 255, 0.2);
-  box-shadow: none;
-}
-
-.badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px 18px;
-  margin-top: 14px;
-  border-radius: 999px;
-  border: 1px solid rgba(59, 130, 246, 0.25);
-  background: var(--primary-soft);
-  color: #60a5fa;
-  font-weight: 600;
-  font-size: 0.85rem;
+.footer-links h4 {
+  margin: 0 0 18px;
+  font-size: 1rem;
+  color: white;
+  text-transform: uppercase;
   letter-spacing: 0.5px;
 }
 
-.plan-card {
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 20px;
-  padding: 24px;
-  border: 1px solid var(--border);
-  text-align: left;
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+.footer-links a {
+  display: block;
+  color: var(--text-muted);
+  text-decoration: none;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  transition: color 0.3s ease;
 }
 
-.plan-card:hover {
-  transform: translateY(-4px);
-  border-color: rgba(59, 130, 246, 0.3);
-  box-shadow: 0 16px 36px rgba(0, 0, 0, 0.3);
-  background: var(--surface-hover);
-}
-
-.plan-card h4 {
-  margin: 0 0 8px;
-  font-size: 1.4rem;
-  font-family: 'Playfair Display', serif;
+.footer-links a:hover {
   color: #fff;
 }
 
-.plan-details {
-  font-size: 0.95rem;
+.copyright {
+  text-align: center;
+  border-top: 1px solid var(--border);
+  padding-top: 24px;
   color: var(--text-muted);
-  margin-bottom: 12px;
+  font-size: 0.85rem;
+  max-width: 1100px;
+  margin: 0 auto;
 }
 
-.plan-price {
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: var(--accent);
-  margin-bottom: 16px;
-}
-
-.plan-desc {
-  font-size: 0.9rem;
-  color: var(--text-muted);
-  line-height: 1.6;
-  min-height: 48px;
-  margin-bottom: 20px;
-}
-
-.plan-buttons {
+/* Floating WhatsApp Widget */
+.whatsapp-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background: #25d366;
+  color: white;
+  border-radius: 50%;
   display: flex;
-  gap: 10px;
-  margin-top: auto;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  box-shadow: 0 8px 24px rgba(37, 211, 102, 0.4);
+  z-index: 999;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
 }
 
-.plan-buttons button {
-  margin-top: 0;
+.whatsapp-widget:hover {
+  transform: scale(1.08) rotate(8deg);
+  box-shadow: 0 12px 30px rgba(37, 211, 102, 0.6);
 }
 
-.btn-choose {
-  flex: 1.5;
-  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
-}
-
-.btn-details {
-  flex: 1;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border);
-  box-shadow: none;
-}
-
-.btn-details:hover {
-  background: rgba(255, 255, 255, 0.08);
-  box-shadow: none;
+@media (max-width: 768px) {
+  header nav {
+    display: none;
+  }
+  .hero-section h1 {
+    font-size: 2.6rem;
+  }
+  .contact-section {
+    grid-template-columns: 1fr;
+  }
+  .footer-grid {
+    grid-template-columns: 1fr;
+  }
 }
 </style>
 </head>
-
 <body>
-<div class="container">
+
 <header>
-  <div class="small-note">Fitnesstime Gym</div>
-  <h2>Elevate Your Strength</h2>
-  <p>Your portal to ultimate fitness. Join us today and experience a complete, trainer-guided workout ecosystem tailored exactly to your goals.</p>
+  <a href="index.html" class="logo" id="headerLogo">🏋️ Fitnesstime</a>
+  <nav>
+    <a href="index.html" class="active" id="navHome">Home</a>
+    <a href="membership.html" id="navMembership">Membership</a>
+    <a href="trainers.html" id="navTrainers">Trainers</a>
+    <a href="gallery.html" id="navGallery">Gallery</a>
+    <a href="contact.html" id="navContact">Contact</a>
+  </nav>
+  
+  <div class="right-controls">
+    <!-- Multi Language Translation Switcher -->
+    <select class="lang-selector" onchange="switchLanguage(this.value)">
+      <option value="en">English</option>
+      <option value="ml">മലയാളം</option>
+      <option value="hi">हिन्दी</option>
+    </select>
+    <a href="login.html" class="nav-btn" id="btnMemberPortal">Member Portal</a>
+  </div>
 </header>
 
-<!-- PLANS & PRICING -->
-<div class="card" id="plansSection">
-  <h3>Select Your Plan</h3>
-  <div id="plansGrid" class="section-grid" style="grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); display: grid; gap: 20px;">
-    Loading plans...
+<!-- HERO SECTION -->
+<div class="hero-section">
+  <h1 id="heroTitle">Elevate Your Strength, Unleash Your Form</h1>
+  <p id="heroSubtitle">Your portal to ultimate fitness. Join us today and experience a complete, trainer-guided workout ecosystem tailored exactly to your goals.</p>
+  <div class="hero-ctas">
+    <a href="login.html" class="btn-main" id="btnGetStarted">Get Started Today</a>
+    <a href="membership.html" class="btn-secondary" id="btnViewPlans">View pricing tiers</a>
+  </div>
+
+  <!-- Real time counter stats -->
+  <div class="stats-grid">
+    <div class="stat-item">
+      <h3 id="stat1Val">2000+</h3>
+      <p id="stat1Name">ACTIVE MEMBERS</p>
+    </div>
+    <div class="stat-item">
+      <h3 id="stat2Val">15+</h3>
+      <p id="stat2Name">ELITE COACHES</p>
+    </div>
+    <div class="stat-item">
+      <h3 id="stat3Val">24/7</h3>
+      <p id="stat3Name">STUDIO ACCESS</p>
+    </div>
   </div>
 </div>
 
-<!-- REGISTRATION CARD -->
-<div class="card" id="registerBox">
-  <h3>New Member Registration</h3>
-  <input id="r_name" placeholder="Name">
-  <input id="r_phone" placeholder="Phone">
-  <input id="r_email" placeholder="Email">
-  <input id="r_password" type="password" placeholder="Password (for login)">
-  
-  <div class="grid-2">
-    <input id="r_age" type="number" placeholder="Age">
-    <select id="r_gender">
-      <option value="">Gender</option>
-      <option value="Male">Male</option>
-      <option value="Female">Female</option>
-      <option value="Other">Other</option>
-    </select>
-  </div>
-  
-  <div class="grid-2">
-    <input id="r_weight" type="number" placeholder="Weight (kg)">
-    <input id="r_height" type="number" placeholder="Height (cm)">
-  </div>
-  
-  <textarea id="r_goal" placeholder="Fitness goal (e.g. lose weight, build muscle)" rows="3"></textarea>
-  
-  <select id="r_plan" onchange="updatePlanAmount()">
-    <option value="">Select plan</option>
-  </select>
-  
-  <input id="r_amount" type="text" placeholder="Plan amount" readonly style="margin-top: 14px;">
-  
-  <button onclick="register()">Register & Continue</button>
-  <div class="link" onclick="showLogin()">Already registered? Login here</div>
+<!-- FEATURES SECTION -->
+<div class="section-title">
+  <h2 id="featuresTitle">Engineered for Peak Performance</h2>
+  <p id="featuresSubtitle">Discover premium amenities and advanced digital companion tools designed to streamline your daily training metrics.</p>
 </div>
 
-<!-- LOGIN CARD -->
-<div class="card hidden" id="loginBox">
-  <h3>Member Login</h3>
-  <input id="l_phone" placeholder="Phone Number">
-  <input id="l_password" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <div class="link" onclick="showForgot()">Forgot password?</div>
-  <div class="link" onclick="showRegister()">New member? Register here</div>
-  <div class="footer-links">
-    <button onclick="window.location.href='trainer-login.html'">Trainer Panel</button>
-    <button onclick="window.location.href='admin-login.html'">Admin Panel</button>
+<div class="features-section">
+  <div class="features-grid">
+    <!-- F1 -->
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-dumbbell"></i></div>
+      <h3 id="f1Title">Advanced Lifting Floors</h3>
+      <p id="f1Desc">Hammer Strength decks, high-end cardiovascular setups, and dedicated free weight sanctuaries designed for deep muscle loading.</p>
+    </div>
+    <!-- F2 -->
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-apple-whole"></i></div>
+      <h3 id="f2Title">AI Meal Diagnostics</h3>
+      <p id="f2Desc">Advanced client-side expert heuristic recommendation engine producing optimal nutrition structures, calorie rings, and protein limits.</p>
+    </div>
+    <!-- F3 -->
+    <div class="feature-card">
+      <div class="feature-icon"><i class="fa fa-chart-line"></i></div>
+      <h3 id="f3Title">Interactive Tracker</h3>
+      <p id="f3Desc">Log specific active sets, reps, and weights during exercises. Monitor progressive weight overloading via gorgeous graphical timelines.</p>
+    </div>
   </div>
 </div>
 
-<!-- FORGOT CARD -->
-<div class="card hidden" id="forgotBox">
-  <h3>Forgot Password</h3>
-  <p style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 20px;">Enter your phone or email to request password reset assistance from the admin.</p>
-  <input id="f_phone" placeholder="Phone or Email">
-  <button onclick="forgotPassword()">Request Reset Info</button>
-  <div class="link" onclick="showLogin()">Back to login</div>
-</div>
+<!-- PRICING SECTION -->
+<div class="section-title">
+  <h2 id="pricingTitle">Membership Subscription Packages</h2>
+  <p id="pricingSubtitle">Clear, affordable package tiers fetching current pricing dynamically from our secure admin console.</p>
 </div>
 
+<div class="pricing-section">
+  <div class="pricing-grid" id="plansGrid">
+    <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted)">Loading pricing plans...</div>
+  </div>
+</div>
+
+<!-- CONTACT SECTION -->
+<div class="contact-section">
+  <div class="contact-info">
+    <h3 id="contactTitle">Speak with Our Support Desk</h3>
+    <p id="contactSubtitle">Have questions regarding billing holds, zumba slot availability, or custom trainer assignments? Initiate an immediate ticket.</p>
+    
+    <div class="item">
+      <i class="fa fa-map-marker-alt"></i>
+      <span id="contactAdd">Karikakulam, Karaparamb, Calicut, Kerala</span>
+    </div>
+    <div class="item">
+      <i class="fa fa-phone"></i>
+      <span>+91 8086361224 / 7025992455</span>
+    </div>
+    <div class="item">
+      <i class="fa fa-envelope"></i>
+      <span>support@fitnesstime.com</span>
+    </div>
+  </div>
+
+  <div class="contact-form">
+    <input id="c_name" placeholder="Full Name">
+    <input id="c_phone" placeholder="10-digit Phone Number" type="tel" maxlength="10">
+    <textarea id="c_msg" placeholder="Explain your inquiries..." rows="3"></textarea>
+    <button onclick="submitContactMessage()" id="btnSubmitContact">Broadcast Message</button>
+  </div>
+</div>
+
+<!-- FLOATING WHATSAPP SUPPORT -->
+<a href="https://wa.me/918086361224?text=Hi!%20I%20am%20interested%20in%20Fitnesstime%20Gym%20Memberships." target="_blank" class="whatsapp-widget">
+  <i class="fab fa-whatsapp"></i>
+</a>
+
+<!-- LEGAL FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div class="footer-logo">
+      <h3>🏋️ Fitnesstime</h3>
+      <p id="footerDesc">Elite muscle sanctuary, posture correction programs, and personalized nutrition logs tailored strictly for premium athletic results.</p>
+    </div>
+    <div class="footer-links">
+      <h4 id="footTitleSanctuary">Gym Sanctuary</h4>
+      <a href="membership.html">Membership</a>
+      <a href="trainers.html">Trainers</a>
+      <a href="gallery.html">Gallery</a>
+    </div>
+    <div class="footer-links">
+      <h4 id="footTitleLegal">Legal & Info</h4>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="terms.html">Terms & Conditions</a>
+      <a href="contact.html">Contact Us</a>
+    </div>
+  </div>
+  <div class="copyright">
+    &copy; 2026 Fitnesstime Gym. All rights reserved. Registered under Calicut Municipal Corporation Gym Acts.
+  </div>
+</footer>
+
+<!-- Firebase compat SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
+// Initialize Firebase
 firebase.initializeApp({
   apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
   authDomain: "gym-app-79bec.firebaseapp.com",
@@ -398,224 +824,183 @@ firebase.initializeApp({
 });
 const db = firebase.firestore();
 
-if (localStorage.getItem("gymPhone")) {
-  window.location.replace("app.html");
-}
-
-function loadPlanOptions() {
-  db.collection("plans").get().then(snap => {
-    let h = '<option value="">Select plan</option>';
-    if (snap.empty) {
-      let defaultPlans = [
-        {name: "Basic", days: 30, price: 1500},
-        {name: "Standard", days: 60, price: 2800},
-        {name: "Premium", days: 90, price: 3900}
-      ];
-      defaultPlans.forEach(p => {
-        h += `<option value="${p.name}|${p.days}|${p.price}">${p.name} (${p.days} days) - ₹${p.price}</option>`;
-      });
-    } else {
-      snap.forEach(doc => {
-        let p = doc.data();
-        h += `<option value="${p.name}|${p.days}|${p.price}">${p.name} (${p.days} days) - ₹${p.price}</option>`;
-      });
-    }
-    r_plan.innerHTML = h;
-  }).catch(() => {
-    r_plan.innerHTML = '<option value="">Select plan</option><option value="Basic|30|1500">Basic (30 days) - ₹1500</option><option value="Standard|60|2800">Standard (60 days) - ₹2800</option><option value="Premium|90|3900">Premium (90 days) - ₹3900</option>';
-  });
-}
-
-function updatePlanAmount() {
-  let value = r_plan.value;
-  if (!value) {
-    r_amount.value = "";
-    return;
-  }
-  let parts = value.split("|");
-  r_amount.value = "₹" + (parts[2] || "");
-}
-
-loadPlanOptions();
-
-function renderPlans() {
+// Fetch plans dynamically
+function renderHomePlans() {
   const grid = document.getElementById('plansGrid');
-  if (!grid) return;
+  if(!grid) return;
 
-  db.collection('plans').get().then(snap => {
+  db.collection("plans").get().then(snap => {
     let plans = [];
     if (snap.empty) {
       plans = [
-        {name: 'Basic', days: 30, price: 1500, desc: 'Full Gym Access, Free Cardio & Strength Guidance'},
-        {name: 'Standard', days: 60, price: 2800, desc: 'Advanced Trainer Support, Custom Diet & Nutrition Coaching'},
-        {name: 'Premium', days: 90, price: 3900, desc: 'All-Access VIP Pass, Personal Training sessions, Priority Equipment'}
+        {name: "Basic", days: 30, price: 1500, desc: "Standard Cardio Floor, heavy lifter decks, full locker & luxury shower access."},
+        {name: "Standard", days: 60, price: 2800, desc: "Dedicated physical coaches, custom diet logs & macro target setup."},
+        {name: "Premium", days: 90, price: 3900, desc: "All-access VIP pass, 1-on-1 PT slot booking, sauna & recovery spa."}
       ];
     } else {
       snap.forEach(d => {
         let p = d.data();
-        plans.push({name: p.name, days: p.days, price: p.price, desc: p.description || 'Gym Access & Strength Coaching'});
+        plans.push({name: p.name, days: p.days, price: p.price, desc: p.description || "Premium Strength Coaching"});
       });
     }
 
     grid.innerHTML = plans.map(p => `
-      <div class="plan-card">
+      <div class="price-card ${p.name === 'Standard' ? 'featured' : ''}">
         <div>
-          <h4>${p.name}</h4>
-          <div class="plan-details">${p.days} days subscription</div>
-          <div class="plan-desc">${p.desc}</div>
+          <h3>${p.name} Plan</h3>
+          <div class="duration">${p.days} Days Membership</div>
+          <div class="cost">₹${p.price}</div>
+          <p style="color:var(--text-muted); font-size:0.9rem; line-height:1.6; min-height:60px; margin-bottom: 20px;">${p.desc}</p>
         </div>
-        <div>
-          <div class="plan-price">₹${p.price}</div>
-          <div class="plan-buttons">
-            <button class="btn-choose" onclick="choosePlanFromCard('${p.name.replace(/'/g, "\\'")}', '${p.days}', '${p.price}')">Choose Plan</button>
-          </div>
-        </div>
+        <a href="login.html?plan=${p.name}&days=${p.days}&price=${p.price}" class="btn-buy">Subscribe Now</a>
       </div>
     `).join('');
-
   }).catch(() => {
-    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted)">Plans failed to load. Please register using the form.</div>';
+    grid.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: var(--text-muted)">Unable to load plans. Please use member login.</div>';
   });
 }
 
-function choosePlanFromCard(name, days, price) {
-  if (!window.r_plan) return;
-  r_plan.value = `${name}|${days}|${price}`;
-  updatePlanAmount();
-  const el = document.getElementById('registerBox');
-  if (el) el.scrollIntoView({behavior: 'smooth', block: 'center'});
-}
+renderHomePlans();
 
-renderPlans();
+// Save Contact message to Firestore
+function submitContactMessage() {
+  const name = document.getElementById('c_name').value.trim();
+  const phone = document.getElementById('c_phone').value.trim();
+  const msg = document.getElementById('c_msg').value.trim();
 
-function showLogin() {
-  registerBox.classList.add("hidden");
-  forgotBox.classList.add("hidden");
-  loginBox.classList.remove("hidden");
-}
-function showRegister() {
-  loginBox.classList.add("hidden");
-  forgotBox.classList.add("hidden");
-  registerBox.classList.remove("hidden");
-}
-function showForgot() {
-  loginBox.classList.add("hidden");
-  registerBox.classList.add("hidden");
-  forgotBox.classList.remove("hidden");
-}
-
-function register() {
-  let phone = r_phone.value.trim();
-  let name  = r_name.value.trim();
-  let password = r_password.value.trim();
-
-  if (!name || !phone) {
-    alert("Name & Phone required");
-    return;
-  }
-  if (!password || password.length < 4) {
-    alert("Password required (minimum 4 characters)");
+  if(!name || !phone || !msg) {
+    alert("Please fill name, phone and message to proceed.");
     return;
   }
 
-  let planValue = r_plan.value;
-  if (!planValue) {
-    alert("Please select a subscription plan to register.");
-    return;
-  }
-
-  db.collection("users").doc(phone).get().then(doc => {
-    if (doc.exists) {
-      alert("User already exists. Please login.");
-      showLogin();
-      return;
-    }
-
-    let parts = planValue.split("|");
-    let requestedPlan = parts[0] || "";
-    let requestedDays = parts[1] || 0;
-    let requestedPrice = parts[2] || 0;
-
-    db.collection("users").doc(phone).set({
-      name: name,
-      phone: phone,
-      password: password,
-      email: r_email.value || "",
-      age: r_age.value || "",
-      gender: r_gender.value || "",
-      weight: r_weight.value || "",
-      height: r_height.value || "",
-      goal: r_goal.value || "",
-      currentPlan: "",
-      planStatus: "pending_approval",
-      planExpiry: "",
-      paymentStatus: "pending",
-      requestedPlan: requestedPlan,
-      requestedDays: Number(requestedDays),
-      requestedPrice: Number(requestedPrice),
-      paymentMode: "",
-      progressPhotos: [],
-      waterIntake: 0,
-      trainerNote: "",
-      rewardPoints: 0,
-      bookingRequests: []
-    }).then(() => {
-      localStorage.setItem("gymPhone", phone);
-      window.location.replace("app.html");
-    });
+  db.collection("contactMessages").add({
+    name: name,
+    phone: phone,
+    message: msg,
+    timestamp: new Date().toISOString(),
+    status: "unread"
+  }).then(() => {
+    alert("✅ Inquiry broadcasted successfully! Front desk has logged your ticket.");
+    document.getElementById('c_name').value = '';
+    document.getElementById('c_phone').value = '';
+    document.getElementById('c_msg').value = '';
   });
 }
 
-function login() {
-  let phone = l_phone.value.trim();
-  let password = l_password.value.trim();
-  
-  if (!phone || !password) {
-    alert("Enter phone number and password");
-    return;
+/* DYNAMIC MULTI-LANGUAGE TRANSLATION DICTIONARY */
+const dictionary = {
+  en: {
+    navHome: "Home",
+    navMembership: "Membership",
+    navTrainers: "Trainers",
+    navGallery: "Gallery",
+    navContact: "Contact",
+    btnMemberPortal: "Member Portal",
+    heroTitle: "Elevate Your Strength, Unleash Your Form",
+    heroSubtitle: "Your portal to ultimate fitness. Join us today and experience a complete, trainer-guided workout ecosystem tailored exactly to your goals.",
+    btnGetStarted: "Get Started Today",
+    btnViewPlans: "View pricing tiers",
+    stat1Name: "ACTIVE MEMBERS",
+    stat2Name: "ELITE COACHES",
+    stat3Name: "STUDIO ACCESS",
+    featuresTitle: "Engineered for Peak Performance",
+    featuresSubtitle: "Discover premium amenities and advanced digital companion tools designed to streamline your daily training metrics.",
+    f1Title: "Advanced Lifting Floors",
+    f1Desc: "Hammer Strength decks, high-end cardiovascular setups, and dedicated free weight sanctuaries designed for deep muscle loading.",
+    f2Title: "AI Meal Diagnostics",
+    f2Desc: "Advanced client-side expert heuristic recommendation engine producing optimal nutrition structures, calorie rings, and protein limits.",
+    f3Title: "Interactive Tracker",
+    f3Desc: "Log specific active sets, reps, and weights during exercises. Monitor progressive weight overloading via gorgeous graphical timelines.",
+    pricingTitle: "Membership Subscription Packages",
+    pricingSubtitle: "Clear, affordable package tiers fetching current pricing dynamically from our secure admin console.",
+    contactTitle: "Speak with Our Support Desk",
+    contactSubtitle: "Have questions regarding billing holds, zumba slot availability, or custom trainer assignments? Initiate an immediate ticket.",
+    contactAdd: "Karikakulam, Karaparamb, Calicut, Kerala",
+    btnSubmitContact: "Broadcast Message",
+    footerDesc: "Elite muscle sanctuary, posture correction programs, and personalized nutrition logs tailored strictly for premium athletic results.",
+    footTitleSanctuary: "Gym Sanctuary",
+    footTitleLegal: "Legal & Info"
+  },
+  ml: {
+    navHome: "ഹോം",
+    navMembership: "മെമ്പർഷിപ്പ്",
+    navTrainers: "ട്രെയിനർമാർ",
+    navGallery: "ഗാലറി",
+    navContact: "ബന്ധപ്പെടുക",
+    btnMemberPortal: "മെമ്പർ പോർട്ടൽ",
+    heroTitle: "ശക്തി വർദ്ധിപ്പിക്കൂ, ശരീരം മനോഹരമാക്കൂ",
+    heroSubtitle: "നിങ്ങളുടെ ഫിറ്റ്നസ് ലക്ഷ്യങ്ങളിലേക്ക് എത്താൻ ട്രെയിനർമാരുടെ മാർഗ്ഗനിർദ്ദേശത്തോടുകൂടിയ സമ്പൂർണ്ണ ഫിറ്റ്നസ് ആപ്പ് പ്രയോജനപ്പെടുത്തുക.",
+    btnGetStarted: "ഇന്ന് തന്നെ ആരംഭിക്കൂ",
+    btnViewPlans: "റേറ്റ് ലിസ്റ്റ് കാണുക",
+    stat1Name: "ആക്ടീവ് അംഗങ്ങൾ",
+    stat2Name: "മികച്ച കോച്ചുകൾ",
+    stat3Name: "എപ്പോഴും പ്രവേശനം",
+    featuresTitle: "അത്യുഗ്രൻ ഫിറ്റ്നസ് അനുഭവം",
+    featuresSubtitle: "അഡ്വാൻസ്ഡ് ജിം മെഷീനുകളും അതോടൊപ്പം സ്മാർട്ട് ആപ്പ് ടൂളുകളും നിങ്ങളുടെ ലക്ഷ്യങ്ങൾ വേഗത്തിലാക്കുന്നു.",
+    f1Title: "അത്യാധുനിക ജിം ഫ്ലോർ",
+    f1Desc: "ഹാമർ സ്ട്രെങ്ത് മെഷീനുകൾ, മികച്ച കാർഡിയോ സെറ്റപ്പുകൾ, വെയിറ്റ് ലിഫ്റ്റിങ് ഏരിയ എന്നിവ.",
+    f2Title: "AI ഡയറ്റ് ശുപാർശകൾ",
+    f2Desc: "നിങ്ങളുടെ ഉയരവും ഭാരവും അനുസരിച്ച് മികച്ച ഡയറ്റ് ചാർട്ടുകളും കലോറി കണക്കുകളും എഐ ടൂൾ നൽകുന്നു.",
+    f3Title: "വർക്കൗട്ട് ലോഗർ ടൂൾ",
+    f3Desc: "ഓരോ വർക്കൗട്ടിലും ചെയ്ത സെറ്റുകൾ, ഭാരം എന്നിവ കൃത്യമായി രേഖപ്പെടുത്താനും പ്രോഗ്രസ്സ് അറിയാനുമുള്ള ടൂളുകൾ.",
+    pricingTitle: "മെമ്പർഷിപ്പ് പാക്കേജുകൾ",
+    pricingSubtitle: "നിങ്ങൾക്ക് അനുയോജ്യമായ വിവിധ ഫിറ്റ്നസ് പാക്കേജുകൾ താഴെ നൽകുന്നു.",
+    contactTitle: "ഹെൽപ്പ് ഡെസ്ക്",
+    contactSubtitle: "മെമ്പർഷിപ്പ് സംശയങ്ങൾ, ഫീസ് വിവരങ്ങൾ, ക്ലാസ് ബുക്കിങ് എന്നിവയ്ക്കായി ഉടൻ ഞങ്ങളോട് സംസാരിക്കുക.",
+    contactAdd: "കാരിക്കാകുളം, കാരാപ്പറമ്പ്, കോഴിക്കോട്, കേരളം",
+    btnSubmitContact: "മെസ്സേജ് അയക്കുക",
+    footerDesc: "മികച്ച ഫിറ്റ്നസ് ട്രെയിനിങ്, പ്രൊഫഷണൽ കോച്ചിങ്, ഡയറ്റ് ചാർട്ടുകൾ എന്നിവ കോഴിക്കോട്ടെ മികച്ച ജിം ആപ്പിലൂടെ.",
+    footTitleSanctuary: "ജിം ഗാലറി",
+    footTitleLegal: "വിവരങ്ങൾ"
+  },
+  hi: {
+    navHome: "होम",
+    navMembership: "मेम्बरशिप",
+    navTrainers: "ट्रेनर्स",
+    navGallery: "गैलरी",
+    navContact: "संपर्क करें",
+    btnMemberPortal: "सदस्य पोर्टल",
+    heroTitle: "अपनी शक्ति बढ़ाएं, शरीर को सुडौल बनाएं",
+    heroSubtitle: "परम फिटनेस के लिए आपका प्रवेश द्वार। आज ही शामिल हों और अपने लक्ष्यों के लिए तैयार किए गए वर्कआउट इकोसिस्टम का अनुभव करें।",
+    btnGetStarted: "आज ही शुरू करें",
+    btnViewPlans: "प्लान्स देखें",
+    stat1Name: "सक्रिय सदस्य",
+    stat2Name: "प्रशिक्षक",
+    stat3Name: "हमेशा खुला",
+    featuresTitle: "सर्वश्रेष्ठ फिटनेस अनुभव",
+    featuresSubtitle: "दैनिक प्रशिक्षण को आसान बनाने के लिए डिज़ाइन की गई प्रीमियम सुविधाओं और उन्नत डिजिटल उपकरणों की खोज करें।",
+    f1Title: "आधुनिक जिम फ्लोर",
+    f1Desc: "बेहतर कार्डियो सेटअप, और भारी वजन उठाने के लिए डिज़ाइन किए गए शानदार फ्री वेट डेक।",
+    f2Title: "AI आहार मार्गदर्शन",
+    f2Desc: "आपके शरीर के अनुसार बेहतरीन कैलोरी गणना और प्रोटीन सीमाएं बताने वाला स्मार्ट एआई कोच।",
+    f3Title: "इंटरैक्टिव वर्कआउट ट्रैकर",
+    f3Desc: "व्यायाम के दौरान सेट और वजन को आसानी से लॉग करें। प्रगति को ग्राफ के माध्यम से ट्रैक करें।",
+    pricingTitle: "मेम्बरशिप पैकेजेस",
+    pricingSubtitle: "हमारे सुरक्षित एडमिन कंसोल से गतिशील रूप से वर्तमान कीमतों को दर्शाने वाले स्पष्ट प्लान्स।",
+    contactTitle: "सहायता डेस्क से संपर्क करें",
+    contactSubtitle: "बिलिंग होल्ड या स्लॉट उपलब्धता के संबंध में प्रश्न हैं? तुरंत एक टिकट शुरू करें।",
+    contactAdd: "कारिकाकुलम, कारापरम्ब, कालीकट, केरल",
+    btnSubmitContact: "संदेश भेजें",
+    footerDesc: "शानदार शारीरिक परिणाम के लिए तैयार किया गया सर्वश्रेष्ठ जिम, वर्कआउट ट्रैकर और पोषण संबंधी आहार लॉग।",
+    footTitleSanctuary: "जिम गैलरी",
+    footTitleLegal: "कानूनी जानकारी"
   }
+};
 
-  db.collection("users").doc(phone).get().then(doc => {
-    if (doc.exists) {
-      let userData = doc.data();
-      // Safe fallback to '1234' for users loaded without password
-      let savedPass = userData.password || "1234";
-      if (password === savedPass) {
-        localStorage.setItem("gymPhone", phone);
-        window.location.replace("app.html");
+function switchLanguage(lang) {
+  const dictionarySet = dictionary[lang] || dictionary.en;
+  for (let key in dictionarySet) {
+    const el = document.getElementById(key);
+    if(el) {
+      if(el.tagName === 'INPUT' || el.tagName === 'TEXTAREA') {
+        el.placeholder = dictionarySet[key];
       } else {
-        alert("Incorrect password!");
+        el.innerText = dictionarySet[key];
       }
-    } else {
-      alert("User not found. Please contact the administrator.");
     }
-  });
-}
-
-function forgotPassword() {
-  let val = f_phone.value.trim();
-  if (!val) {
-    alert("Enter phone or email");
-    return;
   }
-
-  db.collection("users").where("phone", "==", val).get().then(snap => {
-    if (!snap.empty) {
-      alert("Password reset requested! Please contact administration for approval.");
-      showLogin();
-      return;
-    }
-
-    db.collection("users").where("email", "==", val).get().then(snap2 => {
-      if (!snap2.empty) {
-        alert("Password reset requested! Please contact administration for approval.");
-      } else {
-        alert("No account found with this phone or email.");
-      }
-      showLogin();
-    });
-  });
 }
 </script>
+
 </body>
 </html>

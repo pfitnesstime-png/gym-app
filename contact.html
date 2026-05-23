@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnesstime – Contact Administration</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #d97706; /* Luxury Gold */
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --emerald: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Header & Nav */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(8, 9, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+header nav {
+  display: flex;
+  gap: 28px;
+}
+
+header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+header nav a:hover, header nav a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+header .nav-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+header .nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+}
+
+/* Page Hero */
+.hero {
+  padding: 160px 24px 40px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Contact Grid Section */
+.contact-section {
+  padding: 20px 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 40px;
+}
+
+.contact-info-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.contact-info-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.info-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  margin-bottom: 30px;
+}
+
+.info-item .icon {
+  background: var(--primary-soft);
+  color: var(--primary);
+  width: 50px;
+  height: 50px;
+  border-radius: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  border: 1px solid rgba(59, 130, 246, 0.25);
+  flex-shrink: 0;
+}
+
+.info-item div h4 {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 1.05rem;
+}
+
+.info-item div p {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.6;
+  font-size: 0.95rem;
+}
+
+.map-box {
+  width: 100%;
+  height: 200px;
+  border-radius: 20px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  margin-top: 20px;
+}
+
+.map-box iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Contact Form Card */
+.contact-form-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 28px;
+  padding: 40px;
+  border: 1px solid var(--border);
+}
+
+.contact-form-card h3 {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.8rem;
+  color: #fff;
+  margin-top: 0;
+  margin-bottom: 8px;
+}
+
+.contact-form-card p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  margin-top: 0;
+  margin-bottom: 24px;
+  line-height: 1.6;
+}
+
+input, textarea, button {
+  width: 100%;
+  padding: 16px 20px;
+  margin-top: 16px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  font-size: 15px;
+  font-family: inherit;
+  background: rgba(255, 255, 255, 0.03);
+  color: #fff;
+  outline: none;
+  transition: all 0.25s ease;
+}
+
+input:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 5px rgba(59, 130, 246, 0.15);
+  background: rgba(255, 255, 255, 0.05);
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--text-muted);
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+button {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 8px 24px rgba(217, 119, 6, 0.25);
+  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+  margin-top: 24px;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 30px rgba(217, 119, 6, 0.4);
+}
+
+@media (max-width: 860px) {
+  header nav {
+    display: none;
+  }
+  .contact-section {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">🏋️ Fitnesstime</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="membership.html">Membership</a>
+    <a href="trainers.html">Trainers</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html" class="active">Contact</a>
+  </nav>
+  <a href="login.html" class="nav-btn">Member Portal</a>
+</header>
+
+<div class="hero">
+  <h1>Contact Gym Administration</h1>
+  <p>Have an inquiry regarding trainer schedules, membership hold settings, or supplement availability? Speak directly to our front desk coordinators.</p>
+</div>
+
+<div class="contact-section">
+  <!-- Info Column -->
+  <div class="contact-info-card">
+    <div>
+      <h3>Gym Coordinates</h3>
+      
+      <!-- Info Item 1 -->
+      <div class="info-item">
+        <div class="icon"><i class="fa fa-map-location-dot"></i></div>
+        <div>
+          <h4>Physical Location</h4>
+          <p>Fitnesstime Gym, Karikakulam, Karaparamb, Calicut, Kerala</p>
+        </div>
+      </div>
+
+      <!-- Info Item 2 -->
+      <div class="info-item">
+        <div class="icon"><i class="fa fa-phone"></i></div>
+        <div>
+          <h4>Desk Phone Line</h4>
+          <p>+91 8086361224<br>+91 7025992455</p>
+        </div>
+      </div>
+
+      <!-- Info Item 3 -->
+      <div class="info-item">
+        <div class="icon"><i class="fa fa-clock"></i></div>
+        <div>
+          <h4>Working Timings</h4>
+          <p>Monday – Saturday: 5:00 AM – 10:00 PM<br>Sunday: 6:00 AM – 12:00 PM</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Map Preview -->
+    <div class="map-box">
+      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3912.784534832448!2d75.79512347504893!3d11.277254588899884!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1m3!1d0!2zMTHCsDE2JzM4LjEiTiA3NcKwNDcnNTEuNyJFCg!5e0!3m2!1sen!2sin!4v1700000000000!5m2!1sen!2sin" allowfullscreen="" loading="lazy"></iframe>
+    </div>
+  </div>
+
+  <!-- Form Column -->
+  <div class="contact-form-card">
+    <h3>Initiate Inquiries</h3>
+    <p>Complete the secure form below. Your query will instantly save in the database and alert front desk management.</p>
+    
+    <div id="formContainer">
+      <input id="c_name" placeholder="Full Name">
+      <input id="c_phone" placeholder="Phone Number" type="tel">
+      <input id="c_email" placeholder="Email Address" type="email">
+      <textarea id="c_message" placeholder="Explain your inquiry details..." rows="4"></textarea>
+      <button onclick="submitInquiry()">Broadcast Message</button>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
+<script>
+// Initialize Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
+});
+const db = firebase.firestore();
+
+function submitInquiry() {
+  const name = document.getElementById('c_name').value.trim();
+  const phone = document.getElementById('c_phone').value.trim();
+  const email = document.getElementById('c_email').value.trim();
+  const msg = document.getElementById('c_message').value.trim();
+
+  if(!name || !phone || !msg) {
+    alert("Name, Phone & Message are mandatory!");
+    return;
+  }
+
+  db.collection("contactMessages").add({
+    name: name,
+    phone: phone,
+    email: email,
+    message: msg,
+    timestamp: new Date().toISOString(),
+    status: "unread"
+  }).then(() => {
+    alert("✅ Inquiry submitted successfully! Front desk will contact you soon.");
+    document.getElementById('c_name').value = '';
+    document.getElementById('c_phone').value = '';
+    document.getElementById('c_email').value = '';
+    document.getElementById('c_message').value = '';
+  }).catch((err) => {
+    console.error(err);
+    alert("Database connection error. Please try again.");
+  });
+}
+</script>
+
+</body>
+</html>

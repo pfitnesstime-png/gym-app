@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitnesstime – Master Coaches</title>
+
+<!-- Fonts -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+<style>
+:root {
+  --bg: #080914;
+  --surface: rgba(17, 20, 38, 0.75);
+  --text: #f1f5f9;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-glow: rgba(59, 130, 246, 0.45);
+  --primary-soft: rgba(59, 130, 246, 0.12);
+  --accent: #d97706; /* Luxury Gold */
+  --border: rgba(148, 163, 184, 0.12);
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.5);
+  --emerald: #10b981;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
+  color: var(--text);
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+}
+
+/* Header & Nav */
+header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(8, 9, 20, 0.6);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 40px;
+}
+
+header .logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-decoration: none;
+}
+
+header nav {
+  display: flex;
+  gap: 28px;
+}
+
+header nav a {
+  color: var(--text-muted);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transition: all 0.3s ease;
+}
+
+header nav a:hover, header nav a.active {
+  color: #fff;
+  text-shadow: 0 0 10px rgba(255,255,255,0.3);
+}
+
+header .nav-btn {
+  background: linear-gradient(135deg, var(--accent) 0%, #b45309 100%);
+  color: white;
+  border: none;
+  padding: 10px 22px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 8px 20px rgba(217, 119, 6, 0.25);
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+header .nav-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 25px rgba(217, 119, 6, 0.4);
+}
+
+/* Page Hero */
+.hero {
+  padding: 160px 24px 60px;
+  text-align: center;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.hero h1 {
+  font-family: 'Playfair Display', serif;
+  font-size: 3.2rem;
+  font-weight: 800;
+  margin: 0 0 16px;
+  background: linear-gradient(135deg, #ffffff 30%, var(--accent) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.hero p {
+  color: var(--text-muted);
+  font-size: 1.15rem;
+  line-height: 1.8;
+  margin: 0;
+  font-weight: 300;
+}
+
+/* Trainers Grid */
+.trainers-section {
+  padding: 40px 24px 100px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.trainers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+}
+
+.trainer-card {
+  background: var(--surface);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-radius: 32px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+  display: flex;
+  flex-direction: column;
+}
+
+.trainer-card:hover {
+  transform: translateY(-8px);
+  border-color: rgba(59, 130, 246, 0.35);
+  box-shadow: var(--shadow);
+}
+
+.trainer-img-box {
+  width: 100%;
+  height: 320px;
+  background: #111322;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.trainer-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.trainer-card:hover .trainer-img-box img {
+  transform: scale(1.08);
+}
+
+.trainer-img-box::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 120px;
+  background: linear-gradient(0deg, #0d0f21 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.trainer-card .badge-overlay {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(8, 9, 20, 0.85);
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 14px;
+  border-radius: 99px;
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.trainer-info {
+  padding: 30px;
+  background: #0d0f21;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.trainer-info h3 {
+  margin: 0 0 6px;
+  font-family: 'Playfair Display', serif;
+  font-size: 1.6rem;
+  color: #fff;
+}
+
+.trainer-info .specialty {
+  color: var(--primary);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 16px;
+}
+
+.trainer-info p {
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  margin: 0 0 20px;
+}
+
+.trainer-info .credentials {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  border-top: 1px solid var(--border);
+  padding-top: 16px;
+  margin-bottom: 24px;
+}
+
+.trainer-info .credentials span {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.trainer-info .credentials span b {
+  color: #fff;
+}
+
+.trainer-info .btn-book {
+  background: linear-gradient(135deg, var(--primary) 0%, #1d4ed8 100%);
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  box-shadow: 0 6px 15px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+
+.trainer-info .btn-book:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px var(--primary-glow);
+  filter: brightness(1.1);
+}
+
+@media (max-width: 768px) {
+  header nav {
+    display: none;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="logo">🏋️ Fitnesstime</a>
+  <nav>
+    <a href="index.html">Home</a>
+    <a href="membership.html">Membership</a>
+    <a href="trainers.html" class="active">Trainers</a>
+    <a href="gallery.html">Gallery</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+  <a href="login.html" class="nav-btn">Member Portal</a>
+</header>
+
+<div class="hero">
+  <h1>Meet Our Master Coaches</h1>
+  <p>Certified athletic directors, certified nutritional planners, and posture coaches dedicated entirely to keeping your kinetic motions clean and effective.</p>
+</div>
+
+<div class="trainers-section">
+  <div class="trainers-grid">
+    <!-- TRAINER 1 -->
+    <div class="trainer-card">
+      <div class="badge-overlay">HEAD COACH</div>
+      <div class="trainer-img-box">
+        <img src="https://images.unsplash.com/photo-1567013127542-490d757e51fc?q=80&w=600&auto=format&fit=crop" alt="Coach Rohan">
+      </div>
+      <div class="trainer-info">
+        <div>
+          <h3>Rohan Mathew</h3>
+          <div class="specialty">Strength & Powerlifting</div>
+          <p>Former competitive powerlifter specializing in clean kinetic posture, heavy compound bar mechanics, and maximum muscle hypertrophy coaching.</p>
+          <div class="credentials">
+            <span><i class="fa fa-certificate" style="color:var(--accent); margin-right:6px;"></i><b>Certifications:</b> NASM-PES, Gold Medal Nutritionist</span>
+            <span><i class="fa fa-clock" style="color:var(--accent); margin-right:6px;"></i><b>Experience:</b> 8+ Years Coaching</span>
+          </div>
+        </div>
+        <a href="login.html?book=Rohan" class="btn-book">Book PT Session</a>
+      </div>
+    </div>
+
+    <!-- TRAINER 2 -->
+    <div class="trainer-card">
+      <div class="badge-overlay">MASTER INSTRUCTOR</div>
+      <div class="trainer-img-box">
+        <img src="https://images.unsplash.com/photo-1548690312-e3b507d8c110?q=80&w=600&auto=format&fit=crop" alt="Coach Sarah">
+      </div>
+      <div class="trainer-info">
+        <div>
+          <h3>Sarah Kurian</h3>
+          <div class="specialty">HIIT & Zumba Dance</div>
+          <p>Cardiovascular specialist coordinating our dynamic group zumba workshops, active interval step challenges, and high-intensity metabolic conditioning.</p>
+          <div class="credentials">
+            <span><i class="fa fa-certificate" style="color:var(--accent); margin-right:6px;"></i><b>Certifications:</b> Zumba Gold Pro, ACE Personal Trainer</span>
+            <span><i class="fa fa-clock" style="color:var(--accent); margin-right:6px;"></i><b>Experience:</b> 6+ Years Coaching</span>
+          </div>
+        </div>
+        <a href="login.html?book=Sarah" class="btn-book">Book Zumba Session</a>
+      </div>
+    </div>
+
+    <!-- TRAINER 3 -->
+    <div class="trainer-card">
+      <div class="badge-overlay">YOGA GURU</div>
+      <div class="trainer-img-box">
+        <img src="https://images.unsplash.com/photo-1607962837359-5e7e89f866ad?q=80&w=600&auto=format&fit=crop" alt="Coach Dev">
+      </div>
+      <div class="trainer-info">
+        <div>
+          <h3>Devadathan Nambiar</h3>
+          <div class="specialty">Yoga & Flexibility</div>
+          <p>Certified body flexibility tutor directing our recovery flows, deep core spinal alignments, and mindfulness respiration workshops.</p>
+          <div class="credentials">
+            <span><i class="fa fa-certificate" style="color:var(--accent); margin-right:6px;"></i><b>Certifications:</b> Yoga Alliance 500-RYT, Posture Coach</span>
+            <span><i class="fa fa-clock" style="color:var(--accent); margin-right:6px;"></i><b>Experience:</b> 10+ Years Coaching</span>
+          </div>
+        </div>
+        <a href="login.html?book=Dev" class="btn-book">Book Yoga Session</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

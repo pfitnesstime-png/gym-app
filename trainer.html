@@ -27,6 +27,24 @@
   --red: #ef4444;
 }
 
+.theme-gold {
+  --bg: #f8fafc;
+  --surface: rgba(255, 255, 255, 0.85);
+  --surface-hover: rgba(241, 245, 249, 0.9);
+  --text: #0f172a;
+  --text-muted: #64748b;
+  --primary: #b45309;
+  --primary-glow: rgba(217, 119, 6, 0.3);
+  --primary-soft: rgba(217, 119, 6, 0.08);
+  --accent: #b45309;
+  --border: rgba(15, 23, 42, 0.08);
+  --shadow: 0 20px 40px rgba(15, 23, 42, 0.06);
+}
+
+body {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
 * {
   box-sizing: border-box;
   font-family: 'Outfit', sans-serif;
@@ -238,7 +256,10 @@ hr {
 <body>
 <header>
   <h2>🏋️ Fitnesstime Trainer</h2>
-  <button onclick="logoutTrainer()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+  <div style="display: flex; gap: 10px; align-items: center;">
+    <i class="fa fa-circle-half-stroke" onclick="toggleTrainerTheme()" title="Toggle Theme" style="color: var(--text-muted); font-size: 1.15rem; transition: all 0.3s ease; padding: 10px; border-radius: 50%; background: var(--primary-soft); cursor: pointer; border: 1px solid rgba(59, 130, 246, 0.15); display: inline-block;"></i>
+    <button onclick="logoutTrainer()"><i class="fa fa-sign-out-alt"></i> Logout</button>
+  </div>
 </header>
 
 <div class="container" style="padding: 0 16px;">
@@ -548,6 +569,23 @@ function loadTodayMembers(){
     });
     memberList.innerHTML = html || '<p class="small">No members registered yet.</p>';
   });
+}
+
+/* TRAINER THEME SWAPPER */
+let currentTheme = localStorage.getItem('appTheme') || 'midnight';
+if (currentTheme === 'gold') {
+  document.body.classList.add('theme-gold');
+}
+
+function toggleTrainerTheme() {
+  if (currentTheme === 'midnight') {
+    document.body.classList.add('theme-gold');
+    currentTheme = 'gold';
+  } else {
+    document.body.classList.remove('theme-gold');
+    currentTheme = 'midnight';
+  }
+  localStorage.setItem('appTheme', currentTheme);
 }
 
 // Initial triggers
