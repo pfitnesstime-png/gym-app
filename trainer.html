@@ -321,8 +321,14 @@ hr {
 
   <!-- Progress Monitoring -->
   <div class="card">
-    <h3>All Registered Gym Clients</h3>
-    <button class="btn-primary" onclick="loadTodayMembers()" style="margin-top:0; margin-bottom:16px;"><i class="fa fa-sync"></i> Refresh Client Records</button>
+    <h3>Clients & Personal Training List</h3>
+    <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 16px;">
+      <select id="clientFilterSelect" onchange="loadTodayMembers()" style="margin-top: 0; padding: 10px 14px; flex: 1;">
+        <option value="mine">My PT Clients Only</option>
+        <option value="all">All Gym Members</option>
+      </select>
+      <button class="btn-primary" onclick="loadTodayMembers()" style="margin-top: 0; width: auto; padding: 10px 18px; white-space: nowrap;"><i class="fa fa-sync"></i> Refresh</button>
+    </div>
     <div id="memberList">Loading clients...</div>
   </div>
 </div>
@@ -545,11 +551,22 @@ window.nextPhoto = function() {
 
 // Load full list of registered members
 function loadTodayMembers(){
+  const activeTrainerName = localStorage.getItem('gymTrainerName') || 'Trainer';
+  const filterSelect = document.getElementById('clientFilterSelect');
+  const filterVal = filterSelect ? filterSelect.value : 'mine';
+
   db.collection('users').orderBy('name').get().then(snap=>{
     let html='';
     snap.forEach(doc=>{
       const u = doc.data();
       if(u.phone && u.name) {
+        // Filter by assigned trainer
+        if (filterVal === 'mine') {
+          if (!u.trainerName || u.trainerName.trim() !== activeTrainerName.trim()) {
+            return;
+          }
+        }
+
         const isSelected = u.phone === selectedPhone ? 'border-color:var(--primary); background:rgba(59, 130, 246, 0.04);' : '';
         html += `
           <div class="member-list-item" style="${isSelected} cursor:pointer;" onclick="selectMember('${u.phone}','${u.name}')">
@@ -567,7 +584,12 @@ function loadTodayMembers(){
         `;
       }
     });
-    memberList.innerHTML = html || '<p class="small">No members registered yet.</p>';
+
+    let noClientsMsg = filterVal === 'mine'
+      ? `<p class="small" style="text-align:center; padding:10px;">No Personal Training (PT) clients assigned to you yet.</p>`
+      : `<p class="small" style="text-align:center; padding:10px;">No gym members registered yet.</p>`;
+
+    memberList.innerHTML = html || noClientsMsg;
   });
 }
 
@@ -589,6 +611,9 @@ function toggleTrainerTheme() {
 }
 
 // Initial triggers
+const activeTrainerName = localStorage.getItem('gymTrainerName') || 'Trainer';
+document.querySelector('header h2').innerText = `🏋️ Coach ${activeTrainerName} Panel`;
+
 generateSessionQR();
 loadTodayMembers();
 </script>

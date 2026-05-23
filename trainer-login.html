@@ -78,6 +78,8 @@ function loginTrainer(){
       let t = doc.data();
       if (p === t.password) {
         localStorage.setItem('gymTrainer', 'true');
+        localStorage.setItem('gymTrainerUsername', u);
+        localStorage.setItem('gymTrainerName', t.name || 'Trainer');
         window.location.href = 'trainer.html';
       } else {
         alert('Incorrect trainer credentials');
@@ -86,6 +88,8 @@ function loginTrainer(){
       // Fallback
       if (u === 'trainer' && p === '1234') {
         localStorage.setItem('gymTrainer', 'true');
+        localStorage.setItem('gymTrainerUsername', 'trainer');
+        localStorage.setItem('gymTrainerName', 'Trainer');
         window.location.href = 'trainer.html';
       } else {
         alert('Incorrect trainer credentials');
@@ -95,6 +99,8 @@ function loginTrainer(){
     // Database connection issues fallback
     if (u === 'trainer' && p === '1234') {
       localStorage.setItem('gymTrainer', 'true');
+      localStorage.setItem('gymTrainerUsername', 'trainer');
+      localStorage.setItem('gymTrainerName', 'Trainer');
       window.location.href = 'trainer.html';
     } else {
       alert('Incorrect trainer credentials');
