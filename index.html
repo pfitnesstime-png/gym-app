@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fitnesstime Gym – Premium Fitness Sanctuary</title>
+<meta name="theme-color" content="#080914">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Fitnesstime">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="logo.PNG.png">
 
 <!-- Fonts -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1000,6 +1007,59 @@ function switchLanguage(lang) {
     }
   }
 }
+</script>
+
+<!-- PWA Install Banner -->
+<div id="pwaInstallBanner" style="display:none; position:fixed; bottom:0; left:0; right:0; background:linear-gradient(135deg,#1e40af,#1d4ed8); color:#fff; padding:16px 20px; z-index:9999; display:none; align-items:center; justify-content:space-between; gap:12px; box-shadow:0 -4px 20px rgba(0,0,0,0.3);">
+  <div style="display:flex; align-items:center; gap:12px;">
+    <img src="logo.PNG.png" style="width:40px;height:40px;border-radius:10px;">
+    <div>
+      <div style="font-weight:700; font-size:0.95rem;">Install Fitnesstime App</div>
+      <div style="font-size:0.78rem; opacity:0.8;">Home screen-ൽ add ചെയ്ത് app പോലെ use ചെയ്യൂ!</div>
+    </div>
+  </div>
+  <div style="display:flex; gap:8px; flex-shrink:0;">
+    <button id="pwaInstallBtn" style="background:#fff; color:#1e40af; border:none; padding:10px 18px; border-radius:10px; font-weight:700; cursor:pointer; font-size:0.85rem; width:auto; margin:0;">Install</button>
+    <button onclick="document.getElementById('pwaInstallBanner').style.display='none'" style="background:rgba(255,255,255,0.15); color:#fff; border:none; padding:10px 14px; border-radius:10px; font-weight:600; cursor:pointer; font-size:0.85rem; width:auto; margin:0;">✕</button>
+  </div>
+</div>
+
+<script>
+// Service Worker Registration
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js')
+      .then(reg => console.log('SW registered:', reg.scope))
+      .catch(err => console.log('SW error:', err));
+  });
+}
+
+// PWA Install Prompt
+let deferredPrompt;
+const banner = document.getElementById('pwaInstallBanner');
+const installBtn = document.getElementById('pwaInstallBtn');
+
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  banner.style.display = 'flex';
+});
+
+if (installBtn) {
+  installBtn.addEventListener('click', async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      deferredPrompt = null;
+      banner.style.display = 'none';
+    }
+  });
+}
+
+window.addEventListener('appinstalled', () => {
+  banner.style.display = 'none';
+  deferredPrompt = null;
+});
 </script>
 
 </body>
