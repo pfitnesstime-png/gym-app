@@ -9,6 +9,9 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Playfair+Display:ital,wght@0,600;0,800;1,600&display=swap" rel="stylesheet">
+<!-- Firebase & Compat SDK -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 
 <style>
@@ -389,6 +392,41 @@ header .nav-btn:hover {
 </div>
 
 <script>
+// Initialize Firebase
+firebase.initializeApp({
+  apiKey: "AIzaSyCfeXRcZ-gfUboT3irAHbMe0_3qphUD1X0",
+  authDomain: "gym-app-79bec.firebaseapp.com",
+  projectId: "gym-app-79bec"
+});
+const db = firebase.firestore();
+
+function loadGalleryItems() {
+  db.collection("gallery").orderBy("createdAt", "desc").get().then(snap => {
+    const grid = document.getElementById("galleryGrid");
+    if (snap.empty) {
+      // Keep hardcoded fallback cards!
+      return;
+    }
+    
+    let h = '';
+    snap.forEach(doc => {
+      let g = doc.data();
+      let label = g.category === 'strength' ? 'Strength Floor' : g.category === 'cardio' ? 'Cardio Zone' : 'Group Studios';
+      h += `
+        <div class="gallery-item" data-category="${g.category}" onclick="openModal('${g.url}')">
+          <img src="${g.url}" alt="${g.title}">
+          <div class="overlay">
+            <h4>${g.title}</h4>
+            <span>${label}</span>
+          </div>
+        </div>
+      `;
+    });
+    grid.innerHTML = h;
+  });
+}
+loadGalleryItems();
+
 function filterGallery(category) {
   // Update button active states
   const buttons = document.querySelectorAll('.filter-btn');

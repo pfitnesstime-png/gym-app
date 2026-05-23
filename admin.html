@@ -477,9 +477,10 @@ td {
       <p id="pt_phone" style="color: var(--text-muted); font-size: 0.9rem; margin-top:0; margin-bottom: 20px;">-</p>
     </center>
     
-    <p><b style="color: var(--text-muted);">Current Goal:</b> <span id="pt_goal" style="font-weight: 600;">-</span></p>
-    
-    <hr>
+    <h4>Assign Personal Trainer</h4>
+    <select id="pt_assigned_trainer">
+      <option value="">-- No Trainer Assigned --</option>
+    </select>
     
     <h4>Prescribe Diet Plan</h4>
     <textarea id="pt_diet" placeholder="Enter custom diet regime details..."></textarea>
@@ -644,6 +645,7 @@ td {
       <button class="btn-primary" onclick="showInside('broadcasterBox')" style="margin-top:0;"><i class="fa fa-bullhorn"></i> Global Broadcaster</button>
       <button class="btn-primary" onclick="showInside('trainersConfigBox')" style="margin-top:0;"><i class="fa fa-dumbbell"></i> Manage Trainers</button>
       <button class="btn-primary" onclick="showInside('adminConfigBox')" style="margin-top:0;"><i class="fa fa-key"></i> Admin Credentials</button>
+      <button class="btn-primary" onclick="showInside('galleryConfigBox')" style="margin-top:0;"><i class="fa fa-images"></i> Manage Gallery</button>
     </div>
   </div>
 
@@ -708,6 +710,31 @@ td {
     
     <button class="ok" onclick="saveAdminConfig()" style="margin-top: 24px;"><i class="fa fa-save"></i> Update Credentials</button>
     <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 10px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
+  </div>
+
+  <!-- GALLERY MANAGEMENT BOX -->
+  <div class="card hidden" id="galleryConfigBox">
+    <h3>🖼️ Manage Public Gallery</h3>
+    <p class="small" style="margin-bottom: 20px;">Publish and showcase your facility layouts, premium machinery, and group yoga session snaps directly to your public website gallery.</p>
+    
+    <div class="form-grid">
+      <input id="gal_title" placeholder="Photo Title (e.g. Zen Yoga Sanctuary)">
+      <select id="gal_category">
+        <option value="strength">Strength Floor</option>
+        <option value="cardio">Cardio Zone</option>
+        <option value="studios">Group Studios</option>
+      </select>
+    </div>
+    <input id="gal_url" placeholder="Image URL (Unsplash or web link)">
+    
+    <button class="btn-primary" onclick="addNewGalleryItem()"><i class="fa fa-image"></i> Publish Gallery Image</button>
+    
+    <hr>
+    
+    <h4>Published Gallery Showcase</h4>
+    <div id="adminGalleryList" style="display:flex; flex-direction:column; gap:12px; margin-top: 14px;">Loading gallery...</div>
+    
+    <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 20px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
   </div>
 
   <!-- PAYMENT HISTORY REPORT -->
@@ -911,7 +938,7 @@ function showTab(id, btn){
   [
     "addUser","requests","users","editUser","plans",
     "attendance","qr","whatsapp","payments",
-    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox"
+    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox","galleryConfigBox"
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
@@ -1849,7 +1876,7 @@ function loadTodayCollection(){
 }
 
 function showInside(id){
-  ["attendance","payments","paymentHistory","qr","whatsapp","bookings","offerBanners","requests","paymentConfigBox","broadcasterBox","trainersConfigBox","adminConfigBox"].forEach(x=>{
+  ["attendance","payments","paymentHistory","qr","whatsapp","bookings","offerBanners","requests","paymentConfigBox","broadcasterBox","trainersConfigBox","adminConfigBox","galleryConfigBox"].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
   });
@@ -1862,6 +1889,7 @@ function showInside(id){
   if(id === "broadcasterBox") loadActiveAnnouncements();
   if(id === "trainersConfigBox") loadAdminTrainers();
   if(id === "adminConfigBox") loadAdminConfig();
+  if(id === "galleryConfigBox") loadAdminGallery();
 }
 
 /* PT PROFILE EDITOR */
@@ -1870,15 +1898,33 @@ function openPTProfile(phone){
   currentPTUser = phone;
   showTab("ptProfile", null);
 
-  db.collection("users").doc(phone).get().then(d=>{
-    let u=d.data()||{};
-    pt_name.innerText = u.name||"-";
-    pt_phone.innerText = u.phone||"-";
-    pt_goal.innerText = u.goal||"-";
-    pt_diet.value = u.dietPlan||"";
-    pt_note.value = u.trainerNote||"";
-    pt_weekly.value = u.weeklySessions||0;
-    pt_img.src = u.photoURL || "https://via.placeholder.com/80?text=Gym";
+  // Load active trainers to dropdown first
+  db.collection("trainers").get().then(snap => {
+    let h = '<option value="">-- No Trainer Assigned --</option>';
+    snap.forEach(doc => {
+      let t = doc.data();
+      h += `<option value="${t.name}|${t.phone || ''}">${t.name} (${t.username})</option>`;
+    });
+    pt_assigned_trainer.innerHTML = h;
+
+    // Load member PT details
+    db.collection("users").doc(phone).get().then(d=>{
+      let u=d.data()||{};
+      pt_name.innerText = u.name||"-";
+      pt_phone.innerText = u.phone||"-";
+      pt_goal.innerText = u.goal||"-";
+      pt_diet.value = u.dietPlan||"";
+      pt_note.value = u.trainerNote||"";
+      pt_weekly.value = u.weeklySessions||0;
+      pt_img.src = u.photoURL || "https://via.placeholder.com/80?text=Gym";
+      
+      // Select the current trainer in dropdown
+      if (u.trainerName) {
+        pt_assigned_trainer.value = `${u.trainerName}|${u.trainerPhone || ''}`;
+      } else {
+        pt_assigned_trainer.value = "";
+      }
+    });
   });
 
   db.collection("workouts").doc(phone).get().then(d=>{
@@ -1895,10 +1941,21 @@ function openPTProfile(phone){
 function savePTProfile(){
   if(!currentPTUser) return;
 
+  let trOption = pt_assigned_trainer.value;
+  let trName = "";
+  let trPhone = "";
+  if(trOption) {
+    let parts = trOption.split("|");
+    trName = parts[0];
+    trPhone = parts[1];
+  }
+
   db.collection("users").doc(currentPTUser).update({
     dietPlan: pt_diet.value,
     trainerNote: pt_note.value,
-    weeklySessions: +pt_weekly.value
+    weeklySessions: +pt_weekly.value,
+    trainerName: trName,
+    trainerPhone: trPhone
   }).then(() => {
     alert("PT Profile saved successfully ✅");
   });
@@ -2190,6 +2247,59 @@ function saveAdminConfig() {
   });
 }
 
+/* DYNAMIC PUBLIC GALLERY MANAGEMENT HANDLERS */
+function addNewGalleryItem() {
+  let title = gal_title.value.trim();
+  let category = gal_category.value;
+  let url = gal_url.value.trim();
+  
+  if (!title || !url) {
+    alert("Photo Title and Image URL are required to publish.");
+    return;
+  }
+  
+  db.collection("gallery").add({
+    title: title,
+    category: category,
+    url: url,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    alert("🖼️ Gallery image published successfully!");
+    gal_title.value = gal_url.value = "";
+    loadAdminGallery();
+  });
+}
+
+function loadAdminGallery() {
+  db.collection("gallery").orderBy("createdAt", "desc").get().then(snap => {
+    let h = '';
+    snap.forEach(doc => {
+      let g = doc.data();
+      h += `
+        <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:14px 18px; border-radius:16px; display:flex; justify-content:space-between; align-items:center;">
+          <div style="display:flex; align-items:center; gap:14px;">
+            <img src="${g.url}" width="60" height="40" style="border-radius:8px; object-fit:cover; border:1px solid rgba(255,255,255,0.1);">
+            <div>
+              <b style="font-size:1.05rem; color:#fff;">${g.title}</b><br>
+              <span class="small" style="text-transform:uppercase; font-size:0.75rem;">Category: ${g.category}</span>
+            </div>
+          </div>
+          <button class="del small" onclick="deleteGalleryItem('${doc.id}')" style="margin-top:0;">🗑 Delete</button>
+        </div>
+      `;
+    });
+    document.getElementById("adminGalleryList").innerHTML = h || '<p class="small">No custom gallery images published yet.</p>';
+  });
+}
+
+function deleteGalleryItem(id) {
+  if (!confirm("Are you sure you want to retract/delete this gallery image?")) return;
+  db.collection("gallery").doc(id).delete().then(() => {
+    alert("Gallery image deleted.");
+    loadAdminGallery();
+  });
+}
+
 /* INITIAL SETUP ON LAUNCH */
 loadPlanOptions();
 loadUsers();
@@ -2202,6 +2312,7 @@ loadPaymentConfig();
 loadDashboardMetrics();
 loadAdminTrainers();
 loadAdminConfig();
+loadAdminGallery();
 </script>
 </body>
 </html>
