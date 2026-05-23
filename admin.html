@@ -425,19 +425,19 @@ td {
 <div class="container" style="max-width: 980px; margin: 0 auto; padding: 0 16px 20px;">
   <!-- METRICS ANALYTICS DASHBOARD -->
   <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; margin-top: 10px;">
-    <div style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center;">
+    <div onclick="filterUsersByMetric('all')" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Members</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-top: 6px;" id="metricTotalMembers">0</div>
     </div>
-    <div style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center;">
+    <div onclick="showTab('settings', document.querySelectorAll('.nav button')[4]); showInside('paymentHistory');" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Revenue</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-top: 6px;">₹<span id="metricTotalRevenue">0</span></div>
     </div>
-    <div style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center;">
+    <div onclick="filterUsersByMetric('active')" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='#10b981';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Active Clients</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: #fff; margin-top: 6px;" id="metricActiveMembers">0</div>
     </div>
-    <div style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center;">
+    <div onclick="filterUsersByMetric('expired')" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--red)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Expired Plans</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: var(--red); margin-top: 6px;" id="metricExpiredMembers">0</div>
     </div>
@@ -516,6 +516,7 @@ td {
   <!-- ALL USERS -->
   <div class="card hidden" id="users">
     <h3>All Registered Members</h3>
+    <div id="userFilterIndicator" class="countdown-bar success hidden" style="margin-bottom: 14px; text-align: left; font-size: 0.85rem; padding: 10px 16px;"></div>
     <input id="searchUser" placeholder="Search by name or phone..." onkeyup="loadUsers()">
     <div id="usersList" style="margin-top: 20px; display: flex; flex-direction: column; gap: 14px;">
       Loading...
@@ -1074,6 +1075,8 @@ function addUserWithPlan(){
 }
 
 /* VIEW MEMBERS & CALCULATE STATUS */
+let currentMetricFilter = "all";
+
 function loadUsers(){
   let key = searchUser.value.toLowerCase();
 
@@ -1083,6 +1086,21 @@ function loadUsers(){
     s.forEach(d=>{
       let u = d.data();
       if(!u.phone || !u.name) return;
+
+      // Calculate status dynamically for metric filter
+      let status = "inactive";
+      if(u.currentPlan){
+        if(u.hold === true){
+          status = "hold";
+        } else if(u.planExpiry){
+          let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
+          status = diff > 0 ? "active" : "expired";
+        }
+      }
+
+      // Apply metric filter
+      if(currentMetricFilter === "active" && status !== "active") return;
+      if(currentMetricFilter === "expired" && status !== "expired") return;
 
       if(key && !u.name.toLowerCase().includes(key) && !u.phone.includes(key))
         return;
@@ -2049,8 +2067,15 @@ function loadDashboardMetrics() {
     let expired = 0;
     snap.forEach(doc => {
       let u = doc.data();
-      if(u.planStatus === 'active') active++;
-      else if(u.planStatus === 'expired') expired++;
+      if(u.currentPlan){
+        if(u.hold === true){
+          // on hold
+        } else if(u.planExpiry){
+          let diff = Math.ceil((new Date(u.planExpiry) - new Date())/86400000);
+          if (diff > 0) active++;
+          else expired++;
+        }
+      }
     });
     document.getElementById("metricActiveMembers").innerText = active;
     document.getElementById("metricExpiredMembers").innerText = expired;
@@ -2063,6 +2088,34 @@ function loadDashboardMetrics() {
     });
     document.getElementById("metricTotalRevenue").innerText = total;
   });
+}
+
+/* INTERACTIVE FILTER HANDLERS FOR METRICS */
+function filterUsersByMetric(filterType) {
+  currentMetricFilter = filterType;
+  
+  // Highlight active tab (Users tab is index 2)
+  showTab('users', document.querySelectorAll('.nav button')[2]);
+  
+  // Update header/filter indicator
+  const indicator = document.getElementById("userFilterIndicator");
+  if(indicator) {
+    if(filterType === 'active') {
+      indicator.innerHTML = `💡 Showing only <b>ACTIVE MEMBERS</b>. &nbsp;&nbsp;<a href="javascript:clearUserMetricFilter()" style="color:#3b82f6; font-weight:800; text-decoration:none;"><i class="fa fa-rotate-left"></i> Reset Filter</a>`;
+      indicator.classList.remove("hidden");
+    } else if(filterType === 'expired') {
+      indicator.innerHTML = `💡 Showing only <b>EXPIRED MEMBERS</b>. &nbsp;&nbsp;<a href="javascript:clearUserMetricFilter()" style="color:#3b82f6; font-weight:800; text-decoration:none;"><i class="fa fa-rotate-left"></i> Reset Filter</a>`;
+      indicator.classList.remove("hidden");
+    } else {
+      indicator.classList.add("hidden");
+    }
+  }
+  
+  loadUsers();
+}
+
+function clearUserMetricFilter() {
+  filterUsersByMetric('all');
 }
 
 /* GST INVOICE GENERATOR LOGIC */
