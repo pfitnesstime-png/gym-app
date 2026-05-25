@@ -1022,5 +1022,40 @@ if ('serviceWorker' in navigator) {
 }
 </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const adminLoggedIn = localStorage.getItem("admin") === "true";
+  const trainerLoggedIn = localStorage.getItem("gymTrainer") === "true";
+  const userLoggedIn = localStorage.getItem("gymPhone");
+
+  let targetPage = "";
+  let btnText = "Go to Dashboard";
+
+  if (adminLoggedIn) {
+    targetPage = "admin.html";
+    btnText = "Admin Console";
+  } else if (trainerLoggedIn) {
+    targetPage = "trainer.html";
+    btnText = "Trainer Panel";
+  } else if (userLoggedIn) {
+    targetPage = "app.html";
+    btnText = "My Dashboard";
+  }
+
+  if (targetPage) {
+    const portalBtn = document.getElementById("btnMemberPortal");
+    const startBtn = document.getElementById("btnGetStarted");
+    if (portalBtn) {
+      portalBtn.href = targetPage;
+      portalBtn.innerText = btnText;
+    }
+    if (startBtn) {
+      startBtn.href = targetPage;
+      startBtn.innerText = btnText;
+    }
+  }
+});
+</script>
+
 </body>
 </html>
