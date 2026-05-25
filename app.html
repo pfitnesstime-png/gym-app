@@ -1374,8 +1374,10 @@ function submitUPIPaymentNotification() {
 }
 
 function logout(){
-  localStorage.removeItem("gymPhone");
-  location.href = "login.html";
+  if (confirm("Are you sure you want to log out of your Member Portal?")) {
+    localStorage.removeItem("gymPhone");
+    window.location.replace("login.html");
+  }
 }
 
 function openProfile(){

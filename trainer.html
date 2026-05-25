@@ -347,12 +347,14 @@ let selectedPhone = null;
 
 // Route guard
 if(localStorage.getItem('gymTrainer') !== 'true'){
-  window.location.href = 'trainer-login.html';
+  window.location.replace('trainer-login.html');
 }
 
 function logoutTrainer(){
-  localStorage.removeItem('gymTrainer');
-  window.location.href = 'trainer-login.html';
+  if (confirm("Are you sure you want to log out of the Trainer Panel?")) {
+    localStorage.removeItem('gymTrainer');
+    window.location.replace('trainer-login.html');
+  }
 }
 
 // Generate dynamic secure QR code (YYYY-MM-DD)

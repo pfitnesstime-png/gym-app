@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+if (localStorage.getItem("gymPhone")) {
+  window.location.replace("app.html");
+}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fitnesstime – Member Portal</title>
@@ -546,9 +551,6 @@ firebase.initializeApp({
 });
 const db = firebase.firestore();
 
-if (localStorage.getItem("gymPhone")) {
-  window.location.replace("app.html");
-}
 
 // Global OTP state
 let otpFlowType = ''; // 'login' or 'register'

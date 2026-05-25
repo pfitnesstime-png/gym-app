@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
+<script>
+if (localStorage.getItem("gymTrainer") === "true") {
+  window.location.replace("trainer.html");
+}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trainer Login</title>
@@ -80,7 +85,7 @@ function loginTrainer(){
         localStorage.setItem('gymTrainer', 'true');
         localStorage.setItem('gymTrainerUsername', u);
         localStorage.setItem('gymTrainerName', t.name || 'Trainer');
-        window.location.href = 'trainer.html';
+        window.location.replace('trainer.html');
       } else {
         alert('Incorrect trainer credentials');
       }
@@ -90,7 +95,7 @@ function loginTrainer(){
         localStorage.setItem('gymTrainer', 'true');
         localStorage.setItem('gymTrainerUsername', 'trainer');
         localStorage.setItem('gymTrainerName', 'Trainer');
-        window.location.href = 'trainer.html';
+        window.location.replace('trainer.html');
       } else {
         alert('Incorrect trainer credentials');
       }
@@ -101,7 +106,7 @@ function loginTrainer(){
       localStorage.setItem('gymTrainer', 'true');
       localStorage.setItem('gymTrainerUsername', 'trainer');
       localStorage.setItem('gymTrainerName', 'Trainer');
-      window.location.href = 'trainer.html';
+      window.location.replace('trainer.html');
     } else {
       alert('Incorrect trainer credentials');
     }

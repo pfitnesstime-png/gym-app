@@ -1,6 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<script>
+if (localStorage.getItem("admin") === "true") {
+  window.location.replace("admin.html");
+}
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Admin Login – Fitnesstime Console</title>
@@ -253,7 +258,7 @@ function loginAdmin(){
 
     if (u === expectedUser && p === expectedPass) {
       localStorage.setItem("admin", "true");
-      window.location.href = "admin.html";
+      window.location.replace("admin.html");
     } else {
       alert("❌ Incorrect username or password!");
     }
@@ -261,7 +266,7 @@ function loginAdmin(){
     // Fallback in case of database connectivity issues on first load
     if (u === "admin" && p === "1234") {
       localStorage.setItem("admin", "true");
-      window.location.href = "admin.html";
+      window.location.replace("admin.html");
     } else {
       alert("❌ Incorrect username or password!");
     }

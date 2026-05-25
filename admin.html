@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
 <script>
 if(localStorage.getItem("admin") !== "true"){
-  window.location.href = "admin-login.html";
+  window.location.replace("admin-login.html");
 }
 </script>
 <style>
@@ -1709,8 +1709,10 @@ function downloadReceiptImage(id){
 }
 
 function adminLogout(){
-  localStorage.removeItem("admin");
-  window.location.href = "admin-login.html";
+  if (confirm("Are you sure you want to log out of the Admin Console?")) {
+    localStorage.removeItem("admin");
+    window.location.replace("admin-login.html");
+  }
 }
 
 /* FREEZE SUBSCRIPTION (ON HOLD) */
