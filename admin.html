@@ -45,8 +45,171 @@ body {
   background: radial-gradient(circle at top, #141732 0%, #080914 60%, #030408 100%);
   color: var(--text);
   min-height: 100vh;
-  padding-bottom: 140px;
+  padding-bottom: 40px;
   overflow-x: hidden;
+}
+
+/* Sidebar Layout CSS */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+  position: relative;
+}
+
+.sidebar {
+  width: 280px;
+  background: rgba(10, 12, 26, 0.95);
+  backdrop-filter: blur(25px);
+  -webkit-backdrop-filter: blur(25px);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1000;
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+}
+
+.sidebar-header {
+  padding: 24px 20px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar-header img {
+  height: 44px;
+  border-radius: 12px;
+}
+
+.sidebar-header .title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, #ffffff 40%, #a5b4fc 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.sidebar-nav {
+  padding: 16px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+}
+
+.sidebar-group-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  padding: 14px 14px 6px;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  color: var(--text-muted);
+  border-radius: 14px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  cursor: pointer;
+  background: none;
+  border: none;
+  width: 100%;
+  text-align: left;
+  transition: all 0.25s ease;
+  box-shadow: none;
+  margin-top: 0;
+}
+
+.sidebar-link i {
+  font-size: 1.1rem;
+  width: 22px;
+  text-align: center;
+  color: var(--primary);
+  transition: transform 0.2s;
+}
+
+.sidebar-link:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(4px);
+}
+
+.sidebar-link.active {
+  color: #fff !important;
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.25) 0%, rgba(59, 130, 246, 0.08) 100%) !important;
+  border: 1px solid rgba(59, 130, 246, 0.35) !important;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 280px;
+  padding-bottom: 60px;
+  min-width: 0;
+  transition: margin-left 0.3s ease;
+}
+
+.top-bar {
+  background: rgba(8, 9, 20, 0.7);
+  backdrop-filter: blur(15px);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 900;
+}
+
+.sidebar-toggle-btn {
+  display: none;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: #fff;
+  padding: 10px 14px;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  cursor: pointer;
+  width: auto;
+  margin-top: 0;
+}
+
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+}
+
+@media (max-width: 992px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main-content {
+    margin-left: 0;
+  }
+  .sidebar-toggle-btn {
+    display: inline-flex;
+  }
+  .sidebar-overlay.active {
+    display: block;
+  }
 }
 
 header {
@@ -411,25 +574,67 @@ td {
 </head>
 <body>
 
-<header>
-  <div class="brand">
-    <img src="logo.PNG.png" alt="Gym logo">
-    <div class="title">
-      <h1>Fitnesstime Admin</h1>
-      <p>Premium Gym Management Console</p>
-    </div>
-  </div>
-  <button class="logout" onclick="adminLogout()"><i class="fa fa-sign-out-alt"></i> Logout</button>
-</header>
+<div class="app-layout">
+  <!-- MOBILE SIDEBAR OVERLAY -->
+  <div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
 
-<div class="container" style="max-width: 980px; margin: 0 auto; padding: 0 16px 20px;">
+  <!-- SIDEBAR NAVIGATION DRAWER -->
+  <aside class="sidebar" id="sidebarMenu">
+    <div class="sidebar-header">
+      <img src="logo.PNG.png" alt="Gym logo">
+      <div>
+        <div class="title">Fitnesstime</div>
+        <p style="margin:0; font-size:0.75rem; color:var(--text-muted);">Admin Console</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="sidebar-group-label">Core & POS</div>
+      <button class="sidebar-link active" onclick="showTab('posBilling', this)"><i class="fa fa-receipt"></i> Quick Billing & POS</button>
+      <button class="sidebar-link" onclick="showTab('addUser', this)"><i class="fa fa-user-plus"></i> Add New Member</button>
+      <button class="sidebar-link" onclick="showTab('users', this)"><i class="fa fa-users"></i> All Members</button>
+      <button class="sidebar-link" onclick="showTab('requests', this)"><i class="fa fa-inbox"></i> Signup Requests <span id="requestsCountBadge" class="hidden" style="margin-left:auto; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; padding: 2px 7px; font-weight: 800;">0</span></button>
+
+      <div class="sidebar-group-label">Store & Payroll</div>
+      <button class="sidebar-link" onclick="showTab('gymStore', this)"><i class="fa fa-store"></i> Gym Store & Sales</button>
+      <button class="sidebar-link" onclick="showTab('trainerSalary', this)"><i class="fa fa-money-bill-wave"></i> Trainer Salaries</button>
+
+      <div class="sidebar-group-label">Reports & Records</div>
+      <button class="sidebar-link" onclick="showTab('paymentHistory', this)"><i class="fa fa-file-invoice-dollar"></i> Collections Report</button>
+      <button class="sidebar-link" onclick="showTab('attendance', this)"><i class="fa fa-calendar-alt"></i> Attendance Grid</button>
+      <button class="sidebar-link" onclick="showTab('bookings', this)"><i class="fa fa-clock"></i> PT Slot Bookings</button>
+
+      <div class="sidebar-group-label">Management</div>
+      <button class="sidebar-link" onclick="showTab('plans', this)"><i class="fa fa-list"></i> Pricing Plans</button>
+      <button class="sidebar-link" onclick="showTab('trainersConfigBox', this)"><i class="fa fa-dumbbell"></i> Manage Trainers</button>
+      <button class="sidebar-link" onclick="showTab('paymentConfigBox', this)"><i class="fa fa-gears"></i> Payment Gateway</button>
+      <button class="sidebar-link" onclick="showTab('broadcasterBox', this)"><i class="fa fa-bullhorn"></i> Announcements</button>
+      <button class="sidebar-link" onclick="showTab('offerBanners', this)"><i class="fa fa-images"></i> Promo Banners</button>
+      <button class="sidebar-link" onclick="showTab('galleryConfigBox', this)"><i class="fa fa-image"></i> Public Gallery</button>
+      <button class="sidebar-link" onclick="showTab('adminConfigBox', this)"><i class="fa fa-key"></i> Admin Credentials</button>
+      <button class="sidebar-link" onclick="showTab('whatsapp', this)"><i class="fa fa-whatsapp"></i> WhatsApp Alerts</button>
+      <button class="sidebar-link" onclick="showTab('qr', this)"><i class="fa fa-qrcode"></i> Print Desk QR</button>
+    </nav>
+  </aside>
+
+  <!-- MAIN CONTENT AREA -->
+  <main class="main-content">
+    <div class="top-bar">
+      <div style="display:flex; align-items:center; gap:14px;">
+        <button class="sidebar-toggle-btn" onclick="toggleSidebar()"><i class="fa fa-bars"></i></button>
+        <span style="font-weight:700; font-size:1.1rem; color:#fff;" id="topPageTitle">🧾 Quick Member Billing & POS</span>
+      </div>
+      <button class="logout" onclick="adminLogout()" style="margin-top:0;"><i class="fa fa-sign-out-alt"></i> Logout</button>
+    </div>
+
+    <div class="container" style="max-width: 980px; margin: 0 auto; padding: 16px;">
   <!-- METRICS ANALYTICS DASHBOARD -->
   <div style="display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 24px; margin-top: 10px;">
     <div onclick="filterUsersByMetric('all')" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--primary)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Members</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: var(--primary); margin-top: 6px;" id="metricTotalMembers">0</div>
     </div>
-    <div onclick="showTab('settings', document.querySelectorAll('.nav button')[4]); showInside('paymentHistory');" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
+    <div onclick="showTab('paymentHistory')" onmouseover="this.style.background='rgba(255,255,255,0.06)'; this.style.borderColor='var(--accent)';" onmouseout="this.style.background='rgba(255,255,255,0.02)'; this.style.borderColor='var(--border)';" style="flex:1; min-width: 160px; background: rgba(255,255,255,0.02); border: 1px solid var(--border); padding: 16px; border-radius: 20px; text-align: center; cursor: pointer; transition: all 0.25s ease;">
       <span style="font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Total Revenue</span>
       <div style="font-size: 1.8rem; font-weight: 800; color: var(--accent); margin-top: 6px;">₹<span id="metricTotalRevenue">0</span></div>
     </div>
@@ -1020,140 +1225,7 @@ td {
     <button class="btn-sec" onclick="showInside('settings')" style="margin-top: 20px; width: 100%; border: 1px solid var(--border); background: none; color: var(--text-muted);">Back to Tools</button>
   </div>
 </div>
-
-<!-- POS BILL RECEIPT & WHATSAPP MODAL -->
-<div id="billReceiptModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8,9,20,0.92); backdrop-filter: blur(20px); z-index: 3500; display: flex; align-items: center; justify-content: center; padding: 16px; overflow-y: auto;">
-  <div class="card" style="width: 100%; max-width: 520px; padding: 24px; background: #0c0e1d; border: 2px solid rgba(59,130,246,0.4); border-radius: 24px; margin: auto;">
-    <div id="billPrintArea" style="padding:16px; color:#fff; font-family:'Outfit', sans-serif; background:#080914; border-radius:18px; border:1px solid rgba(255,255,255,0.1);">
-      <div style="text-align:center;">
-        <img src="logo.PNG.png" height="48" style="border-radius:12px; margin-bottom:6px;">
-        <h2 style="margin:0; font-family:'Playfair Display', serif; color:#fff; font-size:1.6rem; letter-spacing:1px;">FITNESSTIME</h2>
-        <p style="font-size:0.78rem; color:#94a3b8; margin:2px 0 10px;">Karikakulam, Karaparamb, Calicut, Kerala<br>Tel: +91 8086361224 | Web: fitnesstime.com</p>
-      </div>
-      
-      <div style="text-align:center; font-weight:800; font-size:0.9rem; border:1px solid rgba(59,130,246,0.4); padding:6px; border-radius:10px; margin: 10px 0; background:rgba(59,130,246,0.15); color:#a5b4fc; text-transform:uppercase; letter-spacing:1px;">
-        MEMBERSHIP & SALES RECEIPT
-      </div>
-      
-      <div style="font-size:0.85rem; line-height:1.6; margin-bottom: 12px; background:rgba(255,255,255,0.02); padding:12px; border-radius:12px; border:1px solid rgba(255,255,255,0.05);">
-        <div style="display:flex; justify-content:space-between;"><span><b>Bill No:</b> <span id="rec_bill_no">-</span></span> <span><b>Date:</b> <span id="rec_date">-</span></span></div>
-        <div><b>Member Name:</b> <span id="rec_name">-</span></div>
-        <div><b>Phone:</b> <span id="rec_phone">-</span></div>
-        <div><b>Address:</b> <span id="rec_address">-</span></div>
-        <div><b>Assigned Trainer:</b> <span id="rec_trainer">-</span></div>
-        <div><b>Payment Status:</b> <span id="rec_status_badge" class="badge-status" style="background:#10b98122; color:#10b981; border-color:#10b981;">PAID</span></div>
-      </div>
-      
-      <table style="width:100%; font-size:0.8rem; margin:10px 0; border:1px solid rgba(255,255,255,0.1); border-collapse:collapse; background: none;">
-        <thead>
-          <tr style="background:rgba(255,255,255,0.05);">
-            <th style="padding:8px; text-align:left; border:1px solid rgba(255,255,255,0.1); color:#fff;">Item Description</th>
-            <th style="padding:8px; text-align:center; border:1px solid rgba(255,255,255,0.1); color:#fff;">Qty</th>
-            <th style="padding:8px; text-align:right; border:1px solid rgba(255,255,255,0.1); color:#fff;">Amount</th>
-          </tr>
-        </thead>
-        <tbody id="rec_items_body">
-          <tr>
-            <td style="padding:8px; text-align:left; border:1px solid rgba(255,255,255,0.1);" id="rec_plan_name">Subscription Plan</td>
-            <td style="padding:8px; text-align:center; border:1px solid rgba(255,255,255,0.1);">1</td>
-            <td style="padding:8px; text-align:right; border:1px solid rgba(255,255,255,0.1);">₹<span id="rec_plan_amt">0</span></td>
-          </tr>
-        </tbody>
-      </table>
-      
-      <div style="font-size:0.9rem; line-height:1.8; margin-top:12px; text-align:right; border-top:1px solid rgba(255,255,255,0.1); padding-top:8px;">
-        <div style="font-size:1.1rem; font-weight:800; color:#10b981;">Grand Total: ₹<span id="rec_grand_total">0</span></div>
-        <div style="font-size:0.8rem; color:#94a3b8;">Payment Mode: <span id="rec_pay_mode">Cash</span></div>
-      </div>
-      
-      <p style="font-size:0.75rem; text-align:center; color:var(--text-muted); margin-top:16px; font-weight:600; border-top:1px dashed rgba(255,255,255,0.1); padding-top:10px;">
-        Thank you for training with Fitnesstime Gym! 💪<br>Stay fit, stay strong.
-      </p>
-    </div>
-    
-    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-top:16px;">
-      <button class="ok" onclick="printPOSBill()"><i class="fa fa-print"></i> Print Receipt</button>
-      <button class="ok" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important;" onclick="sharePOSBillWhatsApp()"><i class="fab fa-whatsapp"></i> WhatsApp Share</button>
-    </div>
-    <button class="del" onclick="closePOSModal()" style="margin-top:10px; width:100%;">Close Modal</button>
-  </div>
-</div>
-
-<!-- GST INVOICE VIEW MODAL -->
-<div id="gstModal" class="hidden" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(8,9,20,0.9); backdrop-filter: blur(15px); z-index: 3000; display: flex; align-items: center; justify-content: center; padding: 24px;">
-  <div class="card" style="width: 100%; max-width: 500px; padding: 30px; background: #080914; border: 2px solid rgba(59,130,246,0.3); border-radius: 20px; margin: 0;">
-    <div id="gstPrintArea" style="padding:10px; color:#fff; font-family:'Outfit';">
-      <h2 style="text-align:center; margin:0; font-family:'Playfair Display'; color:#fff; font-size:1.7rem;">FITNESSTIME</h2>
-      <p style="text-align:center; font-size:0.8rem; color:#94a3b8; margin:2px 0 10px;">Karikakulam, Karaparamb, Calicut, Kerala<br>GSTIN: 32AABCF1234F1Z0 • Tel: 8086361224</p>
-      
-      <div style="text-align:center; font-weight:800; font-size:1rem; border:1px solid rgba(255,255,255,0.15); padding:4px; border-radius:8px; margin: 10px 0; background:rgba(255,255,255,0.02);">TAX INVOICE (GST)</div>
-      
-      <div style="font-size:0.85rem; line-height:1.5; margin-bottom: 12px; border-bottom:1px solid rgba(255,255,255,0.06); padding-bottom:8px;">
-        <div><b>Invoice No:</b> <span id="gstInvNo">-</span></div>
-        <div><b>Date:</b> <span id="gstInvDate">-</span></div>
-        <div><b>Client Name:</b> <span id="gstClientName">-</span></div>
-        <div><b>Client Phone:</b> <span id="gstClientPhone">-</span></div>
-      </div>
-      
-      <table style="width:100%; font-size:0.8rem; margin:10px 0; border:1px solid rgba(255,255,255,0.1); border-collapse:collapse; background: none;">
-        <thead>
-          <tr style="background:rgba(255,255,255,0.03);">
-            <th style="padding:6px; font-size:0.8rem; border:1px solid rgba(255,255,255,0.1); background:none; color:#fff;">Particulars</th>
-            <th style="padding:6px; font-size:0.8rem; border:1px solid rgba(255,255,255,0.1); background:none; color:#fff;">Amount</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td style="padding:6px; text-align:left; border:1px solid rgba(255,255,255,0.1);" id="gstInvParticulars">Starter Plan - 30 days</td>
-            <td style="padding:6px; border:1px solid rgba(255,255,255,0.1);">₹<span id="gstBaseAmt">0</span></td>
-          </tr>
-          <tr>
-            <td style="padding:6px; text-align:left; border:1px solid rgba(255,255,255,0.1);">Central GST (CGST @ 9%)</td>
-            <td style="padding:6px; border:1px solid rgba(255,255,255,0.1);">₹<span id="gstCgstAmt">0</span></td>
-          </tr>
-          <tr>
-            <td style="padding:6px; text-align:left; border:1px solid rgba(255,255,255,0.1);">State GST (SGST @ 9%)</td>
-            <td style="padding:6px; border:1px solid rgba(255,255,255,0.1);">₹<span id="gstSgstAmt">0</span></td>
-          </tr>
-          <tr style="font-weight:800; background:rgba(255,255,255,0.02);">
-            <td style="padding:6px; text-align:left; border:1px solid rgba(255,255,255,0.1);">Total Amount (incl. taxes)</td>
-            <td style="padding:6px; border:1px solid rgba(255,255,255,0.1); color:var(--accent);">₹<span id="gstTotalAmt">0</span></td>
-          </tr>
-        </tbody>
-      </table>
-      <p style="font-size:0.75rem; text-align:center; color:var(--text-muted); margin-top:14px; font-weight:700;">THANK YOU FOR TRAINING WITH US! 💪</p>
-    </div>
-    <button class="ok" onclick="printGSTInvoice()" style="margin-top:20px;"><i class="fa fa-print"></i> Print Tax Invoice</button>
-    <button class="del" onclick="closeGSTInvoice()" style="margin-top:10px;">Close</button>
-  </div>
-</div>
-
-<!-- NAV BAR -->
-<div class="nav">
-  <button class="active" onclick="showTab('posBilling',this)">
-    <i class="fa fa-receipt"></i>Billing
-  </button>
-
-  <button onclick="showTab('addUser',this)">
-    <i class="fa fa-user-plus"></i>Add
-  </button>
-
-  <button onclick="showTab('requests',this)" style="position: relative;">
-    <i class="fa fa-inbox"></i>Requests
-    <span id="requestsCountBadge" class="hidden" style="position: absolute; top: 6px; right: 18%; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; width: 18px; height: 18px; display: flex; align-items: center; justify-content: center; font-weight: 800;">0</span>
-  </button>
-
-  <button onclick="showTab('users',this)">
-    <i class="fa fa-users"></i>Users
-  </button>
-
-  <button onclick="showTab('gymStore',this)">
-    <i class="fa fa-store"></i>Store
-  </button>
-
-  <button onclick="showTab('settings',this)">
-    <i class="fa fa-gear"></i>Settings
-  </button>
+</main>
 </div>
 
 <!-- Firebase & Screenshot libraries -->
@@ -1169,11 +1241,25 @@ firebase.initializeApp({
 });
 const db = firebase.firestore();
 
+function toggleSidebar() {
+  const sidebar = document.getElementById("sidebarMenu");
+  const overlay = document.getElementById("sidebarOverlay");
+  if(sidebar) sidebar.classList.toggle("open");
+  if(overlay) overlay.classList.toggle("active");
+}
+
+function closeSidebar() {
+  const sidebar = document.getElementById("sidebarMenu");
+  const overlay = document.getElementById("sidebarOverlay");
+  if(sidebar) sidebar.classList.remove("open");
+  if(overlay) overlay.classList.remove("active");
+}
+
 function showTab(id, btn){
   [
     "posBilling","gymStore","trainerSalary","addUser","requests","users","editUser","plans",
     "attendance","qr","whatsapp","payments",
-    "paymentHistory","settings","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox","galleryConfigBox"
+    "paymentHistory","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox","galleryConfigBox","broadcasterBox"
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
@@ -1182,8 +1268,44 @@ function showTab(id, btn){
   const target = document.getElementById(id);
   if(target) target.classList.remove("hidden");
 
-  document.querySelectorAll(".nav button").forEach(b=>b.classList.remove("active"));
-  if (btn) btn.classList.add("active");
+  document.querySelectorAll(".sidebar-link").forEach(b=>b.classList.remove("active"));
+  if (btn && btn.classList && btn.classList.contains("sidebar-link")) {
+    btn.classList.add("active");
+  } else {
+    let match = Array.from(document.querySelectorAll(".sidebar-link")).find(b => b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${id}'`));
+    if (match) match.classList.add("active");
+  }
+
+  const pageTitles = {
+    "posBilling": "🧾 Quick Member Billing & POS",
+    "addUser": "👤 Add New Member",
+    "users": "👥 All Registered Members",
+    "requests": "📥 Online Signup Requests",
+    "gymStore": "🛒 Gym Store & Supplement Sales",
+    "trainerSalary": "💵 Trainer Salary Management",
+    "paymentHistory": "📊 Collections & Revenue Report",
+    "attendance": "📅 Gym Attendance Sheet",
+    "bookings": "🗓 Personal Training Bookings",
+    "plans": "🏷 Manage Subscription Plans",
+    "trainersConfigBox": "🏋️ Manage Staff Trainers",
+    "paymentConfigBox": "💳 Payment Gateway Config",
+    "broadcasterBox": "📢 Global Announcements",
+    "offerBanners": "🏷 Promotional Banners",
+    "galleryConfigBox": "🖼 Public Gallery",
+    "adminConfigBox": "🔐 Admin Credentials",
+    "whatsapp": "📲 WhatsApp Broadcast Alerts",
+    "qr": "🖨 Print Desk QR",
+    "payments": "💰 Log Client Payment",
+    "ptProfile": "👤 Member PT Profile",
+    "editUser": "✏️ Edit Member Profile"
+  };
+
+  const titleEl = document.getElementById("topPageTitle");
+  if (titleEl && pageTitles[id]) {
+    titleEl.innerText = pageTitles[id];
+  }
+
+  closeSidebar();
 
   if(id === "whatsapp") loadWhatsAppList();
   if(id === "requests") loadRequests();
