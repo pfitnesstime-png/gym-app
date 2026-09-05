@@ -1775,44 +1775,52 @@ async function loadAttendanceSheet(){
   document.getElementById("attTable").innerHTML = table;
 }
 
-/* WHATSAPP OUTREACH */
+/* WHATSAPP OUTREACH & MONTH-END EXPIRY REMINDERS */
 function loadWhatsAppList(){
   db.collection("users").get().then(snap=>{
     let h="";
+    let count = 0;
+    let today = new Date();
 
     snap.forEach(d=>{
       let u = d.data();
       if(!u.phone || !u.name) return;
 
       let expired = false;
+      let expiryFormatted = "N/A";
       if(u.planExpiry){
-        expired = new Date(u.planExpiry) < new Date();
+        let expDate = new Date(u.planExpiry);
+        expired = expDate < today;
+        expiryFormatted = expDate.toLocaleDateString();
       }
 
       if((expired && !u.hold) || u.paymentStatus === "pending"){
-        let msg = `Hi ${u.name}, your Fitnesstime Gym membership has expired or has pending dues. Please contact us or visit the desk to renew. Thank you!`;
-        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+        count++;
+        let msg = `Hi ${u.name} 👋, your Fitnesstime Gym membership expired on ${expiryFormatted}. Month-end renewal is due! Please contact us or visit the desk to renew your plan. Thank you! 💪`;
+        let phoneStr = u.phone.replace(/[^0-9]/g, '');
+        if(!phoneStr.startsWith("91") && phoneStr.length === 10) phoneStr = "91" + phoneStr;
+        let url = `https://wa.me/${phoneStr}?text=${encodeURIComponent(msg)}`;
 
         h += `
           <div style="background:rgba(255,255,255,0.02); border:1px solid var(--border); padding:16px; border-radius:18px; display:flex; justify-content:space-between; align-items:center;">
             <div>
-              <b>${u.name}</b> (${u.phone})<br>
+              <b style="font-size:1.05rem; color:#fff;">${u.name}</b> (${u.phone})<br>
               <span class="badge-status" style="background:rgba(239,68,68,0.1); color:var(--red); border-color:rgba(239,68,68,0.25); margin-top:4px;">
-                ${expired ? "EXPIRED" : "DUES PENDING"}
+                ${expired ? "EXPIRED on " + expiryFormatted : "DUES PENDING"}
               </span>
             </div>
-            <button class="ok small" onclick="window.open('${url}','_blank')"><i class="fab fa-whatsapp"></i> Send Reminder</button>
+            <button class="ok small" style="background: linear-gradient(135deg, #25D366 0%, #128C7E 100%) !important; margin-top:0;" onclick="window.open('${url}','_blank')"><i class="fab fa-whatsapp"></i> Send WhatsApp Reminder</button>
           </div>
         `;
       }
     });
 
-    waList.innerHTML = h || '<p class="small">No expired memberships today! 🎉</p>';
+    waList.innerHTML = h || '<p class="small" style="text-align:center; padding:20px; color:var(--text-muted);">No expired memberships today! All active. 🎉</p>';
   });
 }
 
 function sendBulkWhatsApp(){
-  if(!confirm("Send broadcast reminder links one-by-one to ALL expired / pending members?")) return;
+  if(!confirm("Send automated WhatsApp broadcast reminder links to ALL expired / pending members?")) return;
 
   db.collection("users").get().then(snap=>{
     let delay = 0;
@@ -1823,14 +1831,19 @@ function sendBulkWhatsApp(){
       if(!u.phone || !u.name) return;
 
       let expired = false;
+      let expiryFormatted = "N/A";
       if(u.planExpiry){
-        expired = new Date(u.planExpiry) < new Date();
+        let expDate = new Date(u.planExpiry);
+        expired = expDate < new Date();
+        expiryFormatted = expDate.toLocaleDateString();
       }
 
       if((expired && !u.hold) || u.paymentStatus === "pending"){
         count++;
-        let msg = `Hi ${u.name}, your Fitnesstime Gym membership has expired or has pending dues. Please visit the desk to renew. Thank you!`;
-        let url = `https://wa.me/91${u.phone}?text=${encodeURIComponent(msg)}`;
+        let msg = `Hi ${u.name} 👋, your Fitnesstime Gym membership expired on ${expiryFormatted}. Month-end renewal is due! Please contact us or visit the desk to renew your plan. Thank you! 💪`;
+        let phoneStr = u.phone.replace(/[^0-9]/g, '');
+        if(!phoneStr.startsWith("91") && phoneStr.length === 10) phoneStr = "91" + phoneStr;
+        let url = `https://wa.me/${phoneStr}?text=${encodeURIComponent(msg)}`;
 
         setTimeout(()=>{
           window.open(url, "_blank");
@@ -1841,9 +1854,9 @@ function sendBulkWhatsApp(){
     });
 
     if(count === 0){
-      alert("No expired members found.");
+      alert("No expired members found to broadcast.");
     }else{
-      alert("WhatsApp Web client links will open sequentially. Please let them load completely.");
+      alert(`🚀 Initiated broadcast reminders for ${count} expired members!`);
     }
   });
 }
@@ -2969,6 +2982,9 @@ function generateAndSavePOSBill() {
   document.getElementById("rec_pay_mode").innerText = payMode;
 
   document.getElementById("billReceiptModal").classList.remove("hidden");
+
+  // Instant WhatsApp message trigger
+  sharePOSBillWhatsApp();
 
   document.getElementById("pos_name").value = "";
   document.getElementById("pos_phone").value = "";
