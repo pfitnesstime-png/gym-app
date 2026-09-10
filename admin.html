@@ -816,72 +816,27 @@ td {
     <h3>📊 Analytics Dashboard</h3>
     <p class="small" style="margin-bottom: 24px;">Real-time overview of your gym's performance — revenue, expenses, member stats, and payment trends at a glance.</p>
 
-    <!-- Today's Collection Bar -->
-    <div class="dash-today-bar">
-      <div class="dash-today-card">
-        <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Today's Cash</span>
-        <div style="font-size:1.6rem; font-weight:800; color:#10b981; margin-top:6px;">₹<span id="dash_today_cash">0</span></div>
-      </div>
-      <div class="dash-today-card">
-        <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Today's UPI/Bank</span>
-        <div style="font-size:1.6rem; font-weight:800; color:#3b82f6; margin-top:6px;">₹<span id="dash_today_upi">0</span></div>
-      </div>
-      <div class="dash-today-card">
-        <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Today's Card</span>
-        <div style="font-size:1.6rem; font-weight:800; color:#a855f7; margin-top:6px;">₹<span id="dash_today_card_amt">0</span></div>
-      </div>
-      <div class="dash-today-card" style="border-color: rgba(255,255,255,0.15);">
-        <span style="font-size:0.75rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Today's Total</span>
-        <div style="font-size:1.6rem; font-weight:800; color:#fff; margin-top:6px;">₹<span id="dash_today_total">0</span></div>
-      </div>
-    </div>
-
     <!-- KPI Stats Grid -->
     <div class="dash-stats-grid">
-      <div class="dash-stat-card" style="--card-accent:#10b981; --icon-bg:rgba(16,185,129,0.12);">
+      <div class="dash-stat-card" style="--card-accent:#10b981; --icon-bg:rgba(16,185,129,0.12); cursor: pointer;" onclick="showTab('paymentHistory', document.querySelector('.sidebar-link[onclick*=\\'paymentHistory\\']'))">
         <div class="stat-icon"><i class="fa fa-indian-rupee-sign"></i></div>
         <div class="stat-label">This Month Sales</div>
         <div class="stat-value">₹<span id="dash_month_sales">0</span></div>
       </div>
-      <div class="dash-stat-card" style="--card-accent:#ef4444; --icon-bg:rgba(239,68,68,0.12);">
-        <div class="stat-icon"><i class="fa fa-arrow-trend-down"></i></div>
-        <div class="stat-label">Total Expenses</div>
-        <div class="stat-value">₹<span id="dash_month_expenses">0</span></div>
-      </div>
-      <div class="dash-stat-card" style="--card-accent:#3b82f6; --icon-bg:rgba(59,130,246,0.12);">
+      <div class="dash-stat-card" style="--card-accent:#3b82f6; --icon-bg:rgba(59,130,246,0.12); cursor: pointer;" onclick="showTab('finances', document.querySelector('.sidebar-link[onclick*=\\'finances\\']'))">
         <div class="stat-icon"><i class="fa fa-chart-pie"></i></div>
         <div class="stat-label">Net Profit</div>
         <div class="stat-value">₹<span id="dash_net_profit">0</span></div>
       </div>
-      <div class="dash-stat-card" style="--card-accent:#f59e0b; --icon-bg:rgba(245,158,11,0.12);">
-        <div class="stat-icon"><i class="fa fa-credit-card"></i></div>
-        <div class="stat-label">Card Payments</div>
-        <div class="stat-value">₹<span id="dash_card_total">0</span></div>
-      </div>
-      <div class="dash-stat-card" style="--card-accent:#06b6d4; --icon-bg:rgba(6,182,212,0.12);">
-        <div class="stat-icon"><i class="fa fa-money-bill"></i></div>
-        <div class="stat-label">Cash Payments</div>
-        <div class="stat-value">₹<span id="dash_cash_total">0</span></div>
-      </div>
-      <div class="dash-stat-card" style="--card-accent:#8b5cf6; --icon-bg:rgba(139,92,246,0.12);">
-        <div class="stat-icon"><i class="fa fa-mobile-screen"></i></div>
-        <div class="stat-label">UPI / Online</div>
-        <div class="stat-value">₹<span id="dash_upi_total">0</span></div>
-      </div>
-      <div class="dash-stat-card" style="--card-accent:#22c55e; --icon-bg:rgba(34,197,94,0.12);">
+      <div class="dash-stat-card" style="--card-accent:#22c55e; --icon-bg:rgba(34,197,94,0.12); cursor: pointer;" onclick="filterUsersByMetric('active')">
         <div class="stat-icon"><i class="fa fa-users"></i></div>
         <div class="stat-label">Active Members</div>
         <div class="stat-value"><span id="dash_active_members">0</span></div>
       </div>
-      <div class="dash-stat-card" style="--card-accent:#f43f5e; --icon-bg:rgba(244,63,94,0.12);">
+      <div class="dash-stat-card" style="--card-accent:#f43f5e; --icon-bg:rgba(244,63,94,0.12); cursor: pointer;" onclick="filterUsersByMetric('expired')">
         <div class="stat-icon"><i class="fa fa-user-clock"></i></div>
         <div class="stat-label">Expired Plans</div>
         <div class="stat-value"><span id="dash_expired_members">0</span></div>
-      </div>
-      <div class="dash-stat-card" style="--card-accent:#c084fc; --icon-bg:rgba(192,132,252,0.12);">
-        <div class="stat-icon"><i class="fa fa-hourglass-half"></i></div>
-        <div class="stat-label">Pending Dues</div>
-        <div class="stat-value">₹<span id="dash_pending_dues">0</span></div>
       </div>
     </div>
 
@@ -902,18 +857,6 @@ td {
       <div class="dash-chart-box">
         <h4><i class="fa fa-users"></i> Member Status</h4>
         <div style="position:relative; height:260px;"><canvas id="dashMemberStatusDoughnut"></canvas></div>
-      </div>
-    </div>
-
-    <!-- Recent Activity Grid -->
-    <div class="dash-recent-grid">
-      <div class="dash-recent-box">
-        <h4><i class="fa fa-receipt" style="color:var(--primary); margin-right:8px;"></i> Recent Payments</h4>
-        <div id="dash_recent_payments"><p class="small">Loading...</p></div>
-      </div>
-      <div class="dash-recent-box">
-        <h4><i class="fa fa-arrow-trend-down" style="color:var(--red); margin-right:8px;"></i> Recent Expenses</h4>
-        <div id="dash_recent_expenses"><p class="small">Loading...</p></div>
       </div>
     </div>
   </div>
@@ -4168,57 +4111,12 @@ function loadDashboardTab() {
     let thisMonthExpenses = totalExpenseArr[5] || 0;
     let netProfit = thisMonthSales - thisMonthExpenses;
 
-    // Update today's collection bar
-    let el;
-    el = document.getElementById('dash_today_cash'); if(el) el.innerText = payments.todayCash.toLocaleString('en-IN');
-    el = document.getElementById('dash_today_upi'); if(el) el.innerText = payments.todayUpi.toLocaleString('en-IN');
-    el = document.getElementById('dash_today_card_amt'); if(el) el.innerText = payments.todayCard.toLocaleString('en-IN');
-    el = document.getElementById('dash_today_total'); if(el) el.innerText = (payments.todayCash + payments.todayUpi + payments.todayCard).toLocaleString('en-IN');
-
     // Update KPI stat cards
+    let el;
     el = document.getElementById('dash_month_sales'); if(el) el.innerText = thisMonthSales.toLocaleString('en-IN');
-    el = document.getElementById('dash_month_expenses'); if(el) el.innerText = thisMonthExpenses.toLocaleString('en-IN');
     el = document.getElementById('dash_net_profit'); if(el) { el.innerText = netProfit.toLocaleString('en-IN'); el.style.color = netProfit >= 0 ? '#10b981' : '#ef4444'; }
-    el = document.getElementById('dash_card_total'); if(el) el.innerText = payments.mCard.toLocaleString('en-IN');
-    el = document.getElementById('dash_cash_total'); if(el) el.innerText = payments.mCash.toLocaleString('en-IN');
-    el = document.getElementById('dash_upi_total'); if(el) el.innerText = payments.mUpi.toLocaleString('en-IN');
     el = document.getElementById('dash_active_members'); if(el) el.innerText = users.active;
     el = document.getElementById('dash_expired_members'); if(el) el.innerText = users.expired;
-    el = document.getElementById('dash_pending_dues'); if(el) el.innerText = users.pendingDues.toLocaleString('en-IN');
-
-    // Recent payments list
-    let rpEl = document.getElementById('dash_recent_payments');
-    if(rpEl) {
-      if(payments.recentPayments.length === 0) {
-        rpEl.innerHTML = '<p class="small" style="color:var(--text-muted);">No payments recorded yet.</p>';
-      } else {
-        let rph = '';
-        payments.recentPayments.forEach(p => {
-          rph += `<div class="dash-recent-item">
-            <div><b style="color:#fff; font-size:0.9rem;">${p.name || 'N/A'}</b><br><span class="small" style="color:var(--text-muted);">${p.mode || 'N/A'} • ${p.date}</span></div>
-            <b style="color:#10b981;">₹${p.amount.toLocaleString('en-IN')}</b>
-          </div>`;
-        });
-        rpEl.innerHTML = rph;
-      }
-    }
-
-    // Recent expenses list
-    let reEl = document.getElementById('dash_recent_expenses');
-    if(reEl) {
-      if(recentExpenses.length === 0) {
-        reEl.innerHTML = '<p class="small" style="color:var(--text-muted);">No expenses recorded yet.</p>';
-      } else {
-        let reh = '';
-        recentExpenses.forEach(e => {
-          reh += `<div class="dash-recent-item">
-            <div><b style="color:#fff; font-size:0.9rem;">${e.title || 'N/A'}</b><br><span class="small" style="color:var(--text-muted);">${e.category || ''} • ${e.date}</span></div>
-            <b style="color:#ef4444;">₹${e.amount.toLocaleString('en-IN')}</b>
-          </div>`;
-        });
-        reEl.innerHTML = reh;
-      }
-    }
 
     // ---- CHART.JS RENDERING ----
     if(typeof Chart === 'undefined') return;
