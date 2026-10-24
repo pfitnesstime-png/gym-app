@@ -153,6 +153,152 @@ body {
   border: 1px solid rgba(59, 130, 246, 0.35) !important;
 }
 
+/* Vyapar Style Sidebar Dropdown & Sublinks */
+.sidebar-dropdown {
+  display: flex;
+  flex-direction: column;
+}
+.sidebar-dropdown-toggle {
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+}
+.sidebar-dropdown-toggle .dropdown-arrow {
+  transition: transform 0.25s ease;
+  font-size: 0.75rem !important;
+  color: var(--text-muted);
+}
+.sidebar-dropdown.open .sidebar-dropdown-toggle .dropdown-arrow {
+  transform: rotate(180deg);
+  color: var(--primary);
+}
+.sidebar-dropdown-menu {
+  display: none;
+  flex-direction: column;
+  padding-left: 20px;
+  gap: 3px;
+  margin-top: 3px;
+  margin-bottom: 6px;
+}
+.sidebar-dropdown.open .sidebar-dropdown-menu {
+  display: flex;
+}
+.sidebar-sublink {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 14px;
+  color: var(--text-muted);
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 0.88rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+.sidebar-sublink i {
+  font-size: 0.95rem;
+  width: 18px;
+  text-align: center;
+  color: var(--primary);
+}
+.sidebar-sublink:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.05);
+  transform: translateX(3px);
+}
+.sidebar-sublink.active {
+  color: #fff !important;
+  background: rgba(59, 130, 246, 0.2) !important;
+  border-left: 3px solid var(--primary) !important;
+  font-weight: 700;
+}
+
+/* Vyapar Style Components */
+.btn-vyapar-red {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+  color: #fff !important;
+  border-radius: 24px !important;
+  padding: 10px 22px !important;
+  font-weight: 700 !important;
+  font-size: 0.95rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+  border: none !important;
+  box-shadow: 0 4px 14px rgba(239, 68, 68, 0.35) !important;
+  transition: all 0.25s ease !important;
+  width: auto !important;
+  margin-top: 0 !important;
+}
+.btn-vyapar-red:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5) !important;
+}
+
+.vyapar-summary-bar {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.vyapar-summary-card {
+  flex: 1;
+  min-width: 160px;
+  padding: 18px 22px;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.vyapar-card-green {
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+}
+.vyapar-card-blue {
+  background: rgba(59, 130, 246, 0.12);
+  border: 1px solid rgba(59, 130, 246, 0.35);
+}
+.vyapar-card-orange {
+  background: rgba(245, 158, 11, 0.12);
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+.vyapar-operator {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: var(--text-muted);
+}
+.vyapar-search-box {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  padding: 10px 16px;
+  border-radius: 14px;
+  margin-bottom: 16px;
+  max-width: 380px;
+}
+.vyapar-search-box input {
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  font-size: 0.9rem !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  flex: 1;
+}
+.vyapar-search-box input:focus {
+  outline: none !important;
+}
+
+
 .main-content {
   flex: 1;
   margin-left: 280px;
@@ -757,14 +903,36 @@ td {
       <button class="sidebar-link" onclick="showTab('users', this)"><i class="fa fa-users"></i> All Members</button>
       <button class="sidebar-link" onclick="showTab('requests', this)"><i class="fa fa-inbox"></i> Signup Requests <span id="requestsCountBadge" class="hidden" style="margin-left:auto; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; padding: 2px 7px; font-weight: 800;">0</span></button>
 
-      <div class="sidebar-group-label">Store & Payroll</div>
-      <button class="sidebar-link" onclick="showTab('finances', this)"><i class="fa fa-chart-line"></i> Finances & Profit</button>
-      <button class="sidebar-link" onclick="showTab('billCreateTab', this)"><i class="fa fa-file-invoice"></i> Bill / Invoice</button>
+      <div class="sidebar-group-label">Vyapar / Store & Accounting</div>
       <button class="sidebar-link" onclick="showTab('partiesTab', this)"><i class="fa fa-address-book"></i> Parties</button>
       <button class="sidebar-link" onclick="showTab('itemsTab', this)"><i class="fa fa-boxes-stacked"></i> Items</button>
-      <button class="sidebar-link" onclick="showTab('expensesTab', this)"><i class="fa fa-receipt"></i> Expenses</button>
-      <button class="sidebar-link" onclick="showTab('paymentOutTab', this)"><i class="fa fa-arrow-up-from-bracket"></i> Payment Out</button>
-      <button class="sidebar-link" onclick="showTab('paymentInTab', this)"><i class="fa fa-arrow-down-to-bracket"></i> Payment In</button>
+      
+      <!-- SALE DROPDOWN -->
+      <div class="sidebar-dropdown" id="saleDropdownGroup">
+        <button class="sidebar-link sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('saleDropdownGroup')">
+          <span><i class="fa fa-cart-shopping"></i> Sale</span>
+          <i class="fa fa-chevron-down dropdown-arrow"></i>
+        </button>
+        <div class="sidebar-dropdown-menu">
+          <button class="sidebar-sublink" onclick="showTab('saleInvoicesTab', this)"><i class="fa fa-file-invoice-dollar"></i> Sale Invoices</button>
+          <button class="sidebar-sublink" onclick="showTab('paymentInTab', this)"><i class="fa fa-arrow-down"></i> Payment-In</button>
+        </div>
+      </div>
+
+      <!-- PURCHASE & EXPENSE DROPDOWN -->
+      <div class="sidebar-dropdown open" id="purchaseDropdownGroup">
+        <button class="sidebar-link sidebar-dropdown-toggle" onclick="toggleSidebarDropdown('purchaseDropdownGroup')">
+          <span><i class="fa fa-truck-ramp-box"></i> Purchase & Expense</span>
+          <i class="fa fa-chevron-down dropdown-arrow"></i>
+        </button>
+        <div class="sidebar-dropdown-menu">
+          <button class="sidebar-sublink" onclick="showTab('purchaseBillsTab', this)"><i class="fa fa-receipt"></i> Purchase Bills</button>
+          <button class="sidebar-sublink" onclick="showTab('paymentOutTab', this)"><i class="fa fa-arrow-up"></i> Payment-Out</button>
+          <button class="sidebar-sublink" onclick="showTab('expensesTab', this)"><i class="fa fa-money-bill-transfer"></i> Expenses</button>
+        </div>
+      </div>
+
+      <button class="sidebar-link" onclick="showTab('finances', this)"><i class="fa fa-chart-line"></i> Finances & Profit</button>
       <button class="sidebar-link" onclick="showTab('trainerSalary', this)"><i class="fa fa-money-bill-wave"></i> Trainer Salaries</button>
 
       <div class="sidebar-group-label">Reports & Records</div>
@@ -1521,169 +1689,373 @@ td {
     <div id="finExpensesLog" style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">Loading expenses...</div>
   </div>
 
-  <!-- ========== BILL / INVOICE CREATE TAB ========== -->
-  <div class="card hidden" id="billCreateTab">
-    <h3>🧾 Create Bill / Invoice</h3>
-    <p class="small" style="margin-bottom: 18px;">Generate purchase or sale invoices. Add line items, set payment status, and track all bills.</p>
-
-    <!-- Paid/Unpaid Toggle at Top -->
-    <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.03); padding:14px 18px; border-radius:16px; border:1px solid var(--border);">
-      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; font-size:0.95rem;">
-        <input type="checkbox" id="bill_paid" checked style="width:20px; height:20px; accent-color:#10b981; cursor:pointer;">
-        <span id="bill_paid_label" style="color:#10b981;">✅ Paid</span>
-      </label>
-      <span class="small" style="color:var(--text-muted);">Toggle to mark as Unpaid</span>
-    </div>
-
-    <div class="form-grid">
-      <select id="bill_party_select">
-        <option value="">Select Party (Supplier / Customer)</option>
-      </select>
-      <input id="bill_date" type="date">
-    </div>
-    <div class="form-grid">
-      <input id="bill_invoice_no" placeholder="Invoice Number (e.g. INV-001)">
-      <input id="bill_amount" type="number" placeholder="Total Invoice Amount (₹)" readonly>
-    </div>
-
-    <hr>
-    <h4><i class="fa fa-list" style="color:var(--primary); margin-right:6px;"></i>Invoice Line Items</h4>
-    <div id="billItemsContainer" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
-      <!-- Dynamic item rows will be added here -->
-    </div>
-    <button class="small ok" onclick="addBillItemRow()" style="margin-bottom:14px;"><i class="fa fa-plus"></i> Add Item Row</button>
-
-    <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25); padding:16px 20px; border-radius:16px; text-align:right; margin-bottom:18px;">
-      <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Subtotal</span>
-      <div style="font-size:1.8rem; font-weight:800; color:var(--primary); margin-top:4px;">₹<span id="bill_subtotal">0.00</span></div>
-    </div>
-
-    <button class="ok" onclick="saveBillInvoice()"><i class="fa fa-save"></i> Save Invoice</button>
-
-    <hr>
-    <h4>Recent Invoices / Bills</h4>
-    <div id="billsHistoryLog" style="display:flex; flex-direction:column; gap:12px;">Loading bills...</div>
-  </div>
-
   <!-- ========== PARTIES TAB ========== -->
   <div class="card hidden" id="partiesTab">
-    <h3>📒 Parties (Suppliers & Customers)</h3>
-    <p class="small" style="margin-bottom: 18px;">Create and manage your Suppliers and Customers. Track opening balance, contact info, and transaction type.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-address-book" style="color:var(--primary); margin-right:8px;"></i>Parties</h3>
+        <p class="small" style="margin:4px 0 0;">Manage your suppliers and customers, opening balances, and contact details.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddPartyModal()"><i class="fa fa-plus"></i> + Add Party</button>
+    </div>
 
-    <div style="display:flex; gap:10px; margin-bottom:16px;">
-      <button class="small" id="partyTypeSupplier" onclick="setPartyType('Supplier')" style="flex:1; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border:none;">🏭 Supplier</button>
-      <button class="small" id="partyTypeCustomer" onclick="setPartyType('Customer')" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-muted);">🧑 Customer</button>
+    <!-- Parties Quick Stats -->
+    <div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap;">
+      <div class="vyapar-summary-card vyapar-card-blue">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Total Parties</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#3b82f6; margin-top:4px;" id="party_stat_total">0</div>
+      </div>
+      <div class="vyapar-summary-card vyapar-card-orange">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Suppliers</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#f59e0b; margin-top:4px;" id="party_stat_suppliers">0</div>
+      </div>
+      <div class="vyapar-summary-card vyapar-card-green">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Customers</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#10b981; margin-top:4px;" id="party_stat_customers">0</div>
+      </div>
     </div>
-    <input type="hidden" id="party_type" value="Supplier">
 
-    <div class="form-grid">
-      <input id="party_name" placeholder="Party Name (e.g. Optimum Nutrition)">
-      <input id="party_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    <!-- Filter & Search Bar -->
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+      <div class="vyapar-search-box" style="margin-bottom:0;">
+        <i class="fa fa-search"></i>
+        <input id="partySearchInput" placeholder="Search party name or phone..." oninput="filterPartiesTable()">
+      </div>
+      <div style="display:flex; gap:8px;">
+        <button class="small" id="partyFilterAll" onclick="setPartyFilter('all')" style="background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">All</button>
+        <button class="small" id="partyFilterSuppliers" onclick="setPartyFilter('Supplier')" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">🏭 Suppliers</button>
+        <button class="small" id="partyFilterCustomers" onclick="setPartyFilter('Customer')" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">🧑 Customers</button>
+      </div>
     </div>
-    <div class="form-grid">
-      <input id="party_address" placeholder="Address (Optional)">
-      <input id="party_opening_bal" type="number" placeholder="Opening Balance (₹)" value="0">
-    </div>
-    <button class="ok" onclick="saveParty()"><i class="fa fa-save"></i> Save Party</button>
 
-    <hr>
-    <div style="display:flex; gap:10px; margin-bottom:14px;">
-      <button class="small" onclick="loadParties('all')" style="background:var(--primary); border:none;">All</button>
-      <button class="small" onclick="loadParties('Supplier')" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.35); color:#f59e0b;">Suppliers</button>
-      <button class="small" onclick="loadParties('Customer')" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:#10b981;">Customers</button>
+    <!-- Parties Table -->
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Party Name</th>
+            <th>Type</th>
+            <th>Phone</th>
+            <th style="text-align:left;">Address</th>
+            <th>Opening Balance</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="partiesTableBody">
+          <tr><td colspan="6" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading parties...</td></tr>
+        </tbody>
+      </table>
     </div>
-    <h4>Saved Parties</h4>
-    <div id="partiesListLog" style="display:flex; flex-direction:column; gap:12px;">Loading parties...</div>
   </div>
 
   <!-- ========== ITEMS TAB ========== -->
   <div class="card hidden" id="itemsTab">
-    <h3>📦 Items / Products</h3>
-    <p class="small" style="margin-bottom: 18px;">Manage your inventory items — supplements, accessories, beverages. Set MRP, cost price, selling price, and product code.</p>
-
-    <div class="form-grid">
-      <input id="item_name" placeholder="Item Name (e.g. Whey Protein 1kg)">
-      <input id="item_code" placeholder="Item Code / SKU (e.g. WP-001)">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-boxes-stacked" style="color:var(--primary); margin-right:8px;"></i>Items & Products</h3>
+        <p class="small" style="margin:4px 0 0;">Manage store inventory items, cost prices, selling rates, and stock levels.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddItemModal()"><i class="fa fa-plus"></i> + Add Item</button>
     </div>
-    <div class="form-grid">
-      <select id="item_category">
-        <option value="Supplement">💊 Supplement</option>
-        <option value="Accessory">🧤 Gym Accessory</option>
-        <option value="Beverage">🥤 Fitness Beverage</option>
-        <option value="Apparel">👕 Gym Apparel</option>
-        <option value="Equipment">🏋️ Equipment</option>
-        <option value="Other">📦 Other</option>
+
+    <!-- Items Stats -->
+    <div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap;">
+      <div class="vyapar-summary-card vyapar-card-blue">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Total Products</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#3b82f6; margin-top:4px;" id="item_stat_total">0</div>
+      </div>
+      <div class="vyapar-summary-card vyapar-card-green">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Total Stock Units</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#10b981; margin-top:4px;" id="item_stat_stock">0</div>
+      </div>
+      <div class="vyapar-summary-card vyapar-card-orange">
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Low Stock (&lt; 5)</span>
+        <div style="font-size:1.8rem; font-weight:800; color:#f59e0b; margin-top:4px;" id="item_stat_low">0</div>
+      </div>
+    </div>
+
+    <!-- Search Input -->
+    <div class="vyapar-search-box">
+      <i class="fa fa-search"></i>
+      <input id="itemSearchInput" placeholder="Search by item name or code..." oninput="filterItemsTable()">
+    </div>
+
+    <!-- Items Table -->
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th style="text-align:left;">Item Name</th>
+            <th>Item Code</th>
+            <th>Category</th>
+            <th>Stock Qty</th>
+            <th>Cost Price</th>
+            <th>Selling Price</th>
+            <th>MRP</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="itemsTableBody">
+          <tr><td colspan="8" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading items...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== SALE INVOICES TAB ========== -->
+  <div class="card hidden" id="saleInvoicesTab">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-file-invoice-dollar" style="color:var(--primary); margin-right:8px;"></i>Sale Invoices</h3>
+        <p class="small" style="margin:4px 0 0;">View customer sales bills, track payments received and pending balances.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddSaleModal()"><i class="fa fa-plus"></i> + Add Sale</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="vyapar-filter-bar">
+      <span style="font-size:0.88rem; color:var(--text-muted); font-weight:600;">Filter by:</span>
+      <select id="saleDateFilter" onchange="loadSaleInvoicesPage()" style="background:#0f1228; color:#fff; border:1px solid var(--border); border-radius:10px;">
+        <option value="month">This Month</option>
+        <option value="today">Today</option>
+        <option value="all">All Time</option>
       </select>
-      <input id="item_mrp" type="number" placeholder="MRP (₹)">
     </div>
-    <div class="form-grid">
-      <input id="item_cost_price" type="number" placeholder="Cost Price (₹)">
-      <input id="item_selling_price" type="number" placeholder="Selling Price (₹)">
-    </div>
-    <button class="ok" onclick="saveItem()"><i class="fa fa-save"></i> Save Item</button>
 
-    <hr>
-    <h4>Saved Items / Products</h4>
-    <div id="itemsListLog" style="display:flex; flex-direction:column; gap:12px;">Loading items...</div>
+    <!-- Vyapar Style Summary Card -->
+    <div style="background:rgba(255,255,255,0.025); border:1px solid var(--border); border-radius:18px; padding:20px; margin-bottom:24px; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:16px;">
+      <div>
+        <span style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase;">Total Sales Amount</span>
+        <div style="font-size:2rem; font-weight:800; color:#fff; margin-top:4px;">₹<span id="saleSummaryTotal">0</span></div>
+      </div>
+      <div style="display:flex; gap:24px;">
+        <div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Received:</span>
+          <div style="font-size:1.3rem; font-weight:700; color:#10b981;">₹<span id="saleSummaryReceived">0</span></div>
+        </div>
+        <div>
+          <span style="font-size:0.8rem; color:var(--text-muted);">Balance:</span>
+          <div style="font-size:1.3rem; font-weight:700; color:#ef4444;">₹<span id="saleSummaryBalance">0</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS SECTION -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <h4 style="margin:0; text-transform:uppercase; letter-spacing:1px; font-size:0.85rem; color:var(--text-muted);">Transactions</h4>
+      <div class="vyapar-search-box" style="margin-bottom:0;">
+        <i class="fa fa-search"></i>
+        <input id="saleSearchInput" placeholder="Search by invoice no or party..." oninput="filterSaleTable()">
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Invoice No</th>
+            <th style="text-align:left;">Party Name</th>
+            <th>Payment Type</th>
+            <th>Amount</th>
+            <th>Balance</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="saleInvoicesTableBody">
+          <tr><td colspan="8" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading sale invoices...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== PURCHASE BILLS TAB ========== -->
+  <div class="card hidden" id="purchaseBillsTab">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-receipt" style="color:var(--primary); margin-right:8px;"></i>Purchase Bills</h3>
+        <p class="small" style="margin:4px 0 0;">Track stock purchases from vendors, unpaid bills, and payments.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddPurchaseModal()"><i class="fa fa-plus"></i> + Add Purchase</button>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="vyapar-filter-bar">
+      <span style="font-size:0.88rem; color:var(--text-muted); font-weight:600;">Filter:</span>
+      <select id="purDateFilter" onchange="loadPurchaseBillsPage()" style="background:#0f1228; color:#fff; border:1px solid var(--border); border-radius:10px;">
+        <option value="month">This Month</option>
+        <option value="today">Today</option>
+        <option value="all">All Time</option>
+      </select>
+    </div>
+
+    <!-- Vyapar 3 Summary Cards: Paid + Unpaid = Total -->
+    <div class="vyapar-summary-bar">
+      <div class="vyapar-summary-card vyapar-card-green">
+        <span style="font-size:0.85rem; color:#10b981; font-weight:700;">Paid</span>
+        <div style="font-size:2rem; font-weight:800; color:#fff; margin-top:6px;">₹<span id="purStatPaid">0</span></div>
+      </div>
+      <div class="vyapar-operator">+</div>
+      <div class="vyapar-summary-card vyapar-card-blue">
+        <span style="font-size:0.85rem; color:#3b82f6; font-weight:700;">Unpaid</span>
+        <div style="font-size:2rem; font-weight:800; color:#fff; margin-top:6px;">₹<span id="purStatUnpaid">0</span></div>
+      </div>
+      <div class="vyapar-operator">=</div>
+      <div class="vyapar-summary-card vyapar-card-orange">
+        <span style="font-size:0.85rem; color:#f59e0b; font-weight:700;">Total</span>
+        <div style="font-size:2rem; font-weight:800; color:#fff; margin-top:6px;">₹<span id="purStatTotal">0</span></div>
+      </div>
+    </div>
+
+    <!-- TRANSACTIONS -->
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px;">
+      <h4 style="margin:0; text-transform:uppercase; letter-spacing:1px; font-size:0.85rem; color:var(--text-muted);">Transactions</h4>
+      <div class="vyapar-search-box" style="margin-bottom:0;">
+        <i class="fa fa-search"></i>
+        <input id="purSearchInput" placeholder="Search transactions..." oninput="filterPurchaseTable()">
+      </div>
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Invoice No.</th>
+            <th style="text-align:left;">Party Name</th>
+            <th>Payment Type</th>
+            <th>Amount</th>
+            <th>Balance Due</th>
+            <th>Status</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="purchaseBillsTableBody">
+          <tr><td colspan="8" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading purchase bills...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- ========== PAYMENT OUT TAB ========== -->
   <div class="card hidden" id="paymentOutTab">
-    <h3>📤 Payment Out (To Suppliers)</h3>
-    <p class="small" style="margin-bottom: 18px;">Record payments made to suppliers/vendors for stock purchases or services.</p>
-
-    <div class="form-grid">
-      <select id="pout_party_select">
-        <option value="">Select Supplier</option>
-      </select>
-      <input id="pout_amount" type="number" placeholder="Amount Paid (₹)">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-arrow-up-from-bracket" style="color:#ef4444; margin-right:8px;"></i>Payment Out</h3>
+        <p class="small" style="margin:4px 0 0;">Record payouts made to suppliers and vendors.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddPaymentOutModal()"><i class="fa fa-plus"></i> + Add Payment Out</button>
     </div>
-    <div class="form-grid">
-      <input id="pout_date" type="date">
-      <select id="pout_mode">
-        <option value="Cash">💵 Cash</option>
-        <option value="GPay">📱 GPay / UPI</option>
-        <option value="Bank Transfer">🏦 Bank Transfer</option>
-      </select>
-    </div>
-    <input id="pout_notes" placeholder="Notes / Description (Optional)">
-    <button class="ok" onclick="savePaymentOut()"><i class="fa fa-arrow-up-from-bracket"></i> Record Payment Out</button>
 
-    <hr>
-    <h4>Recent Payments Out</h4>
-    <div id="paymentOutLog" style="display:flex; flex-direction:column; gap:12px;">Loading payment outs...</div>
+    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:18px; padding:18px 24px; margin-bottom:24px; display:inline-block; min-width:240px;">
+      <span style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase;">Total Amount Paid Out</span>
+      <div style="font-size:2rem; font-weight:800; color:#ef4444; margin-top:4px;">₹<span id="poutTotalSum">0</span></div>
+    </div>
+
+    <div class="vyapar-search-box">
+      <i class="fa fa-search"></i>
+      <input id="poutSearchInput" placeholder="Search supplier or notes..." oninput="filterPaymentOutTable()">
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th style="text-align:left;">Supplier Name</th>
+            <th>Payment Type</th>
+            <th>Amount</th>
+            <th style="text-align:left;">Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="paymentOutTableBody">
+          <tr><td colspan="6" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading payment outs...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- ========== PAYMENT IN TAB ========== -->
   <div class="card hidden" id="paymentInTab">
-    <h3>📥 Payment In (From Clients)</h3>
-    <p class="small" style="margin-bottom: 18px;">Record client membership payments, plan renewals, and walk-in cash/GPay collections.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-arrow-down-to-bracket" style="color:#10b981; margin-right:8px;"></i>Payment In</h3>
+        <p class="small" style="margin:4px 0 0;">Record direct client payments, membership fee collections, and advance receipts.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddPaymentInModal()"><i class="fa fa-plus"></i> + Add Payment In</button>
+    </div>
 
-    <div class="form-grid">
-      <input id="pin_client_name" placeholder="Client / Member Name">
-      <input id="pin_client_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    <div style="background:rgba(16,185,129,0.1); border:1px solid rgba(16,185,129,0.3); border-radius:18px; padding:18px 24px; margin-bottom:24px; display:inline-block; min-width:240px;">
+      <span style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase;">Total Payments Received</span>
+      <div style="font-size:2rem; font-weight:800; color:#10b981; margin-top:4px;">₹<span id="pinTotalSum">0</span></div>
     </div>
-    <div class="form-grid">
-      <input id="pin_date" type="date">
-      <select id="pin_plan">
-        <option value="">Select Plan (Optional)</option>
-      </select>
-    </div>
-    <div class="form-grid">
-      <input id="pin_amount" type="number" placeholder="Amount Received (₹)">
-      <select id="pin_mode">
-        <option value="Cash">💵 Cash</option>
-        <option value="GPay">📱 GPay / UPI</option>
-        <option value="Bank Transfer">🏦 Bank Transfer</option>
-        <option value="Card">💳 Card</option>
-      </select>
-    </div>
-    <input id="pin_notes" placeholder="Notes / Remarks (Optional)">
-    <button class="ok" onclick="savePaymentIn()"><i class="fa fa-arrow-down"></i> Record Payment In</button>
 
-    <hr>
-    <h4>Recent Payments Received</h4>
-    <div id="paymentInLog" style="display:flex; flex-direction:column; gap:12px;">Loading payment ins...</div>
+    <div class="vyapar-search-box">
+      <i class="fa fa-search"></i>
+      <input id="pinSearchInput" placeholder="Search client name or phone..." oninput="filterPaymentInTable()">
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th style="text-align:left;">Client Name</th>
+            <th>Phone</th>
+            <th>Plan / Ref</th>
+            <th>Payment Type</th>
+            <th>Amount</th>
+            <th style="text-align:left;">Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="paymentInTableBody">
+          <tr><td colspan="8" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading payment ins...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ========== EXPENSES TAB ========== -->
+  <div class="card hidden" id="expensesTab">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
+      <div>
+        <h3 style="margin:0;"><i class="fa fa-money-bill-transfer" style="color:#ef4444; margin-right:8px;"></i>Gym Operational Expenses</h3>
+        <p class="small" style="margin:4px 0 0;">Manage rent, electricity, equipment maintenance, and general gym overheads.</p>
+      </div>
+      <button class="btn-vyapar-red" onclick="openAddExpenseModal()"><i class="fa fa-plus"></i> + Add Expense</button>
+    </div>
+
+    <div style="background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); border-radius:18px; padding:18px 24px; margin-bottom:24px; display:inline-block; min-width:240px;">
+      <span style="font-size:0.82rem; color:var(--text-muted); text-transform:uppercase;">Total Gym Expenses</span>
+      <div style="font-size:2rem; font-weight:800; color:#ef4444; margin-top:4px;">₹<span id="expTotalSum">0</span></div>
+    </div>
+
+    <div class="vyapar-search-box">
+      <i class="fa fa-search"></i>
+      <input id="expSearchInput" placeholder="Search expense title or category..." oninput="filterExpensesTable()">
+    </div>
+
+    <div style="overflow-x:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th style="text-align:left;">Expense Title</th>
+            <th>Category</th>
+            <th>Payment Type</th>
+            <th>Amount</th>
+            <th style="text-align:left;">Notes</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="expensesTableBody">
+          <tr><td colspan="7" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading expenses...</td></tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <!-- TRAINER SALARY MANAGEMENT -->
@@ -1809,6 +2181,337 @@ td {
   </div>
 </div>
 
+<!-- ==========================================
+     VYAPAR MODALS FOR STORE & ACCOUNTING
+     ========================================== -->
+
+<!-- 1. ADD PARTY MODAL -->
+<div id="modalAddParty" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(59,130,246,0.3); border-radius:24px; max-width:480px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeAddPartyModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-user-plus" style="color:var(--primary); margin-right:8px;"></i>Add New Party</h3>
+
+    <div style="display:flex; gap:10px; margin-bottom:16px;">
+      <button class="small" id="partyModalTypeSupplier" onclick="setPartyModalType('Supplier')" style="flex:1; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:#fff; border:none; padding:10px; border-radius:12px; font-weight:700; cursor:pointer;">🏭 Supplier</button>
+      <button class="small" id="partyModalTypeCustomer" onclick="setPartyModalType('Customer')" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-muted); padding:10px; border-radius:12px; font-weight:700; cursor:pointer;">🧑 Customer</button>
+    </div>
+    <input type="hidden" id="modal_party_type" value="Supplier">
+
+    <div class="form-grid">
+      <input id="modal_party_name" placeholder="Party Name (e.g. Optimum Nutrition)">
+      <input id="modal_party_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    </div>
+    <div class="form-grid">
+      <input id="modal_party_address" placeholder="Address / Location (Optional)">
+      <input id="modal_party_opening_bal" type="number" placeholder="Opening Balance (₹)" value="0">
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-vyapar-red" onclick="savePartyFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Party</button>
+      <button onclick="closeAddPartyModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 2. ADD ITEM MODAL -->
+<div id="modalAddItem" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(59,130,246,0.3); border-radius:24px; max-width:520px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeAddItemModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-box" style="color:var(--primary); margin-right:8px;"></i>Add New Item / Product</h3>
+
+    <div class="form-grid">
+      <input id="modal_item_name" placeholder="Item Name (e.g. Gold Whey Protein 2kg)">
+      <input id="modal_item_code" placeholder="Item Code / SKU (e.g. WP-001)">
+    </div>
+    <div class="form-grid">
+      <select id="modal_item_category">
+        <option value="Supplement">💊 Supplement</option>
+        <option value="Accessory">🧤 Gym Accessory</option>
+        <option value="Beverage">🥤 Fitness Beverage</option>
+        <option value="Apparel">👕 Gym Apparel</option>
+        <option value="Equipment">🏋️ Equipment</option>
+        <option value="Other">📦 Other</option>
+      </select>
+      <input id="modal_item_stock" type="number" placeholder="Opening Stock Quantity" value="10">
+    </div>
+    <div class="form-grid">
+      <input id="modal_item_cost_price" type="number" placeholder="Purchase / Cost Price (₹)">
+      <input id="modal_item_selling_price" type="number" placeholder="Selling Price (₹)">
+    </div>
+    <input id="modal_item_mrp" type="number" placeholder="MRP (₹)">
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-vyapar-red" onclick="saveItemFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Item</button>
+      <button onclick="closeAddItemModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 3. ADD PURCHASE BILL MODAL (Matches Vyapar Purchase Bill creation) -->
+<div id="modalAddPurchase" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(239,68,68,0.35); border-radius:24px; max-width:680px; width:100%; padding:26px; position:relative; max-height:90vh; overflow-y:auto;">
+    <button onclick="closeAddPurchaseModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-receipt" style="color:#ef4444; margin-right:8px;"></i>Create Purchase Bill</h3>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); padding:12px 18px; border-radius:14px; border:1px solid var(--border); margin-bottom:16px;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:700;">
+        <input type="checkbox" id="modal_pur_paid" checked onchange="togglePurModalPaidCheckbox()" style="width:20px; height:20px; accent-color:#10b981; cursor:pointer;">
+        <span id="modal_pur_paid_label" style="color:#10b981;">✅ Paid</span>
+      </label>
+      <select id="modal_pur_payment_mode" style="width:auto; margin:0; padding:6px 14px;">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Party / Supplier Name:</label>
+        <select id="modal_pur_party_select" style="margin-top:0;">
+          <option value="">Select Supplier</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Date:</label>
+        <input id="modal_pur_date" type="date" style="margin-top:0;">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Invoice Number:</label>
+        <input id="modal_pur_inv_no" placeholder="e.g. PUR-1001" style="margin-top:0;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Total Amount (₹):</label>
+        <input id="modal_pur_total_amount" type="number" readonly placeholder="0.00" style="margin-top:0; font-weight:800; color:#f59e0b;">
+      </div>
+    </div>
+
+    <hr style="margin:16px 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h4 style="margin:0; font-size:0.95rem; color:#fff;"><i class="fa fa-boxes-stacked" style="color:var(--primary); margin-right:6px;"></i>Item Line Particulars</h4>
+      <button class="small ok" onclick="addPurchaseModalItemRow()" style="margin:0;"><i class="fa fa-plus"></i> Add Item</button>
+    </div>
+
+    <div id="modalPurItemsContainer" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <!-- Dynamic rows inserted here -->
+    </div>
+
+    <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.25); border-radius:14px; padding:14px 18px; text-align:right; margin-bottom:18px;">
+      <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Subtotal Amount</span>
+      <div style="font-size:1.8rem; font-weight:800; color:#f59e0b; margin-top:2px;">₹<span id="modalPurSubtotalText">0.00</span></div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn-vyapar-red" onclick="savePurchaseBillFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Purchase Bill</button>
+      <button onclick="closeAddPurchaseModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 4. ADD SALE INVOICE MODAL -->
+<div id="modalAddSale" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(16,185,129,0.35); border-radius:24px; max-width:680px; width:100%; padding:26px; position:relative; max-height:90vh; overflow-y:auto;">
+    <button onclick="closeAddSaleModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-file-invoice-dollar" style="color:#10b981; margin-right:8px;"></i>Create Sale Invoice</h3>
+
+    <div style="display:flex; align-items:center; justify-content:space-between; background:rgba(255,255,255,0.03); padding:12px 18px; border-radius:14px; border:1px solid var(--border); margin-bottom:16px;">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:700;">
+        <input type="checkbox" id="modal_sale_paid" checked onchange="toggleSaleModalPaidCheckbox()" style="width:20px; height:20px; accent-color:#10b981; cursor:pointer;">
+        <span id="modal_sale_paid_label" style="color:#10b981;">✅ Paid</span>
+      </label>
+      <select id="modal_sale_payment_mode" style="width:auto; margin:0; padding:6px 14px;">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Card">💳 Card</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Customer / Member Name:</label>
+        <input id="modal_sale_customer_name" placeholder="Enter customer name or select party" list="saleCustomersDatalist" style="margin-top:0;">
+        <datalist id="saleCustomersDatalist"></datalist>
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Date:</label>
+        <input id="modal_sale_date" type="date" style="margin-top:0;">
+      </div>
+    </div>
+
+    <div class="form-grid">
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Invoice Number:</label>
+        <input id="modal_sale_inv_no" placeholder="e.g. INV-1001" style="margin-top:0;">
+      </div>
+      <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Total Amount (₹):</label>
+        <input id="modal_sale_total_amount" type="number" readonly placeholder="0.00" style="margin-top:0; font-weight:800; color:#10b981;">
+      </div>
+    </div>
+
+    <hr style="margin:16px 0;">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+      <h4 style="margin:0; font-size:0.95rem; color:#fff;"><i class="fa fa-boxes-stacked" style="color:var(--primary); margin-right:6px;"></i>Item Line Particulars</h4>
+      <button class="small ok" onclick="addSaleModalItemRow()" style="margin:0;"><i class="fa fa-plus"></i> Add Item</button>
+    </div>
+
+    <div id="modalSaleItemsContainer" style="display:flex; flex-direction:column; gap:8px; margin-bottom:14px;">
+      <!-- Dynamic rows inserted here -->
+    </div>
+
+    <div style="background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.25); border-radius:14px; padding:14px 18px; text-align:right; margin-bottom:18px;">
+      <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Subtotal Amount</span>
+      <div style="font-size:1.8rem; font-weight:800; color:#10b981; margin-top:2px;">₹<span id="modalSaleSubtotalText">0.00</span></div>
+    </div>
+
+    <div style="display:flex; gap:10px;">
+      <button class="btn-vyapar-red" onclick="saveSaleInvoiceFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Sale Invoice</button>
+      <button onclick="closeAddSaleModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 5. ADD PAYMENT OUT MODAL -->
+<div id="modalAddPaymentOut" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(239,68,68,0.3); border-radius:24px; max-width:480px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeAddPaymentOutModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-arrow-up-from-bracket" style="color:#ef4444; margin-right:8px;"></i>Record Payment Out</h3>
+
+    <div class="form-grid">
+      <select id="modal_pout_supplier">
+        <option value="">Select Supplier</option>
+      </select>
+      <input id="modal_pout_amount" type="number" placeholder="Amount Paid (₹)">
+    </div>
+    <div class="form-grid">
+      <input id="modal_pout_date" type="date">
+      <select id="modal_pout_mode">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+    </div>
+    <input id="modal_pout_notes" placeholder="Notes / Description (Optional)">
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-vyapar-red" onclick="savePaymentOutFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Payment Out</button>
+      <button onclick="closeAddPaymentOutModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 6. ADD PAYMENT IN MODAL -->
+<div id="modalAddPaymentIn" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(16,185,129,0.3); border-radius:24px; max-width:480px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeAddPaymentInModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-arrow-down-to-bracket" style="color:#10b981; margin-right:8px;"></i>Record Payment In</h3>
+
+    <div class="form-grid">
+      <input id="modal_pin_name" placeholder="Client / Member Name">
+      <input id="modal_pin_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    </div>
+    <div class="form-grid">
+      <input id="modal_pin_date" type="date">
+      <input id="modal_pin_plan" placeholder="Plan / Reason (e.g. 1 Month Renewal)">
+    </div>
+    <div class="form-grid">
+      <input id="modal_pin_amount" type="number" placeholder="Amount Received (₹)">
+      <select id="modal_pin_mode">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Card">💳 Card</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+    </div>
+    <input id="modal_pin_notes" placeholder="Notes / Remarks (Optional)">
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-vyapar-red" onclick="savePaymentInFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Payment In</button>
+      <button onclick="closeAddPaymentInModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 7. ADD EXPENSE MODAL -->
+<div id="modalAddExpense" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(239,68,68,0.3); border-radius:24px; max-width:480px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeAddExpenseModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <h3 style="margin:0 0 16px;"><i class="fa fa-money-bill-transfer" style="color:#ef4444; margin-right:8px;"></i>Record Gym Expense</h3>
+
+    <div class="form-grid">
+      <input id="modal_exp_title" placeholder="Expense Title (e.g. Electricity Bill)">
+      <select id="modal_exp_cat">
+        <option value="Electricity & Utilities">⚡ Electricity & Water</option>
+        <option value="Rent">🏢 Gym Rent</option>
+        <option value="Equipment Maintenance">🏋️ Equipment Maintenance</option>
+        <option value="Cleaning & Supplies">🧹 Housekeeping & Cleaning</option>
+        <option value="Staff / Wages">👥 Staff / Wages</option>
+        <option value="Marketing & Ads">📢 Marketing & Ads</option>
+        <option value="Software & Internet">💻 Internet & Systems</option>
+        <option value="Miscellaneous">📦 Miscellaneous</option>
+      </select>
+    </div>
+    <div class="form-grid">
+      <input id="modal_exp_amount" type="number" placeholder="Amount (₹)">
+      <input id="modal_exp_date" type="date">
+    </div>
+    <div class="form-grid">
+      <select id="modal_exp_mode">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+      <input id="modal_exp_notes" placeholder="Notes (Optional)">
+    </div>
+
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-vyapar-red" onclick="saveExpenseFromModal()" style="flex:1; justify-content:center;"><i class="fa fa-save"></i> Save Expense</button>
+      <button onclick="closeAddExpenseModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- 8. VIEW INVOICE BILL MODAL -->
+<div id="modalViewInvoice" class="hidden" style="position:fixed; inset:0; z-index:9999; background:rgba(0,0,0,0.85); display:flex; align-items:center; justify-content:center; padding:16px; overflow-y:auto;">
+  <div style="background:#0d1024; border:1px solid rgba(59,130,246,0.35); border-radius:24px; max-width:540px; width:100%; padding:26px; position:relative;">
+    <button onclick="closeViewInvoiceModal()" style="position:absolute; top:16px; right:16px; background:rgba(239,68,68,0.1); border:1px solid rgba(239,68,68,0.3); color:#ef4444; border-radius:50%; width:34px; height:34px; font-size:1rem; cursor:pointer;">✕</button>
+    <div id="viewInvoicePrintArea">
+      <div style="text-align:center; margin-bottom:16px;">
+        <h2 style="font-family:'Playfair Display',serif; color:#fff; margin:0;" id="viewInvGymTitle">FITNESSTIME</h2>
+        <p style="color:#94a3b8; font-size:0.8rem; margin:4px 0 0;">Karikakulam, Karaparamb | 📞 8086361224</p>
+        <h3 style="display:inline-block; border:1px solid rgba(255,255,255,0.2); border-radius:12px; padding:4px 14px; margin:10px 0 4px; font-size:0.9rem;" id="viewInvTypeBadge">INVOICE</h3>
+      </div>
+      <table style="border:none; margin:0 0 14px; font-size:0.85rem;">
+        <tr><td style="border:none; text-align:left; color:#94a3b8; padding:3px 0;">Invoice No: <b style="color:#fff;" id="viewInvNo">-</b></td><td style="border:none; text-align:right; color:#94a3b8; padding:3px 0;">Date: <b style="color:#fff;" id="viewInvDate">-</b></td></tr>
+        <tr><td colspan="2" style="border:none; text-align:left; color:#94a3b8; padding:3px 0;">Party: <b style="color:#fff;" id="viewInvParty">-</b></td></tr>
+      </table>
+      <table style="font-size:0.85rem;">
+        <thead><tr><th style="text-align:left;">Item</th><th>Qty</th><th>Price</th><th style="text-align:right;">Total</th></tr></thead>
+        <tbody id="viewInvItemsBody"></tbody>
+        <tfoot>
+          <tr>
+            <td colspan="3" style="text-align:right; font-weight:700;">Subtotal:</td>
+            <td style="text-align:right; font-weight:800; color:#10b981;">₹<span id="viewInvSubtotal">0</span></td>
+          </tr>
+        </tfoot>
+      </table>
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding:10px 14px; background:rgba(255,255,255,0.025); border-radius:12px;">
+        <span style="font-size:0.85rem; color:#94a3b8;">Payment: <b style="color:#fff;" id="viewInvPaymentMode">-</b></span>
+        <span id="viewInvStatusBadge" style="font-weight:700; font-size:0.8rem; padding:4px 12px; border-radius:14px;">-</span>
+      </div>
+    </div>
+    <div style="display:flex; gap:10px; margin-top:18px;">
+      <button class="btn-primary" onclick="printViewInvoice()" style="flex:1;"><i class="fa fa-print"></i> Print</button>
+      <button onclick="closeViewInvoiceModal()" style="background:none; border:1px solid var(--border); color:var(--text-muted); padding:10px 18px; border-radius:14px; cursor:pointer;">Close</button>
+    </div>
+  </div>
+</div>
+
+
 <!-- Firebase & Screenshot libraries -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
@@ -1836,11 +2539,17 @@ function closeSidebar() {
   if(overlay) overlay.classList.remove("active");
 }
 
+function toggleSidebarDropdown(groupId) {
+  const el = document.getElementById(groupId);
+  if(el) el.classList.toggle("open");
+}
+
 function showTab(id, btn){
   [
     "dashboard","posBilling","gymStore","trainerSalary","addUser","requests","users","editUser","plans",
     "attendance","qr","whatsapp","payments",
-    "paymentHistory","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox","galleryConfigBox","broadcasterBox","finances","expensesTab"
+    "paymentHistory","ptProfile","bookings","offerBanners","paymentConfigBox","trainersConfigBox","adminConfigBox","galleryConfigBox","broadcasterBox","finances",
+    "partiesTab", "itemsTab", "saleInvoicesTab", "purchaseBillsTab", "paymentOutTab", "paymentInTab", "expensesTab"
   ].forEach(x=>{
     let el = document.getElementById(x);
     if(el) el.classList.add("hidden");
@@ -1849,12 +2558,18 @@ function showTab(id, btn){
   const target = document.getElementById(id);
   if(target) target.classList.remove("hidden");
 
-  document.querySelectorAll(".sidebar-link").forEach(b=>b.classList.remove("active"));
-  if (btn && btn.classList && btn.classList.contains("sidebar-link")) {
+  document.querySelectorAll(".sidebar-link, .sidebar-sublink").forEach(b=>b.classList.remove("active"));
+  if (btn) {
     btn.classList.add("active");
+    let dropdownParent = btn.closest(".sidebar-dropdown");
+    if(dropdownParent) dropdownParent.classList.add("open");
   } else {
-    let match = Array.from(document.querySelectorAll(".sidebar-link")).find(b => b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${id}'`));
-    if (match) match.classList.add("active");
+    let match = Array.from(document.querySelectorAll(".sidebar-link, .sidebar-sublink")).find(b => b.getAttribute("onclick") && b.getAttribute("onclick").includes(`'${id}'`));
+    if (match) {
+      match.classList.add("active");
+      let dropdownParent = match.closest(".sidebar-dropdown");
+      if(dropdownParent) dropdownParent.classList.add("open");
+    }
   }
 
   const pageTitles = {
@@ -1879,8 +2594,15 @@ function showTab(id, btn){
     "payments": "💰 Log Client Payment",
     "ptProfile": "👤 Member PT Profile",
     "editUser": "✏️ Edit Member Profile",
-    "expensesTab": "💸 Gym Operational Expenses",
-    "dashboard": "📊 Analytics Dashboard"
+    "finances": "📈 Financial Dashboard & Profit",
+    "dashboard": "📊 Analytics Dashboard",
+    "partiesTab": "📒 Parties (Suppliers & Customers)",
+    "itemsTab": "📦 Items & Inventory Products",
+    "saleInvoicesTab": "🧾 Sale Invoices",
+    "purchaseBillsTab": "🛒 Purchase Bills",
+    "paymentOutTab": "📤 Payment-Out (To Suppliers)",
+    "paymentInTab": "📥 Payment-In (From Clients)",
+    "expensesTab": "💸 Gym Operational Expenses"
   };
 
   const titleEl = document.getElementById("topPageTitle");
@@ -1896,6 +2618,13 @@ function showTab(id, btn){
   if(id === "trainerSalary") loadTrainerPayoutsHistory();
   if(id === "finances") loadFinancialDashboard();
   if(id === "dashboard") loadDashboardTab();
+  if(id === "partiesTab") loadPartiesPage();
+  if(id === "itemsTab") loadItemsPage();
+  if(id === "saleInvoicesTab") loadSaleInvoicesPage();
+  if(id === "purchaseBillsTab") loadPurchaseBillsPage();
+  if(id === "paymentOutTab") loadPaymentOutPage();
+  if(id === "paymentInTab") loadPaymentInPage();
+  if(id === "expensesTab") loadExpensesPage();
 }
 
 function showInside(id) {
@@ -4410,6 +5139,1239 @@ function loadDashboardTab() {
   });
 }
 
+/* =========================================================
+   VYAPAR STORE & ACCOUNTING LOGIC
+   ========================================================= */
+
+// ---------- 1. PARTIES MODULE ----------
+let allPartiesData = [];
+let currentPartyFilter = 'all';
+
+function openAddPartyModal() {
+  document.getElementById("modal_party_name").value = "";
+  document.getElementById("modal_party_phone").value = "";
+  document.getElementById("modal_party_address").value = "";
+  document.getElementById("modal_party_opening_bal").value = "0";
+  setPartyModalType('Supplier');
+  document.getElementById("modalAddParty").classList.remove("hidden");
+}
+
+function closeAddPartyModal() {
+  document.getElementById("modalAddParty").classList.add("hidden");
+}
+
+function setPartyModalType(t) {
+  document.getElementById("modal_party_type").value = t;
+  const supBtn = document.getElementById("partyModalTypeSupplier");
+  const custBtn = document.getElementById("partyModalTypeCustomer");
+  if(t === 'Supplier') {
+    supBtn.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    supBtn.style.color = '#fff';
+    supBtn.style.border = 'none';
+    custBtn.style.background = 'rgba(255,255,255,0.05)';
+    custBtn.style.color = 'var(--text-muted)';
+    custBtn.style.border = '1px solid var(--border)';
+  } else {
+    custBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+    custBtn.style.color = '#fff';
+    custBtn.style.border = 'none';
+    supBtn.style.background = 'rgba(255,255,255,0.05)';
+    supBtn.style.color = 'var(--text-muted)';
+    supBtn.style.border = '1px solid var(--border)';
+  }
+}
+
+function setPartyFilter(f) {
+  currentPartyFilter = f;
+  ['all', 'Supplier', 'Customer'].forEach(x => {
+    let btn = document.getElementById(x === 'all' ? 'partyFilterAll' : (x === 'Supplier' ? 'partyFilterSuppliers' : 'partyFilterCustomers'));
+    if(btn) {
+      if(x === f) {
+        btn.style.background = 'var(--primary)';
+        btn.style.color = '#fff';
+        btn.style.border = 'none';
+      } else {
+        btn.style.background = 'rgba(255,255,255,0.05)';
+        btn.style.color = 'var(--text-muted)';
+        btn.style.border = '1px solid var(--border)';
+      }
+    }
+  });
+  renderPartiesTable();
+}
+
+function savePartyFromModal() {
+  let name = document.getElementById("modal_party_name").value.trim();
+  let phone = document.getElementById("modal_party_phone").value.trim();
+  let address = document.getElementById("modal_party_address").value.trim();
+  let openingBal = parseFloat(document.getElementById("modal_party_opening_bal").value) || 0;
+  let type = document.getElementById("modal_party_type").value || "Supplier";
+
+  if(!name) {
+    alert("Please enter party name!");
+    return;
+  }
+
+  db.collection("parties").add({
+    name: name,
+    phone: phone,
+    address: address,
+    openingBalance: openingBal,
+    type: type,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    alert(`Party "${name}" (${type}) saved!`);
+    closeAddPartyModal();
+    loadPartiesPage();
+  });
+}
+
+function loadPartiesPage() {
+  db.collection("parties").get().then(snap => {
+    allPartiesData = [];
+    let suppliersCount = 0;
+    let customersCount = 0;
+
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allPartiesData.push(d);
+      if(d.type === 'Supplier') suppliersCount++;
+      else customersCount++;
+    });
+
+    let el;
+    el = document.getElementById("party_stat_total"); if(el) el.innerText = allPartiesData.length;
+    el = document.getElementById("party_stat_suppliers"); if(el) el.innerText = suppliersCount;
+    el = document.getElementById("party_stat_customers"); if(el) el.innerText = customersCount;
+
+    renderPartiesTable();
+  });
+}
+
+function renderPartiesTable() {
+  const tbody = document.getElementById("partiesTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("partySearchInput") ? document.getElementById("partySearchInput").value.toLowerCase() : "");
+
+  let filtered = allPartiesData.filter(p => {
+    if(currentPartyFilter !== 'all' && p.type !== currentPartyFilter) return false;
+    if(query && !(p.name||'').toLowerCase().includes(query) && !(p.phone||'').includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-address-book" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No parties found. Click "+ Add Party" to create one.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(p => {
+    let typeBadge = p.type === 'Supplier' 
+      ? '<span style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">🏭 Supplier</span>'
+      : '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">🧑 Customer</span>';
+
+    h += `
+      <tr>
+        <td style="text-align:left; font-weight:700; color:#fff;">${p.name}</td>
+        <td>${typeBadge}</td>
+        <td>${p.phone || '-'}</td>
+        <td style="text-align:left; font-size:0.85rem; color:var(--text-muted);">${p.address || '-'}</td>
+        <td style="font-weight:700; color:#3b82f6;">₹${Number(p.openingBalance || 0).toLocaleString('en-IN')}</td>
+        <td>
+          <button class="del small" onclick="deleteParty('${p.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterPartiesTable() {
+  renderPartiesTable();
+}
+
+function deleteParty(id) {
+  if(!confirm("Are you sure you want to delete this party?")) return;
+  db.collection("parties").doc(id).delete().then(() => {
+    loadPartiesPage();
+  });
+}
+
+
+// ---------- 2. ITEMS MODULE ----------
+let allItemsData = [];
+
+function openAddItemModal() {
+  document.getElementById("modal_item_name").value = "";
+  document.getElementById("modal_item_code").value = "";
+  document.getElementById("modal_item_stock").value = "10";
+  document.getElementById("modal_item_cost_price").value = "";
+  document.getElementById("modal_item_selling_price").value = "";
+  document.getElementById("modal_item_mrp").value = "";
+  document.getElementById("modalAddItem").classList.remove("hidden");
+}
+
+function closeAddItemModal() {
+  document.getElementById("modalAddItem").classList.add("hidden");
+}
+
+function saveItemFromModal() {
+  let name = document.getElementById("modal_item_name").value.trim();
+  let code = document.getElementById("modal_item_code").value.trim();
+  let cat = document.getElementById("modal_item_category").value;
+  let stock = parseInt(document.getElementById("modal_item_stock").value) || 0;
+  let costPrice = parseFloat(document.getElementById("modal_item_cost_price").value) || 0;
+  let sellingPrice = parseFloat(document.getElementById("modal_item_selling_price").value) || 0;
+  let mrp = parseFloat(document.getElementById("modal_item_mrp").value) || sellingPrice;
+
+  if(!name || sellingPrice <= 0) {
+    alert("Please enter product name and valid selling price!");
+    return;
+  }
+
+  db.collection("inventoryItems").add({
+    name: name,
+    code: code || `SKU-${Date.now().toString().slice(-4)}`,
+    category: cat,
+    stock: stock,
+    costPrice: costPrice,
+    sellingPrice: sellingPrice,
+    mrp: mrp,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    // Also sync to storeProducts for POS
+    db.collection("storeProducts").add({
+      name: name,
+      category: cat,
+      price: sellingPrice,
+      stock: stock,
+      createdAt: new Date().toISOString()
+    });
+    alert(`Item "${name}" saved to inventory!`);
+    closeAddItemModal();
+    loadItemsPage();
+  });
+}
+
+function loadItemsPage() {
+  db.collection("inventoryItems").get().then(snap => {
+    allItemsData = [];
+    let totalStock = 0;
+    let lowStockCount = 0;
+
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allItemsData.push(d);
+      let s = Number(d.stock || 0);
+      totalStock += s;
+      if(s < 5) lowStockCount++;
+    });
+
+    let el;
+    el = document.getElementById("item_stat_total"); if(el) el.innerText = allItemsData.length;
+    el = document.getElementById("item_stat_stock"); if(el) el.innerText = totalStock;
+    el = document.getElementById("item_stat_low"); if(el) el.innerText = lowStockCount;
+
+    renderItemsTable();
+  });
+}
+
+function renderItemsTable() {
+  const tbody = document.getElementById("itemsTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("itemSearchInput") ? document.getElementById("itemSearchInput").value.toLowerCase() : "");
+
+  let filtered = allItemsData.filter(it => {
+    if(query && !(it.name||'').toLowerCase().includes(query) && !(it.code||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-boxes-stacked" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No items found. Click "+ Add Item" to add a product.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(it => {
+    let stockColor = (it.stock || 0) >= 5 ? '#10b981' : '#ef4444';
+    h += `
+      <tr>
+        <td style="text-align:left; font-weight:700; color:#fff;">${it.name}</td>
+        <td style="font-size:0.85rem; color:var(--text-muted); font-family:monospace;">${it.code || '-'}</td>
+        <td><span style="background:rgba(59,130,246,0.15); color:#a5b4fc; border:1px solid rgba(59,130,246,0.3); padding:3px 10px; border-radius:12px; font-size:0.75rem;">${it.category || 'Other'}</span></td>
+        <td style="font-weight:700; color:${stockColor};">${it.stock || 0}</td>
+        <td>₹${Number(it.costPrice || 0).toLocaleString('en-IN')}</td>
+        <td style="font-weight:700; color:#10b981;">₹${Number(it.sellingPrice || 0).toLocaleString('en-IN')}</td>
+        <td style="color:var(--text-muted);">₹${Number(it.mrp || 0).toLocaleString('en-IN')}</td>
+        <td>
+          <button class="del small" onclick="deleteItem('${it.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterItemsTable() {
+  renderItemsTable();
+}
+
+function deleteItem(id) {
+  if(!confirm("Are you sure you want to delete this product?")) return;
+  db.collection("inventoryItems").doc(id).delete().then(() => {
+    loadItemsPage();
+  });
+}
+
+
+// ---------- 3. PURCHASE BILLS MODULE ----------
+let allPurchaseBillsData = [];
+let purModalRowCounter = 0;
+
+function openAddPurchaseModal() {
+  document.getElementById("modal_pur_date").value = new Date().toISOString().split('T')[0];
+  document.getElementById("modal_pur_inv_no").value = `PUR-${Math.floor(1000 + Math.random() * 9000)}`;
+  document.getElementById("modal_pur_paid").checked = true;
+  togglePurModalPaidCheckbox();
+  document.getElementById("modal_pur_total_amount").value = "";
+  document.getElementById("modalPurSubtotalText").innerText = "0.00";
+
+  // Populate supplier select
+  const select = document.getElementById("modal_pur_party_select");
+  if(select) {
+    let opts = '<option value="">Select Supplier</option>';
+    allPartiesData.forEach(p => {
+      opts += `<option value="${p.name}">${p.name} (${p.type})</option>`;
+    });
+    select.innerHTML = opts;
+  }
+
+  // Clear rows & add initial line item
+  const container = document.getElementById("modalPurItemsContainer");
+  if(container) container.innerHTML = "";
+  purModalRowCounter = 0;
+  addPurchaseModalItemRow();
+
+  document.getElementById("modalAddPurchase").classList.remove("hidden");
+}
+
+function closeAddPurchaseModal() {
+  document.getElementById("modalAddPurchase").classList.add("hidden");
+}
+
+function togglePurModalPaidCheckbox() {
+  const cb = document.getElementById("modal_pur_paid");
+  const lbl = document.getElementById("modal_pur_paid_label");
+  if(cb && lbl) {
+    if(cb.checked) {
+      lbl.innerText = "✅ Paid";
+      lbl.style.color = "#10b981";
+    } else {
+      lbl.innerText = "⏳ Unpaid";
+      lbl.style.color = "#ef4444";
+    }
+  }
+}
+
+function addPurchaseModalItemRow() {
+  purModalRowCounter++;
+  const rowId = `purRow_${purModalRowCounter}`;
+  const container = document.getElementById("modalPurItemsContainer");
+  if(!container) return;
+
+  let itemOptions = '<option value="">Select Product</option>';
+  allItemsData.forEach(it => {
+    itemOptions += `<option value="${it.name}" data-price="${it.costPrice || 0}">${it.name} (Cost: ₹${it.costPrice || 0})</option>`;
+  });
+
+  const row = document.createElement("div");
+  row.id = rowId;
+  row.style.cssText = "display:flex; gap:8px; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:12px; border:1px solid var(--border);";
+  row.innerHTML = `
+    <select onchange="onPurRowSelectChange('${rowId}', this)" style="flex:2; margin:0; padding:8px; font-size:0.85rem;">${itemOptions}</select>
+    <input type="number" class="pur-row-qty" value="1" min="1" placeholder="Qty" oninput="calcPurchaseModalTotal()" style="width:70px; margin:0; padding:8px; text-align:center;">
+    <input type="number" class="pur-row-price" placeholder="Price" oninput="calcPurchaseModalTotal()" style="width:90px; margin:0; padding:8px; text-align:right;">
+    <span class="pur-row-total" style="width:80px; text-align:right; font-weight:700; color:#f59e0b; font-size:0.9rem;">₹0</span>
+    <button class="del small" onclick="removePurModalRow('${rowId}')" style="margin:0; padding:6px 10px;"><i class="fa fa-times"></i></button>
+  `;
+  container.appendChild(row);
+}
+
+function onPurRowSelectChange(rowId, sel) {
+  const row = document.getElementById(rowId);
+  if(!row) return;
+  const opt = sel.options[sel.selectedIndex];
+  const price = opt.getAttribute("data-price") || 0;
+  row.querySelector(".pur-row-price").value = price;
+  calcPurchaseModalTotal();
+}
+
+function removePurModalRow(rowId) {
+  const row = document.getElementById(rowId);
+  if(row) row.remove();
+  calcPurchaseModalTotal();
+}
+
+function calcPurchaseModalTotal() {
+  let subtotal = 0;
+  document.querySelectorAll("#modalPurItemsContainer > div").forEach(row => {
+    let qty = parseFloat(row.querySelector(".pur-row-qty").value) || 0;
+    let price = parseFloat(row.querySelector(".pur-row-price").value) || 0;
+    let rowTotal = qty * price;
+    row.querySelector(".pur-row-total").innerText = `₹${rowTotal.toFixed(0)}`;
+    subtotal += rowTotal;
+  });
+  document.getElementById("modal_pur_total_amount").value = subtotal.toFixed(2);
+  document.getElementById("modalPurSubtotalText").innerText = subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+}
+
+function savePurchaseBillFromModal() {
+  let party = document.getElementById("modal_pur_party_select").value.trim();
+  let dateVal = document.getElementById("modal_pur_date").value || new Date().toISOString().split('T')[0];
+  let invNo = document.getElementById("modal_pur_inv_no").value.trim();
+  let total = parseFloat(document.getElementById("modal_pur_total_amount").value) || 0;
+  let isPaid = document.getElementById("modal_pur_paid").checked;
+  let mode = document.getElementById("modal_pur_payment_mode").value;
+
+  if(!party) {
+    alert("Please select a supplier!");
+    return;
+  }
+  if(total <= 0) {
+    alert("Please add items with valid cost!");
+    return;
+  }
+
+  let items = [];
+  document.querySelectorAll("#modalPurItemsContainer > div").forEach(row => {
+    let sel = row.querySelector("select");
+    let name = sel.options[sel.selectedIndex].value;
+    let qty = parseFloat(row.querySelector(".pur-row-qty").value) || 0;
+    let price = parseFloat(row.querySelector(".pur-row-price").value) || 0;
+    if(name && qty > 0) {
+      items.push({ name: name, qty: qty, price: price, total: qty * price });
+    }
+  });
+
+  db.collection("purchaseBills").add({
+    invoiceNo: invNo,
+    partyName: party,
+    date: dateVal,
+    totalAmount: total,
+    isPaid: isPaid,
+    paymentMode: isPaid ? mode : "Unpaid",
+    balanceDue: isPaid ? 0 : total,
+    items: items,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    // If paid, also log into supplierPayments
+    if(isPaid) {
+      db.collection("supplierPayments").add({
+        supplierName: party,
+        amountPaid: total,
+        paymentMode: mode,
+        date: dateVal,
+        createdAt: new Date().toISOString()
+      });
+      db.collection("paymentOut").add({
+        supplierName: party,
+        amount: total,
+        paymentMode: mode,
+        date: dateVal,
+        notes: `Purchase Bill ${invNo}`,
+        createdAt: new Date().toISOString()
+      });
+    }
+
+    // Update product stock for line items
+    items.forEach(it => {
+      db.collection("inventoryItems").where("name", "==", it.name).get().then(snap => {
+        snap.forEach(doc => {
+          let curr = doc.data().stock || 0;
+          db.collection("inventoryItems").doc(doc.id).update({ stock: curr + it.qty });
+        });
+      });
+    });
+
+    alert(`Purchase Bill ${invNo} saved successfully!`);
+    closeAddPurchaseModal();
+    loadPurchaseBillsPage();
+  });
+}
+
+function loadPurchaseBillsPage() {
+  db.collection("purchaseBills").orderBy("date", "desc").get().then(snap => {
+    allPurchaseBillsData = [];
+    let filter = document.getElementById("purDateFilter") ? document.getElementById("purDateFilter").value : "month";
+    let now = new Date();
+    let monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    let todayStr = now.toISOString().split('T')[0];
+
+    let paidSum = 0;
+    let unpaidSum = 0;
+
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allPurchaseBillsData.push(d);
+
+      let dStr = (d.date || '').substr(0, 10);
+      let match = true;
+      if(filter === 'month' && !dStr.startsWith(monthStr)) match = false;
+      if(filter === 'today' && dStr !== todayStr) match = false;
+
+      if(match) {
+        if(d.isPaid) paidSum += Number(d.totalAmount || 0);
+        else unpaidSum += Number(d.totalAmount || 0);
+      }
+    });
+
+    let el;
+    el = document.getElementById("purStatPaid"); if(el) el.innerText = paidSum.toLocaleString('en-IN');
+    el = document.getElementById("purStatUnpaid"); if(el) el.innerText = unpaidSum.toLocaleString('en-IN');
+    el = document.getElementById("purStatTotal"); if(el) el.innerText = (paidSum + unpaidSum).toLocaleString('en-IN');
+
+    renderPurchaseBillsTable();
+  });
+}
+
+function renderPurchaseBillsTable() {
+  const tbody = document.getElementById("purchaseBillsTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("purSearchInput") ? document.getElementById("purSearchInput").value.toLowerCase() : "");
+
+  let filtered = allPurchaseBillsData.filter(b => {
+    if(query && !(b.invoiceNo||'').toLowerCase().includes(query) && !(b.partyName||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:35px; color:var(--text-muted);"><i class="fa fa-receipt" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No transactions to show. Click "+ Add Purchase" to record a bill.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(b => {
+    let statusBadge = b.isPaid 
+      ? '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">PAID</span>'
+      : '<span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">UNPAID</span>';
+
+    h += `
+      <tr>
+        <td>${b.date || '-'}</td>
+        <td style="font-weight:700; color:#fff;">${b.invoiceNo || '-'}</td>
+        <td style="text-align:left; font-weight:600; color:#fff;">${b.partyName}</td>
+        <td>${b.paymentMode || '-'}</td>
+        <td style="font-weight:700; color:#f59e0b;">₹${Number(b.totalAmount || 0).toLocaleString('en-IN')}</td>
+        <td style="color:${b.balanceDue > 0 ? '#ef4444' : '#10b981'}; font-weight:600;">₹${Number(b.balanceDue || 0).toLocaleString('en-IN')}</td>
+        <td>${statusBadge}</td>
+        <td>
+          <button class="ok small" onclick="viewVyaparInvoice('purchaseBills', '${b.id}')" style="margin:0 4px 0 0; padding:5px 9px;" title="View & Print"><i class="fa fa-eye"></i></button>
+          <button class="del small" onclick="deletePurchaseBill('${b.id}')" style="margin:0; padding:5px 9px;" title="Delete"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterPurchaseTable() {
+  renderPurchaseBillsTable();
+}
+
+function deletePurchaseBill(id) {
+  if(!confirm("Are you sure you want to delete this purchase bill?")) return;
+  db.collection("purchaseBills").doc(id).delete().then(() => {
+    loadPurchaseBillsPage();
+  });
+}
+
+
+// ---------- 4. SALE INVOICES MODULE ----------
+let allSaleInvoicesData = [];
+let saleModalRowCounter = 0;
+
+function openAddSaleModal() {
+  document.getElementById("modal_sale_date").value = new Date().toISOString().split('T')[0];
+  document.getElementById("modal_sale_inv_no").value = `INV-${Math.floor(1000 + Math.random() * 9000)}`;
+  document.getElementById("modal_sale_paid").checked = true;
+  toggleSaleModalPaidCheckbox();
+  document.getElementById("modal_sale_total_amount").value = "";
+  document.getElementById("modalSaleSubtotalText").innerText = "0.00";
+  document.getElementById("modal_sale_customer_name").value = "";
+
+  // Populate datalist with customers & members
+  const datalist = document.getElementById("saleCustomersDatalist");
+  if(datalist) {
+    let opts = '';
+    allPartiesData.filter(p => p.type === 'Customer').forEach(p => {
+      opts += `<option value="${p.name}">`;
+    });
+    datalist.innerHTML = opts;
+  }
+
+  // Clear rows & add initial line item
+  const container = document.getElementById("modalSaleItemsContainer");
+  if(container) container.innerHTML = "";
+  saleModalRowCounter = 0;
+  addSaleModalItemRow();
+
+  document.getElementById("modalAddSale").classList.remove("hidden");
+}
+
+function closeAddSaleModal() {
+  document.getElementById("modalAddSale").classList.add("hidden");
+}
+
+function toggleSaleModalPaidCheckbox() {
+  const cb = document.getElementById("modal_sale_paid");
+  const lbl = document.getElementById("modal_sale_paid_label");
+  if(cb && lbl) {
+    if(cb.checked) {
+      lbl.innerText = "✅ Paid";
+      lbl.style.color = "#10b981";
+    } else {
+      lbl.innerText = "⏳ Unpaid";
+      lbl.style.color = "#ef4444";
+    }
+  }
+}
+
+function addSaleModalItemRow() {
+  saleModalRowCounter++;
+  const rowId = `saleRow_${saleModalRowCounter}`;
+  const container = document.getElementById("modalSaleItemsContainer");
+  if(!container) return;
+
+  let itemOptions = '<option value="">Select Product</option>';
+  allItemsData.forEach(it => {
+    itemOptions += `<option value="${it.name}" data-price="${it.sellingPrice || 0}">${it.name} (₹${it.sellingPrice || 0})</option>`;
+  });
+
+  const row = document.createElement("div");
+  row.id = rowId;
+  row.style.cssText = "display:flex; gap:8px; align-items:center; background:rgba(255,255,255,0.02); padding:8px 12px; border-radius:12px; border:1px solid var(--border);";
+  row.innerHTML = `
+    <select onchange="onSaleRowSelectChange('${rowId}', this)" style="flex:2; margin:0; padding:8px; font-size:0.85rem;">${itemOptions}</select>
+    <input type="number" class="sale-row-qty" value="1" min="1" placeholder="Qty" oninput="calcSaleModalTotal()" style="width:70px; margin:0; padding:8px; text-align:center;">
+    <input type="number" class="sale-row-price" placeholder="Price" oninput="calcSaleModalTotal()" style="width:90px; margin:0; padding:8px; text-align:right;">
+    <span class="sale-row-total" style="width:80px; text-align:right; font-weight:700; color:#10b981; font-size:0.9rem;">₹0</span>
+    <button class="del small" onclick="removeSaleModalRow('${rowId}')" style="margin:0; padding:6px 10px;"><i class="fa fa-times"></i></button>
+  `;
+  container.appendChild(row);
+}
+
+function onSaleRowSelectChange(rowId, sel) {
+  const row = document.getElementById(rowId);
+  if(!row) return;
+  const opt = sel.options[sel.selectedIndex];
+  const price = opt.getAttribute("data-price") || 0;
+  row.querySelector(".sale-row-price").value = price;
+  calcSaleModalTotal();
+}
+
+function removeSaleModalRow(rowId) {
+  const row = document.getElementById(rowId);
+  if(row) row.remove();
+  calcSaleModalTotal();
+}
+
+function calcSaleModalTotal() {
+  let subtotal = 0;
+  document.querySelectorAll("#modalSaleItemsContainer > div").forEach(row => {
+    let qty = parseFloat(row.querySelector(".sale-row-qty").value) || 0;
+    let price = parseFloat(row.querySelector(".sale-row-price").value) || 0;
+    let rowTotal = qty * price;
+    row.querySelector(".sale-row-total").innerText = `₹${rowTotal.toFixed(0)}`;
+    subtotal += rowTotal;
+  });
+  document.getElementById("modal_sale_total_amount").value = subtotal.toFixed(2);
+  document.getElementById("modalSaleSubtotalText").innerText = subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+}
+
+function saveSaleInvoiceFromModal() {
+  let customer = document.getElementById("modal_sale_customer_name").value.trim() || "Walk-in Customer";
+  let dateVal = document.getElementById("modal_sale_date").value || new Date().toISOString().split('T')[0];
+  let invNo = document.getElementById("modal_sale_inv_no").value.trim();
+  let total = parseFloat(document.getElementById("modal_sale_total_amount").value) || 0;
+  let isPaid = document.getElementById("modal_sale_paid").checked;
+  let mode = document.getElementById("modal_sale_payment_mode").value;
+
+  if(total <= 0) {
+    alert("Please add items to bill!");
+    return;
+  }
+
+  let items = [];
+  document.querySelectorAll("#modalSaleItemsContainer > div").forEach(row => {
+    let sel = row.querySelector("select");
+    let name = sel.options[sel.selectedIndex].value;
+    let qty = parseFloat(row.querySelector(".sale-row-qty").value) || 0;
+    let price = parseFloat(row.querySelector(".sale-row-price").value) || 0;
+    if(name && qty > 0) {
+      items.push({ name: name, qty: qty, price: price, total: qty * price });
+    }
+  });
+
+  db.collection("saleInvoices").add({
+    invoiceNo: invNo,
+    partyName: customer,
+    date: dateVal,
+    totalAmount: total,
+    isPaid: isPaid,
+    paymentMode: isPaid ? mode : "Unpaid",
+    balanceDue: isPaid ? 0 : total,
+    items: items,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    // If paid, also add to payments collection
+    if(isPaid) {
+      db.collection("payments").add({
+        name: customer,
+        amount: total,
+        mode: mode,
+        date: dateVal,
+        plan: `Store Sale: ${invNo}`,
+        status: "PAID"
+      });
+    }
+
+    // Decrement product stock
+    items.forEach(it => {
+      db.collection("inventoryItems").where("name", "==", it.name).get().then(snap => {
+        snap.forEach(doc => {
+          let curr = doc.data().stock || 0;
+          db.collection("inventoryItems").doc(doc.id).update({ stock: Math.max(0, curr - it.qty) });
+        });
+      });
+    });
+
+    alert(`Sale Invoice ${invNo} saved successfully!`);
+    closeAddSaleModal();
+    loadSaleInvoicesPage();
+  });
+}
+
+function loadSaleInvoicesPage() {
+  db.collection("saleInvoices").orderBy("date", "desc").get().then(snap => {
+    allSaleInvoicesData = [];
+    let filter = document.getElementById("saleDateFilter") ? document.getElementById("saleDateFilter").value : "month";
+    let now = new Date();
+    let monthStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}`;
+    let todayStr = now.toISOString().split('T')[0];
+
+    let totalSum = 0;
+    let receivedSum = 0;
+    let balanceSum = 0;
+
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allSaleInvoicesData.push(d);
+
+      let dStr = (d.date || '').substr(0, 10);
+      let match = true;
+      if(filter === 'month' && !dStr.startsWith(monthStr)) match = false;
+      if(filter === 'today' && dStr !== todayStr) match = false;
+
+      if(match) {
+        let amt = Number(d.totalAmount || 0);
+        totalSum += amt;
+        if(d.isPaid) receivedSum += amt;
+        else balanceSum += amt;
+      }
+    });
+
+    let el;
+    el = document.getElementById("saleSummaryTotal"); if(el) el.innerText = totalSum.toLocaleString('en-IN');
+    el = document.getElementById("saleSummaryReceived"); if(el) el.innerText = receivedSum.toLocaleString('en-IN');
+    el = document.getElementById("saleSummaryBalance"); if(el) el.innerText = balanceSum.toLocaleString('en-IN');
+
+    renderSaleInvoicesTable();
+  });
+}
+
+function renderSaleInvoicesTable() {
+  const tbody = document.getElementById("saleInvoicesTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("saleSearchInput") ? document.getElementById("saleSearchInput").value.toLowerCase() : "");
+
+  let filtered = allSaleInvoicesData.filter(b => {
+    if(query && !(b.invoiceNo||'').toLowerCase().includes(query) && !(b.partyName||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:35px; color:var(--text-muted);"><i class="fa fa-file-invoice" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No Transaction Found. Click "+ Add Sale" to record an invoice.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(b => {
+    let statusBadge = b.isPaid 
+      ? '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">PAID</span>'
+      : '<span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">UNPAID</span>';
+
+    h += `
+      <tr>
+        <td>${b.date || '-'}</td>
+        <td style="font-weight:700; color:#fff;">${b.invoiceNo || '-'}</td>
+        <td style="text-align:left; font-weight:600; color:#fff;">${b.partyName}</td>
+        <td>${b.paymentMode || '-'}</td>
+        <td style="font-weight:700; color:#10b981;">₹${Number(b.totalAmount || 0).toLocaleString('en-IN')}</td>
+        <td style="color:${b.balanceDue > 0 ? '#ef4444' : '#10b981'}; font-weight:600;">₹${Number(b.balanceDue || 0).toLocaleString('en-IN')}</td>
+        <td>${statusBadge}</td>
+        <td>
+          <button class="ok small" onclick="viewVyaparInvoice('saleInvoices', '${b.id}')" style="margin:0 4px 0 0; padding:5px 9px;" title="View & Print"><i class="fa fa-eye"></i></button>
+          <button class="del small" onclick="deleteSaleInvoice('${b.id}')" style="margin:0; padding:5px 9px;" title="Delete"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterSaleTable() {
+  renderSaleInvoicesTable();
+}
+
+function deleteSaleInvoice(id) {
+  if(!confirm("Are you sure you want to delete this sale invoice?")) return;
+  db.collection("saleInvoices").doc(id).delete().then(() => {
+    loadSaleInvoicesPage();
+  });
+}
+
+
+// ---------- 5. PAYMENT OUT MODULE ----------
+let allPaymentOutData = [];
+
+function openAddPaymentOutModal() {
+  document.getElementById("modal_pout_date").value = new Date().toISOString().split('T')[0];
+  document.getElementById("modal_pout_amount").value = "";
+  document.getElementById("modal_pout_notes").value = "";
+
+  const sel = document.getElementById("modal_pout_supplier");
+  if(sel) {
+    let opts = '<option value="">Select Supplier</option>';
+    allPartiesData.forEach(p => {
+      opts += `<option value="${p.name}">${p.name}</option>`;
+    });
+    sel.innerHTML = opts;
+  }
+  document.getElementById("modalAddPaymentOut").classList.remove("hidden");
+}
+
+function closeAddPaymentOutModal() {
+  document.getElementById("modalAddPaymentOut").classList.add("hidden");
+}
+
+function savePaymentOutFromModal() {
+  let sup = document.getElementById("modal_pout_supplier").value.trim();
+  let amount = parseFloat(document.getElementById("modal_pout_amount").value) || 0;
+  let dateVal = document.getElementById("modal_pout_date").value || new Date().toISOString().split('T')[0];
+  let mode = document.getElementById("modal_pout_mode").value;
+  let notes = document.getElementById("modal_pout_notes").value.trim();
+
+  if(!sup || amount <= 0) {
+    alert("Please select supplier and enter valid amount!");
+    return;
+  }
+
+  db.collection("paymentOut").add({
+    supplierName: sup,
+    amount: amount,
+    date: dateVal,
+    paymentMode: mode,
+    notes: notes,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    // Also save to supplierPayments for financial charts
+    db.collection("supplierPayments").add({
+      supplierName: sup,
+      amountPaid: amount,
+      paymentMode: mode,
+      date: dateVal,
+      createdAt: new Date().toISOString()
+    });
+    alert(`Payment Out of ₹${amount} recorded!`);
+    closeAddPaymentOutModal();
+    loadPaymentOutPage();
+  });
+}
+
+function loadPaymentOutPage() {
+  db.collection("paymentOut").orderBy("date", "desc").get().then(snap => {
+    allPaymentOutData = [];
+    let sum = 0;
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allPaymentOutData.push(d);
+      sum += Number(d.amount || 0);
+    });
+
+    let el = document.getElementById("poutTotalSum");
+    if(el) el.innerText = sum.toLocaleString('en-IN');
+
+    renderPaymentOutTable();
+  });
+}
+
+function renderPaymentOutTable() {
+  const tbody = document.getElementById("paymentOutTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("poutSearchInput") ? document.getElementById("poutSearchInput").value.toLowerCase() : "");
+
+  let filtered = allPaymentOutData.filter(p => {
+    if(query && !(p.supplierName||'').toLowerCase().includes(query) && !(p.notes||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-arrow-up-from-bracket" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No payment out records found.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(p => {
+    h += `
+      <tr>
+        <td>${p.date || '-'}</td>
+        <td style="text-align:left; font-weight:700; color:#fff;">${p.supplierName}</td>
+        <td>${p.paymentMode || '-'}</td>
+        <td style="font-weight:700; color:#ef4444;">₹${Number(p.amount || 0).toLocaleString('en-IN')}</td>
+        <td style="text-align:left; font-size:0.85rem; color:var(--text-muted);">${p.notes || '-'}</td>
+        <td>
+          <button class="del small" onclick="deletePaymentOut('${p.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterPaymentOutTable() {
+  renderPaymentOutTable();
+}
+
+function deletePaymentOut(id) {
+  if(!confirm("Are you sure you want to delete this record?")) return;
+  db.collection("paymentOut").doc(id).delete().then(() => {
+    loadPaymentOutPage();
+  });
+}
+
+
+// ---------- 6. PAYMENT IN MODULE ----------
+let allPaymentInData = [];
+
+function openAddPaymentInModal() {
+  document.getElementById("modal_pin_date").value = new Date().toISOString().split('T')[0];
+  document.getElementById("modal_pin_name").value = "";
+  document.getElementById("modal_pin_phone").value = "";
+  document.getElementById("modal_pin_plan").value = "";
+  document.getElementById("modal_pin_amount").value = "";
+  document.getElementById("modal_pin_notes").value = "";
+  document.getElementById("modalAddPaymentIn").classList.remove("hidden");
+}
+
+function closeAddPaymentInModal() {
+  document.getElementById("modalAddPaymentIn").classList.add("hidden");
+}
+
+function savePaymentInFromModal() {
+  let name = document.getElementById("modal_pin_name").value.trim();
+  let phone = document.getElementById("modal_pin_phone").value.trim();
+  let dateVal = document.getElementById("modal_pin_date").value || new Date().toISOString().split('T')[0];
+  let plan = document.getElementById("modal_pin_plan").value.trim() || "Membership Fee";
+  let amount = parseFloat(document.getElementById("modal_pin_amount").value) || 0;
+  let mode = document.getElementById("modal_pin_mode").value;
+  let notes = document.getElementById("modal_pin_notes").value.trim();
+
+  if(!name || amount <= 0) {
+    alert("Please enter client name and valid amount!");
+    return;
+  }
+
+  db.collection("paymentIn").add({
+    clientName: name,
+    phone: phone,
+    plan: plan,
+    amount: amount,
+    date: dateVal,
+    paymentMode: mode,
+    notes: notes,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    // Also save into payments collection for collections report
+    db.collection("payments").add({
+      name: name,
+      amount: amount,
+      mode: mode,
+      date: dateVal,
+      plan: plan,
+      status: "PAID"
+    });
+    alert(`Payment In of ₹${amount} from ${name} recorded!`);
+    closeAddPaymentInModal();
+    loadPaymentInPage();
+  });
+}
+
+function loadPaymentInPage() {
+  db.collection("paymentIn").orderBy("date", "desc").get().then(snap => {
+    allPaymentInData = [];
+    let sum = 0;
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allPaymentInData.push(d);
+      sum += Number(d.amount || 0);
+    });
+
+    let el = document.getElementById("pinTotalSum");
+    if(el) el.innerText = sum.toLocaleString('en-IN');
+
+    renderPaymentInTable();
+  });
+}
+
+function renderPaymentInTable() {
+  const tbody = document.getElementById("paymentInTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("pinSearchInput") ? document.getElementById("pinSearchInput").value.toLowerCase() : "");
+
+  let filtered = allPaymentInData.filter(p => {
+    if(query && !(p.clientName||'').toLowerCase().includes(query) && !(p.phone||'').includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-arrow-down-to-bracket" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No payment in records found.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(p => {
+    h += `
+      <tr>
+        <td>${p.date || '-'}</td>
+        <td style="text-align:left; font-weight:700; color:#fff;">${p.clientName}</td>
+        <td>${p.phone || '-'}</td>
+        <td><span style="background:rgba(59,130,246,0.15); color:#a5b4fc; padding:3px 10px; border-radius:12px; font-size:0.75rem;">${p.plan || 'Direct'}</span></td>
+        <td>${p.paymentMode || '-'}</td>
+        <td style="font-weight:700; color:#10b981;">₹${Number(p.amount || 0).toLocaleString('en-IN')}</td>
+        <td style="text-align:left; font-size:0.85rem; color:var(--text-muted);">${p.notes || '-'}</td>
+        <td>
+          <button class="del small" onclick="deletePaymentIn('${p.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterPaymentInTable() {
+  renderPaymentInTable();
+}
+
+function deletePaymentIn(id) {
+  if(!confirm("Are you sure you want to delete this record?")) return;
+  db.collection("paymentIn").doc(id).delete().then(() => {
+    loadPaymentInPage();
+  });
+}
+
+
+// ---------- 7. EXPENSES MODULE ----------
+let allExpensesData = [];
+
+function openAddExpenseModal() {
+  document.getElementById("modal_exp_date").value = new Date().toISOString().split('T')[0];
+  document.getElementById("modal_exp_title").value = "";
+  document.getElementById("modal_exp_amount").value = "";
+  document.getElementById("modal_exp_notes").value = "";
+  document.getElementById("modalAddExpense").classList.remove("hidden");
+}
+
+function closeAddExpenseModal() {
+  document.getElementById("modalAddExpense").classList.add("hidden");
+}
+
+function saveExpenseFromModal() {
+  let title = document.getElementById("modal_exp_title").value.trim();
+  let cat = document.getElementById("modal_exp_cat").value;
+  let amount = parseFloat(document.getElementById("modal_exp_amount").value) || 0;
+  let dateVal = document.getElementById("modal_exp_date").value || new Date().toISOString().split('T')[0];
+  let mode = document.getElementById("modal_exp_mode").value;
+  let notes = document.getElementById("modal_exp_notes").value.trim();
+
+  if(!title || amount <= 0) {
+    alert("Please enter expense title and valid amount!");
+    return;
+  }
+
+  db.collection("gymExpenses").add({
+    title: title,
+    category: cat,
+    amount: amount,
+    date: dateVal,
+    paymentMode: mode,
+    notes: notes,
+    createdAt: new Date().toISOString()
+  }).then(() => {
+    alert(`Expense of ₹${amount} (${cat}) recorded!`);
+    closeAddExpenseModal();
+    loadExpensesPage();
+    loadFinancialDashboard();
+  });
+}
+
+function loadExpensesPage() {
+  db.collection("gymExpenses").orderBy("date", "desc").get().then(snap => {
+    allExpensesData = [];
+    let sum = 0;
+    snap.forEach(doc => {
+      let d = doc.data();
+      d.id = doc.id;
+      allExpensesData.push(d);
+      sum += Number(d.amount || 0);
+    });
+
+    let el = document.getElementById("expTotalSum");
+    if(el) el.innerText = sum.toLocaleString('en-IN');
+
+    renderExpensesTable();
+  });
+}
+
+function renderExpensesTable() {
+  const tbody = document.getElementById("expensesTableBody");
+  if(!tbody) return;
+
+  const query = (document.getElementById("expSearchInput") ? document.getElementById("expSearchInput").value.toLowerCase() : "");
+
+  let filtered = allExpensesData.filter(e => {
+    if(query && !(e.title||'').toLowerCase().includes(query) && !(e.category||'').toLowerCase().includes(query)) return false;
+    return true;
+  });
+
+  if(filtered.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-money-bill-transfer" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No expenses recorded. Click "+ Add Expense" to record one.</td></tr>`;
+    return;
+  }
+
+  let h = '';
+  filtered.forEach(e => {
+    h += `
+      <tr>
+        <td>${e.date || '-'}</td>
+        <td style="text-align:left; font-weight:700; color:#fff;">${e.title}</td>
+        <td><span style="background:rgba(239,68,68,0.15); color:#fca5a5; padding:3px 10px; border-radius:12px; font-size:0.75rem;">${e.category || 'General'}</span></td>
+        <td>${e.paymentMode || 'Cash'}</td>
+        <td style="font-weight:700; color:#ef4444;">₹${Number(e.amount || 0).toLocaleString('en-IN')}</td>
+        <td style="text-align:left; font-size:0.85rem; color:var(--text-muted);">${e.notes || '-'}</td>
+        <td>
+          <button class="del small" onclick="deleteGymExpense('${e.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
+        </td>
+      </tr>
+    `;
+  });
+  tbody.innerHTML = h;
+}
+
+function filterExpensesTable() {
+  renderExpensesTable();
+}
+
+function deleteGymExpense(id) {
+  if(!confirm("Are you sure you want to delete this expense?")) return;
+  db.collection("gymExpenses").doc(id).delete().then(() => {
+    loadExpensesPage();
+    loadFinancialDashboard();
+  });
+}
+
+
+// ---------- 8. VIEW INVOICE BILL MODAL ----------
+function viewVyaparInvoice(collName, id) {
+  db.collection(collName).doc(id).get().then(doc => {
+    if(!doc.exists) {
+      alert("Bill record not found!");
+      return;
+    }
+    let data = doc.data();
+    let isPur = collName === 'purchaseBills';
+
+    document.getElementById("viewInvTypeBadge").innerText = isPur ? "PURCHASE BILL" : "SALE INVOICE";
+    document.getElementById("viewInvTypeBadge").style.color = isPur ? "#f59e0b" : "#10b981";
+    document.getElementById("viewInvTypeBadge").style.borderColor = isPur ? "#f59e0b" : "#10b981";
+
+    document.getElementById("viewInvNo").innerText = data.invoiceNo || "-";
+    document.getElementById("viewInvDate").innerText = data.date || "-";
+    document.getElementById("viewInvParty").innerText = data.partyName || "-";
+    document.getElementById("viewInvPaymentMode").innerText = data.paymentMode || "-";
+
+    const badge = document.getElementById("viewInvStatusBadge");
+    if(badge) {
+      if(data.isPaid) {
+        badge.innerText = "PAID ✅";
+        badge.style.background = "rgba(16,185,129,0.15)";
+        badge.style.color = "#10b981";
+      } else {
+        badge.innerText = "UNPAID ⏳";
+        badge.style.background = "rgba(239,68,68,0.15)";
+        badge.style.color = "#ef4444";
+      }
+    }
+
+    let itemsHtml = '';
+    let items = data.items || [];
+    if(items.length === 0) {
+      itemsHtml = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Total Bill Amount</td></tr>`;
+    } else {
+      items.forEach(it => {
+        itemsHtml += `
+          <tr>
+            <td style="text-align:left; font-weight:600; color:#fff;">${it.name}</td>
+            <td>${it.qty}</td>
+            <td>₹${Number(it.price || 0).toLocaleString('en-IN')}</td>
+            <td style="text-align:right; font-weight:700;">₹${Number(it.total || 0).toLocaleString('en-IN')}</td>
+          </tr>
+        `;
+      });
+    }
+    document.getElementById("viewInvItemsBody").innerHTML = itemsHtml;
+    document.getElementById("viewInvSubtotal").innerText = Number(data.totalAmount || 0).toLocaleString('en-IN');
+
+    document.getElementById("modalViewInvoice").classList.remove("hidden");
+  });
+}
+
+function closeViewInvoiceModal() {
+  document.getElementById("modalViewInvoice").classList.add("hidden");
+}
+
+function printViewInvoice() {
+  const printArea = document.getElementById("viewInvoicePrintArea");
+  if(!printArea) return;
+  const original = document.body.innerHTML;
+  document.body.innerHTML = printArea.innerHTML;
+  window.print();
+  document.body.innerHTML = original;
+  window.location.reload();
+}
+
+
 /* INITIAL SETUP ON LAUNCH */
 loadPlanOptions();
 loadPOSOptions();
@@ -4427,6 +6389,8 @@ loadAdminGallery();
 loadTrainerPayoutsHistory();
 loadFinancialDashboard();
 loadSupplierPaymentsLog();
+loadPartiesPage();
+loadItemsPage();
 loadDashboardTab();
 </script>
 </body>
