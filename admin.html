@@ -896,15 +896,13 @@ td {
     </div>
 
     <nav class="sidebar-nav">
-      <div class="sidebar-group-label">Core & POS</div>
+      <div class="sidebar-group-label">Core & Admin</div>
       <button class="sidebar-link active" onclick="showTab('dashboard', this)"><i class="fa fa-chart-pie"></i> Dashboard</button>
-      <button class="sidebar-link" onclick="showTab('posBilling', this)"><i class="fa fa-receipt"></i> Quick Billing & POS</button>
       <button class="sidebar-link" onclick="showTab('addUser', this)"><i class="fa fa-user-plus"></i> Add New Member</button>
-      <button class="sidebar-link" onclick="showTab('users', this)"><i class="fa fa-users"></i> All Members</button>
       <button class="sidebar-link" onclick="showTab('requests', this)"><i class="fa fa-inbox"></i> Signup Requests <span id="requestsCountBadge" class="hidden" style="margin-left:auto; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; padding: 2px 7px; font-weight: 800;">0</span></button>
 
       <div class="sidebar-group-label">Vyapar / Store & Accounting</div>
-      <button class="sidebar-link" onclick="showTab('partiesTab', this)"><i class="fa fa-address-book"></i> Parties</button>
+      <button class="sidebar-link" onclick="showTab('partiesTab', this)"><i class="fa fa-address-book"></i> Parties (Members & Suppliers)</button>
       <button class="sidebar-link" onclick="showTab('itemsTab', this)"><i class="fa fa-boxes-stacked"></i> Items</button>
       
       <!-- SALE DROPDOWN -->
@@ -1693,8 +1691,8 @@ td {
   <div class="card hidden" id="partiesTab">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:18px; flex-wrap:wrap; gap:12px;">
       <div>
-        <h3 style="margin:0;"><i class="fa fa-address-book" style="color:var(--primary); margin-right:8px;"></i>Parties</h3>
-        <p class="small" style="margin:4px 0 0;">Manage your suppliers and customers, opening balances, and contact details.</p>
+        <h3 style="margin:0;"><i class="fa fa-address-book" style="color:var(--primary); margin-right:8px;"></i>Parties (Members & Suppliers)</h3>
+        <p class="small" style="margin:4px 0 0;">All gym members and suppliers directory. View membership plans, balances, and contact info.</p>
       </div>
       <button class="btn-vyapar-red" onclick="openAddPartyModal()"><i class="fa fa-plus"></i> + Add Party</button>
     </div>
@@ -1710,7 +1708,7 @@ td {
         <div style="font-size:1.8rem; font-weight:800; color:#f59e0b; margin-top:4px;" id="party_stat_suppliers">0</div>
       </div>
       <div class="vyapar-summary-card vyapar-card-green">
-        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Customers</span>
+        <span style="font-size:0.8rem; color:var(--text-muted); text-transform:uppercase;">Gym Members</span>
         <div style="font-size:1.8rem; font-weight:800; color:#10b981; margin-top:4px;" id="party_stat_customers">0</div>
       </div>
     </div>
@@ -1719,12 +1717,12 @@ td {
     <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
       <div class="vyapar-search-box" style="margin-bottom:0;">
         <i class="fa fa-search"></i>
-        <input id="partySearchInput" placeholder="Search party name or phone..." oninput="filterPartiesTable()">
+        <input id="partySearchInput" placeholder="Search member/supplier name, phone, or plan..." oninput="filterPartiesTable()">
       </div>
       <div style="display:flex; gap:8px;">
         <button class="small" id="partyFilterAll" onclick="setPartyFilter('all')" style="background:var(--primary); color:#fff; border:none; padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">All</button>
         <button class="small" id="partyFilterSuppliers" onclick="setPartyFilter('Supplier')" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">🏭 Suppliers</button>
-        <button class="small" id="partyFilterCustomers" onclick="setPartyFilter('Customer')" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">🧑 Customers</button>
+        <button class="small" id="partyFilterCustomers" onclick="setPartyFilter('Customer')" style="background:rgba(255,255,255,0.05); color:var(--text-muted); border:1px solid var(--border); padding:8px 16px; border-radius:12px; font-weight:600; cursor:pointer;">🏋️ Gym Members</button>
       </div>
     </div>
 
@@ -1733,16 +1731,16 @@ td {
       <table>
         <thead>
           <tr>
-            <th style="text-align:left;">Party Name</th>
+            <th style="text-align:left;">Party / Member Name</th>
             <th>Type</th>
             <th>Phone</th>
-            <th style="text-align:left;">Address</th>
-            <th>Opening Balance</th>
+            <th style="text-align:left;">Plan / Details</th>
+            <th>Balance Due</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody id="partiesTableBody">
-          <tr><td colspan="6" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading parties...</td></tr>
+          <tr><td colspan="6" style="color:var(--text-muted); padding:30px;"><i class="fa fa-spinner fa-spin"></i> Loading parties & members...</td></tr>
         </tbody>
       </table>
     </div>
@@ -2333,23 +2331,61 @@ td {
     <div class="form-grid">
       <div>
         <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Customer / Member Name:</label>
-        <input id="modal_sale_customer_name" placeholder="Enter customer name or select party" list="saleCustomersDatalist" style="margin-top:0;">
+        <input id="modal_sale_customer_name" placeholder="Enter customer name or select member" list="saleCustomersDatalist" oninput="onSaleCustomerInput()" style="margin-top:0;">
         <datalist id="saleCustomersDatalist"></datalist>
       </div>
       <div>
-        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Date:</label>
-        <input id="modal_sale_date" type="date" style="margin-top:0;">
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Member Phone Number:</label>
+        <input id="modal_sale_customer_phone" type="tel" maxlength="10" placeholder="10-digit Phone" oninput="validatePhone(this)" style="margin-top:0;">
       </div>
     </div>
 
     <div class="form-grid">
       <div>
+        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Date:</label>
+        <input id="modal_sale_date" type="date" onchange="updateSaleExpiryPreview()" style="margin-top:0;">
+      </div>
+      <div>
         <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Invoice Number:</label>
         <input id="modal_sale_inv_no" placeholder="e.g. INV-1001" style="margin-top:0;">
       </div>
-      <div>
-        <label style="font-size:0.8rem; color:var(--text-muted); display:block; margin-bottom:4px;">Total Amount (₹):</label>
-        <input id="modal_sale_total_amount" type="number" readonly placeholder="0.00" style="margin-top:0; font-weight:800; color:#10b981;">
+    </div>
+
+    <!-- 🏋️ MEMBERSHIP SUBSCRIPTION PLAN SECTION -->
+    <div style="background:rgba(59,130,246,0.06); border:1px solid rgba(59,130,246,0.25); border-radius:16px; padding:16px; margin-top:14px; margin-bottom:14px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+        <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:700; color:#fff; font-size:0.95rem;">
+          <input type="checkbox" id="modal_sale_has_plan" onchange="toggleSalePlanSection()" style="width:18px; height:18px; accent-color:var(--primary); cursor:pointer;">
+          <span>🏋️ Include Gym Membership Plan</span>
+        </label>
+        <span class="small" style="color:var(--text-muted);">Assign / Renew Subscription</span>
+      </div>
+
+      <div id="modalSalePlanFields" class="hidden">
+        <div class="form-grid">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Select Subscription Plan:</label>
+            <select id="modal_sale_plan_select" onchange="onSalePlanChange()" style="margin-top:0;">
+              <option value="">Select Plan</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Plan Fee (₹):</label>
+            <input id="modal_sale_plan_price" type="number" placeholder="Plan Fee" oninput="calcSaleModalTotal()" style="margin-top:0; font-weight:700; color:#10b981;">
+          </div>
+        </div>
+        <div class="form-grid" style="margin-top:8px;">
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Assign Personal Trainer (Optional):</label>
+            <select id="modal_sale_trainer" style="margin-top:0;">
+              <option value="">Select Trainer (Optional)</option>
+            </select>
+          </div>
+          <div>
+            <label style="font-size:0.75rem; color:var(--text-muted); display:block; margin-bottom:3px;">Plan Expiry Date:</label>
+            <input id="modal_sale_expiry" type="date" readonly style="margin-top:0; color:var(--accent); font-weight:700;">
+          </div>
+        </div>
       </div>
     </div>
 
@@ -5227,23 +5263,67 @@ function savePartyFromModal() {
 }
 
 function loadPartiesPage() {
-  db.collection("parties").get().then(snap => {
+  const p1 = db.collection("parties").get();
+  const p2 = db.collection("users").get();
+
+  Promise.all([p1, p2]).then(results => {
     allPartiesData = [];
     let suppliersCount = 0;
-    let customersCount = 0;
+    let membersCount = 0;
 
-    snap.forEach(doc => {
+    // 1. Load parties from 'parties' collection (suppliers, etc.)
+    results[0].forEach(doc => {
       let d = doc.data();
       d.id = doc.id;
+      d.source = "parties";
       allPartiesData.push(d);
       if(d.type === 'Supplier') suppliersCount++;
-      else customersCount++;
+      else membersCount++;
+    });
+
+    // 2. Load members from 'users' collection (all registered gym members)
+    results[1].forEach(doc => {
+      let u = doc.data();
+      if(!u.phone && !u.name) return;
+      let phone = u.phone || doc.id;
+      let name = u.name || "Member";
+
+      // If already added via parties, merge details
+      let existing = allPartiesData.find(p => p.phone === phone);
+      if(existing) {
+        existing.isMember = true;
+        existing.currentPlan = u.currentPlan;
+        existing.planExpiry = u.planExpiry;
+        existing.hold = u.hold;
+        existing.remainingDays = u.remainingDays;
+        existing.paymentStatus = u.paymentStatus;
+        existing.pendingAmount = u.pendingAmount;
+        return;
+      }
+
+      membersCount++;
+      allPartiesData.push({
+        id: phone,
+        name: name,
+        phone: phone,
+        address: u.address || 'Gym Member',
+        type: 'Customer',
+        isMember: true,
+        currentPlan: u.currentPlan,
+        planExpiry: u.planExpiry,
+        hold: u.hold,
+        remainingDays: u.remainingDays,
+        paymentStatus: u.paymentStatus,
+        pendingAmount: u.pendingAmount || 0,
+        openingBalance: u.pendingAmount || 0,
+        source: "users"
+      });
     });
 
     let el;
     el = document.getElementById("party_stat_total"); if(el) el.innerText = allPartiesData.length;
     el = document.getElementById("party_stat_suppliers"); if(el) el.innerText = suppliersCount;
-    el = document.getElementById("party_stat_customers"); if(el) el.innerText = customersCount;
+    el = document.getElementById("party_stat_customers"); if(el) el.innerText = membersCount;
 
     renderPartiesTable();
   });
@@ -5257,12 +5337,12 @@ function renderPartiesTable() {
 
   let filtered = allPartiesData.filter(p => {
     if(currentPartyFilter !== 'all' && p.type !== currentPartyFilter) return false;
-    if(query && !(p.name||'').toLowerCase().includes(query) && !(p.phone||'').includes(query)) return false;
+    if(query && !(p.name||'').toLowerCase().includes(query) && !(p.phone||'').includes(query) && !(p.currentPlan||'').toLowerCase().includes(query)) return false;
     return true;
   });
 
   if(filtered.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:var(--text-muted);"><i class="fa fa-address-book" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No parties found. Click "+ Add Party" to create one.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:35px; color:var(--text-muted);"><i class="fa fa-address-book" style="font-size:2rem; opacity:0.3; margin-bottom:8px; display:block;"></i>No members or suppliers found.</td></tr>`;
     return;
   }
 
@@ -5270,18 +5350,63 @@ function renderPartiesTable() {
   filtered.forEach(p => {
     let typeBadge = p.type === 'Supplier' 
       ? '<span style="background:rgba(245,158,11,0.15); color:#f59e0b; border:1px solid rgba(245,158,11,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">🏭 Supplier</span>'
-      : '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">🧑 Customer</span>';
+      : '<span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:4px 10px; border-radius:12px; font-weight:700; font-size:0.75rem;">🏋️ Member</span>';
+
+    // Plan details column
+    let planDetails = '';
+    if(p.type === 'Supplier') {
+      planDetails = `<span style="font-size:0.85rem; color:var(--text-muted);">${p.address || 'Vendor'}</span>`;
+    } else {
+      if(p.hold === true) {
+        planDetails = `<span style="color:orange; font-weight:700; font-size:0.82rem;">⏸ ON HOLD (${p.remainingDays || 0}d left)</span>`;
+      } else if(p.currentPlan && p.planExpiry) {
+        let diff = Math.ceil((new Date(p.planExpiry) - new Date()) / 86400000);
+        if(diff > 0) {
+          planDetails = `<b style="color:#fff; font-size:0.9rem;">${p.currentPlan}</b> <span style="background:rgba(16,185,129,0.15); color:#10b981; border:1px solid rgba(16,185,129,0.3); padding:2px 8px; border-radius:10px; font-size:0.75rem; margin-left:4px;">${diff}d left</span>`;
+        } else {
+          planDetails = `<b style="color:#fff; font-size:0.9rem;">${p.currentPlan}</b> <span style="background:rgba(239,68,68,0.15); color:#ef4444; border:1px solid rgba(239,68,68,0.3); padding:2px 8px; border-radius:10px; font-size:0.75rem; margin-left:4px;">Expired</span>`;
+        }
+      } else if(p.currentPlan) {
+        planDetails = `<b style="color:#fff; font-size:0.9rem;">${p.currentPlan}</b>`;
+      } else {
+        planDetails = `<span style="color:var(--text-muted); font-size:0.85rem;">No Plan</span>`;
+      }
+    }
+
+    // Balance Due column
+    let balanceHtml = '';
+    let pendingAmt = Number(p.pendingAmount || 0);
+    if(pendingAmt > 0 || p.paymentStatus === 'pending') {
+      balanceHtml = `<b style="color:#ef4444;">₹${pendingAmt || 'Due'}</b>`;
+    } else {
+      balanceHtml = `<span style="color:#10b981; font-weight:600;">₹0 (Paid)</span>`;
+    }
+
+    // Action buttons
+    let actionButtons = '';
+    if(p.isMember || p.source === 'users') {
+      actionButtons = `
+        <div style="display:flex; gap:4px; justify-content:center;">
+          <button class="ok small" onclick="openEditUser('${p.phone}','${p.name}','${p.currentPlan || ""}')" style="margin:0; padding:5px 8px;" title="Edit Member Profile"><i class="fa fa-edit"></i></button>
+          <button class="small" onclick="openPTProfile('${p.phone}')" style="background:rgba(14,165,233,0.12); border:1px solid rgba(14,165,233,0.3); color:#0ea5e9; margin:0; padding:5px 8px;" title="PT Profile"><i class="fa fa-dumbbell"></i></button>
+          <button class="small" onclick="window.open('https://wa.me/91${p.phone}')" style="background:rgba(37,211,102,0.12); border:1px solid rgba(37,211,102,0.3); color:#25D366; margin:0; padding:5px 8px;" title="WhatsApp"><i class="fab fa-whatsapp"></i></button>
+          <button class="del small" onclick="deleteUser('${p.phone}')" style="margin:0; padding:5px 8px;" title="Delete Member"><i class="fa fa-trash"></i></button>
+        </div>
+      `;
+    } else {
+      actionButtons = `
+        <button class="del small" onclick="deleteParty('${p.id}')" style="margin:0; padding:5px 8px;"><i class="fa fa-trash"></i></button>
+      `;
+    }
 
     h += `
       <tr>
         <td style="text-align:left; font-weight:700; color:#fff;">${p.name}</td>
         <td>${typeBadge}</td>
-        <td>${p.phone || '-'}</td>
-        <td style="text-align:left; font-size:0.85rem; color:var(--text-muted);">${p.address || '-'}</td>
-        <td style="font-weight:700; color:#3b82f6;">₹${Number(p.openingBalance || 0).toLocaleString('en-IN')}</td>
-        <td>
-          <button class="del small" onclick="deleteParty('${p.id}')" style="margin:0;"><i class="fa fa-trash"></i></button>
-        </td>
+        <td style="font-family:monospace; font-size:0.88rem;">${p.phone || '-'}</td>
+        <td style="text-align:left;">${planDetails}</td>
+        <td style="text-align:center;">${balanceHtml}</td>
+        <td>${actionButtons}</td>
       </tr>
     `;
   });
@@ -5704,12 +5829,52 @@ function openAddSaleModal() {
   document.getElementById("modal_sale_total_amount").value = "";
   document.getElementById("modalSaleSubtotalText").innerText = "0.00";
   document.getElementById("modal_sale_customer_name").value = "";
+  const phoneInput = document.getElementById("modal_sale_customer_phone");
+  if(phoneInput) phoneInput.value = "";
+
+  // Reset plan selection section
+  const planCheck = document.getElementById("modal_sale_has_plan");
+  if(planCheck) {
+    planCheck.checked = false;
+    toggleSalePlanSection();
+  }
+  const planSel = document.getElementById("modal_sale_plan_select");
+  if(planSel) {
+    planSel.innerHTML = '<option value="">Select Plan</option>';
+    db.collection("plans").get().then(snap => {
+      let pOpts = '<option value="">Select Plan</option>';
+      snap.forEach(doc => {
+        let pl = doc.data();
+        let days = pl.days || (pl.duration ? parseInt(pl.duration) * 30 : 30);
+        pOpts += `<option value="${pl.name}" data-price="${pl.price || 0}" data-days="${days}">${pl.name} (${days} days - ₹${pl.price || 0})</option>`;
+      });
+      planSel.innerHTML = pOpts;
+    }).catch(err => console.error("Error loading plans:", err));
+  }
+  const planPrice = document.getElementById("modal_sale_plan_price");
+  if(planPrice) planPrice.value = "";
+  const planExp = document.getElementById("modal_sale_expiry");
+  if(planExp) planExp.value = "";
+
+  // Populate trainers
+  const trainerSel = document.getElementById("modal_sale_trainer");
+  if(trainerSel) {
+    trainerSel.innerHTML = '<option value="">Select Trainer (Optional)</option>';
+    db.collection("trainersConfig").get().then(snap => {
+      let tOpts = '<option value="">Select Trainer (Optional)</option>';
+      snap.forEach(doc => {
+        let t = doc.data();
+        if(t.name) tOpts += `<option value="${t.name}">${t.name}</option>`;
+      });
+      trainerSel.innerHTML = tOpts;
+    }).catch(() => {});
+  }
 
   // Populate datalist with customers & members
   const datalist = document.getElementById("saleCustomersDatalist");
   if(datalist) {
     let opts = '';
-    allPartiesData.filter(p => p.type === 'Customer').forEach(p => {
+    allPartiesData.forEach(p => {
       opts += `<option value="${p.name}">`;
     });
     datalist.innerHTML = opts;
@@ -5739,6 +5904,69 @@ function toggleSaleModalPaidCheckbox() {
       lbl.innerText = "⏳ Unpaid";
       lbl.style.color = "#ef4444";
     }
+  }
+}
+
+function toggleSalePlanSection() {
+  const chk = document.getElementById("modal_sale_has_plan");
+  const fields = document.getElementById("modalSalePlanFields");
+  if(!fields) return;
+  if(chk && chk.checked) {
+    fields.classList.remove("hidden");
+    onSalePlanChange();
+  } else {
+    fields.classList.add("hidden");
+    calcSaleModalTotal();
+  }
+}
+
+function onSalePlanChange() {
+  const sel = document.getElementById("modal_sale_plan_select");
+  if(!sel) return;
+  const opt = sel.options[sel.selectedIndex];
+  if(!opt || !opt.value) {
+    const pInput = document.getElementById("modal_sale_plan_price");
+    if(pInput) pInput.value = "";
+    const eInput = document.getElementById("modal_sale_expiry");
+    if(eInput) eInput.value = "";
+    calcSaleModalTotal();
+    return;
+  }
+  const price = opt.getAttribute("data-price") || 0;
+  const days = parseInt(opt.getAttribute("data-days")) || 30;
+  const pInput = document.getElementById("modal_sale_plan_price");
+  if(pInput) pInput.value = price;
+
+  let invDateVal = document.getElementById("modal_sale_date").value || new Date().toISOString().split('T')[0];
+  let d = new Date(invDateVal);
+  d.setDate(d.getDate() + days);
+  const eInput = document.getElementById("modal_sale_expiry");
+  if(eInput) eInput.value = d.toISOString().split('T')[0];
+
+  calcSaleModalTotal();
+}
+
+function updateSaleExpiryPreview() {
+  const sel = document.getElementById("modal_sale_plan_select");
+  if(!sel) return;
+  const opt = sel.options[sel.selectedIndex];
+  if(opt && opt.value) {
+    const days = parseInt(opt.getAttribute("data-days")) || 30;
+    let invDateVal = document.getElementById("modal_sale_date").value || new Date().toISOString().split('T')[0];
+    let d = new Date(invDateVal);
+    d.setDate(d.getDate() + days);
+    const eInput = document.getElementById("modal_sale_expiry");
+    if(eInput) eInput.value = d.toISOString().split('T')[0];
+  }
+}
+
+function onSaleCustomerInput() {
+  const nameVal = (document.getElementById("modal_sale_customer_name").value || '').trim().toLowerCase();
+  if(!nameVal) return;
+  const match = allPartiesData.find(p => (p.name || '').toLowerCase() === nameVal);
+  if(match && match.phone) {
+    const phoneEl = document.getElementById("modal_sale_customer_phone");
+    if(phoneEl) phoneEl.value = match.phone;
   }
 }
 
@@ -5783,6 +6011,15 @@ function removeSaleModalRow(rowId) {
 
 function calcSaleModalTotal() {
   let subtotal = 0;
+
+  // Include plan fee if enabled
+  const hasPlan = document.getElementById("modal_sale_has_plan") && document.getElementById("modal_sale_has_plan").checked;
+  if(hasPlan) {
+    let planPrice = parseFloat(document.getElementById("modal_sale_plan_price").value) || 0;
+    subtotal += planPrice;
+  }
+
+  // Include item rows
   document.querySelectorAll("#modalSaleItemsContainer > div").forEach(row => {
     let qty = parseFloat(row.querySelector(".sale-row-qty").value) || 0;
     let price = parseFloat(row.querySelector(".sale-row-price").value) || 0;
@@ -5790,23 +6027,50 @@ function calcSaleModalTotal() {
     row.querySelector(".sale-row-total").innerText = `₹${rowTotal.toFixed(0)}`;
     subtotal += rowTotal;
   });
-  document.getElementById("modal_sale_total_amount").value = subtotal.toFixed(2);
-  document.getElementById("modalSaleSubtotalText").innerText = subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
+
+  const totInput = document.getElementById("modal_sale_total_amount");
+  if(totInput) totInput.value = subtotal.toFixed(2);
+  const subText = document.getElementById("modalSaleSubtotalText");
+  if(subText) subText.innerText = subtotal.toLocaleString('en-IN', { minimumFractionDigits: 2 });
 }
 
 function saveSaleInvoiceFromModal() {
   let customer = document.getElementById("modal_sale_customer_name").value.trim() || "Walk-in Customer";
+  let phone = (document.getElementById("modal_sale_customer_phone").value || "").trim();
   let dateVal = document.getElementById("modal_sale_date").value || new Date().toISOString().split('T')[0];
   let invNo = document.getElementById("modal_sale_inv_no").value.trim();
   let total = parseFloat(document.getElementById("modal_sale_total_amount").value) || 0;
   let isPaid = document.getElementById("modal_sale_paid").checked;
   let mode = document.getElementById("modal_sale_payment_mode").value;
 
-  if(total <= 0) {
-    alert("Please add items to bill!");
-    return;
+  const hasPlan = document.getElementById("modal_sale_has_plan") && document.getElementById("modal_sale_has_plan").checked;
+  let planName = "";
+  let planPrice = 0;
+  let planDays = 30;
+  let trainer = "";
+  let expiryDate = "";
+
+  if(hasPlan) {
+    const sel = document.getElementById("modal_sale_plan_select");
+    const opt = sel ? sel.options[sel.selectedIndex] : null;
+    planName = opt && opt.value ? opt.value : "";
+    if(!planName) {
+      alert("Please select a gym membership plan!");
+      return;
+    }
+    planPrice = parseFloat(document.getElementById("modal_sale_plan_price").value) || 0;
+    planDays = opt ? (parseInt(opt.getAttribute("data-days")) || 30) : 30;
+    trainer = document.getElementById("modal_sale_trainer").value || "";
+    expiryDate = document.getElementById("modal_sale_expiry").value || "";
+
+    if(!phone || phone.length !== 10) {
+      alert("Please enter a valid 10-digit Member Phone Number to assign/renew membership!");
+      document.getElementById("modal_sale_customer_phone").focus();
+      return;
+    }
   }
 
+  // Items extraction
   let items = [];
   document.querySelectorAll("#modalSaleItemsContainer > div").forEach(row => {
     let sel = row.querySelector("select");
@@ -5818,30 +6082,77 @@ function saveSaleInvoiceFromModal() {
     }
   });
 
+  if(total <= 0 && !hasPlan && items.length === 0) {
+    alert("Please select a plan or add items to bill!");
+    return;
+  }
+
+  // 1. Save Sale Invoice document
   db.collection("saleInvoices").add({
     invoiceNo: invNo,
     partyName: customer,
+    phone: phone,
     date: dateVal,
     totalAmount: total,
     isPaid: isPaid,
     paymentMode: isPaid ? mode : "Unpaid",
     balanceDue: isPaid ? 0 : total,
     items: items,
+    hasMembershipPlan: hasPlan,
+    planDetails: hasPlan ? {
+      planName: planName,
+      planFee: planPrice,
+      days: planDays,
+      trainer: trainer,
+      expiry: expiryDate
+    } : null,
     createdAt: new Date().toISOString()
   }).then(() => {
-    // If paid, also add to payments collection
+    // 2. If Plan selected, update or create Member in users collection
+    if(hasPlan && phone) {
+      const userRef = db.collection("users").doc(phone);
+      userRef.get().then(docSnap => {
+        let memberData = {
+          name: customer,
+          phone: phone,
+          currentPlan: planName,
+          planDays: planDays,
+          planExpiry: expiryDate,
+          paymentStatus: isPaid ? "paid" : "pending",
+          pendingAmount: isPaid ? 0 : planPrice,
+          status: "active",
+          lastRenewalDate: dateVal,
+          hold: false,
+          updatedAt: new Date().toISOString()
+        };
+        if(trainer) memberData.trainer = trainer;
+        if(!docSnap.exists) {
+          memberData.createdAt = new Date().toISOString();
+          memberData.joinedDate = dateVal;
+        }
+        userRef.set(memberData, { merge: true });
+      }).catch(err => console.error("Error updating member profile:", err));
+    }
+
+    // 3. If paid, record in payments collection
     if(isPaid) {
+      let planDescription = hasPlan 
+        ? (items.length > 0 ? `${planName} (+ Store Items: ${invNo})` : `Plan: ${planName} (${invNo})`)
+        : `Store Sale: ${invNo}`;
+
       db.collection("payments").add({
         name: customer,
+        phone: phone,
         amount: total,
         mode: mode,
         date: dateVal,
-        plan: `Store Sale: ${invNo}`,
-        status: "PAID"
+        plan: planDescription,
+        status: "PAID",
+        createdAt: new Date().toISOString()
       });
     }
 
-    // Decrement product stock
+    // 4. Decrement product stock if items were purchased
     items.forEach(it => {
       db.collection("inventoryItems").where("name", "==", it.name).get().then(snap => {
         snap.forEach(doc => {
@@ -5851,9 +6162,12 @@ function saveSaleInvoiceFromModal() {
       });
     });
 
-    alert(`Sale Invoice ${invNo} saved successfully!`);
+    alert(`Sale Invoice ${invNo} saved successfully!${hasPlan ? ' Membership plan activated for member.' : ''}`);
     closeAddSaleModal();
     loadSaleInvoicesPage();
+    loadPartiesPage();
+  }).catch(err => {
+    alert("Error saving sale invoice: " + err.message);
   });
 }
 
@@ -6335,7 +6649,15 @@ function viewVyaparInvoice(collName, id) {
     }
 
     let itemsHtml = '';
-    let items = data.items || [];
+    let items = [...(data.items || [])];
+    if(data.hasMembershipPlan && data.planDetails) {
+      items.unshift({
+        name: `🏋️ Gym Plan: ${data.planDetails.planName || 'Membership'} (Exp: ${data.planDetails.expiry || '-'})`,
+        qty: 1,
+        price: data.planDetails.planFee || 0,
+        total: data.planDetails.planFee || 0
+      });
+    }
     if(items.length === 0) {
       itemsHtml = `<tr><td colspan="4" style="text-align:center; color:var(--text-muted);">Total Bill Amount</td></tr>`;
     } else {
