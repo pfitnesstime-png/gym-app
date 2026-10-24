@@ -758,8 +758,13 @@ td {
       <button class="sidebar-link" onclick="showTab('requests', this)"><i class="fa fa-inbox"></i> Signup Requests <span id="requestsCountBadge" class="hidden" style="margin-left:auto; background: var(--red); color: white; border-radius: 50%; font-size: 0.7rem; padding: 2px 7px; font-weight: 800;">0</span></button>
 
       <div class="sidebar-group-label">Store & Payroll</div>
-      <button class="sidebar-link" onclick="showTab('finances', this)"><i class="fa fa-chart-line"></i> Finances, Profit & Store</button>
-      <button class="sidebar-link" onclick="showTab('expensesTab', this)"><i class="fa fa-receipt"></i> Gym Expenses</button>
+      <button class="sidebar-link" onclick="showTab('finances', this)"><i class="fa fa-chart-line"></i> Finances & Profit</button>
+      <button class="sidebar-link" onclick="showTab('billCreateTab', this)"><i class="fa fa-file-invoice"></i> Bill / Invoice</button>
+      <button class="sidebar-link" onclick="showTab('partiesTab', this)"><i class="fa fa-address-book"></i> Parties</button>
+      <button class="sidebar-link" onclick="showTab('itemsTab', this)"><i class="fa fa-boxes-stacked"></i> Items</button>
+      <button class="sidebar-link" onclick="showTab('expensesTab', this)"><i class="fa fa-receipt"></i> Expenses</button>
+      <button class="sidebar-link" onclick="showTab('paymentOutTab', this)"><i class="fa fa-arrow-up-from-bracket"></i> Payment Out</button>
+      <button class="sidebar-link" onclick="showTab('paymentInTab', this)"><i class="fa fa-arrow-down-to-bracket"></i> Payment In</button>
       <button class="sidebar-link" onclick="showTab('trainerSalary', this)"><i class="fa fa-money-bill-wave"></i> Trainer Salaries</button>
 
       <div class="sidebar-group-label">Reports & Records</div>
@@ -1480,11 +1485,12 @@ td {
   </div>
 
   <!-- GYM EXPENSES TAB -->
+  <!-- GYM EXPENSES TAB (enhanced) -->
   <div class="card hidden" id="expensesTab">
     <h3>💸 Gym Operational Expenses</h3>
-    <p class="small" style="margin-bottom: 14px;">Log monthly operational expenses (Gym Rent, Electricity bill, Equipment maintenance, Marketing, Water, Misc).</p>
+    <p class="small" style="margin-bottom: 14px;">Log all gym operational expenses — rent, electricity, equipment, marketing etc. Track whether paid by Cash or GPay.</p>
     <div class="form-grid">
-      <input id="exp_title" placeholder="Expense Title (e.g. September Gym Rent)">
+      <input id="exp_title" placeholder="Expense Title (e.g. October Gym Rent)">
       <select id="exp_cat">
         <option value="Gym Rent">Gym Rent</option>
         <option value="Electricity Bill">Electricity / Utility Bill</option>
@@ -1492,6 +1498,7 @@ td {
         <option value="Marketing & Promo">Marketing & Advertisements</option>
         <option value="Water & Cleaning">Water & Sanitation</option>
         <option value="Software & Licenses">Software & System Fees</option>
+        <option value="Staff / Helper">Staff / Helper Wages</option>
         <option value="Miscellaneous">Miscellaneous</option>
       </select>
     </div>
@@ -1499,12 +1506,184 @@ td {
       <input id="exp_amount" type="number" placeholder="Expense Amount (₹)">
       <input id="exp_date" type="date">
     </div>
-    <input id="exp_notes" placeholder="Notes / Remarks (Optional)">
+    <div class="form-grid">
+      <select id="exp_pay_method">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+      <input id="exp_notes" placeholder="Notes / Remarks (Optional)">
+    </div>
     <button class="del" onclick="recordGymExpense()"><i class="fa fa-receipt"></i> Record Operational Expense</button>
 
     <hr>
     <h4>Recent Expenses Log</h4>
     <div id="finExpensesLog" style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">Loading expenses...</div>
+  </div>
+
+  <!-- ========== BILL / INVOICE CREATE TAB ========== -->
+  <div class="card hidden" id="billCreateTab">
+    <h3>🧾 Create Bill / Invoice</h3>
+    <p class="small" style="margin-bottom: 18px;">Generate purchase or sale invoices. Add line items, set payment status, and track all bills.</p>
+
+    <!-- Paid/Unpaid Toggle at Top -->
+    <div style="display:flex; align-items:center; gap:16px; margin-bottom:18px; background:rgba(255,255,255,0.03); padding:14px 18px; border-radius:16px; border:1px solid var(--border);">
+      <label style="display:flex; align-items:center; gap:10px; cursor:pointer; font-weight:600; font-size:0.95rem;">
+        <input type="checkbox" id="bill_paid" checked style="width:20px; height:20px; accent-color:#10b981; cursor:pointer;">
+        <span id="bill_paid_label" style="color:#10b981;">✅ Paid</span>
+      </label>
+      <span class="small" style="color:var(--text-muted);">Toggle to mark as Unpaid</span>
+    </div>
+
+    <div class="form-grid">
+      <select id="bill_party_select">
+        <option value="">Select Party (Supplier / Customer)</option>
+      </select>
+      <input id="bill_date" type="date">
+    </div>
+    <div class="form-grid">
+      <input id="bill_invoice_no" placeholder="Invoice Number (e.g. INV-001)">
+      <input id="bill_amount" type="number" placeholder="Total Invoice Amount (₹)" readonly>
+    </div>
+
+    <hr>
+    <h4><i class="fa fa-list" style="color:var(--primary); margin-right:6px;"></i>Invoice Line Items</h4>
+    <div id="billItemsContainer" style="display:flex; flex-direction:column; gap:10px; margin-bottom:14px;">
+      <!-- Dynamic item rows will be added here -->
+    </div>
+    <button class="small ok" onclick="addBillItemRow()" style="margin-bottom:14px;"><i class="fa fa-plus"></i> Add Item Row</button>
+
+    <div style="background:rgba(59,130,246,0.08); border:1px solid rgba(59,130,246,0.25); padding:16px 20px; border-radius:16px; text-align:right; margin-bottom:18px;">
+      <span style="font-size:0.85rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px;">Subtotal</span>
+      <div style="font-size:1.8rem; font-weight:800; color:var(--primary); margin-top:4px;">₹<span id="bill_subtotal">0.00</span></div>
+    </div>
+
+    <button class="ok" onclick="saveBillInvoice()"><i class="fa fa-save"></i> Save Invoice</button>
+
+    <hr>
+    <h4>Recent Invoices / Bills</h4>
+    <div id="billsHistoryLog" style="display:flex; flex-direction:column; gap:12px;">Loading bills...</div>
+  </div>
+
+  <!-- ========== PARTIES TAB ========== -->
+  <div class="card hidden" id="partiesTab">
+    <h3>📒 Parties (Suppliers & Customers)</h3>
+    <p class="small" style="margin-bottom: 18px;">Create and manage your Suppliers and Customers. Track opening balance, contact info, and transaction type.</p>
+
+    <div style="display:flex; gap:10px; margin-bottom:16px;">
+      <button class="small" id="partyTypeSupplier" onclick="setPartyType('Supplier')" style="flex:1; background:linear-gradient(135deg, #f59e0b 0%, #d97706 100%); border:none;">🏭 Supplier</button>
+      <button class="small" id="partyTypeCustomer" onclick="setPartyType('Customer')" style="flex:1; background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--text-muted);">🧑 Customer</button>
+    </div>
+    <input type="hidden" id="party_type" value="Supplier">
+
+    <div class="form-grid">
+      <input id="party_name" placeholder="Party Name (e.g. Optimum Nutrition)">
+      <input id="party_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    </div>
+    <div class="form-grid">
+      <input id="party_address" placeholder="Address (Optional)">
+      <input id="party_opening_bal" type="number" placeholder="Opening Balance (₹)" value="0">
+    </div>
+    <button class="ok" onclick="saveParty()"><i class="fa fa-save"></i> Save Party</button>
+
+    <hr>
+    <div style="display:flex; gap:10px; margin-bottom:14px;">
+      <button class="small" onclick="loadParties('all')" style="background:var(--primary); border:none;">All</button>
+      <button class="small" onclick="loadParties('Supplier')" style="background:rgba(245,158,11,0.15); border:1px solid rgba(245,158,11,0.35); color:#f59e0b;">Suppliers</button>
+      <button class="small" onclick="loadParties('Customer')" style="background:rgba(16,185,129,0.15); border:1px solid rgba(16,185,129,0.35); color:#10b981;">Customers</button>
+    </div>
+    <h4>Saved Parties</h4>
+    <div id="partiesListLog" style="display:flex; flex-direction:column; gap:12px;">Loading parties...</div>
+  </div>
+
+  <!-- ========== ITEMS TAB ========== -->
+  <div class="card hidden" id="itemsTab">
+    <h3>📦 Items / Products</h3>
+    <p class="small" style="margin-bottom: 18px;">Manage your inventory items — supplements, accessories, beverages. Set MRP, cost price, selling price, and product code.</p>
+
+    <div class="form-grid">
+      <input id="item_name" placeholder="Item Name (e.g. Whey Protein 1kg)">
+      <input id="item_code" placeholder="Item Code / SKU (e.g. WP-001)">
+    </div>
+    <div class="form-grid">
+      <select id="item_category">
+        <option value="Supplement">💊 Supplement</option>
+        <option value="Accessory">🧤 Gym Accessory</option>
+        <option value="Beverage">🥤 Fitness Beverage</option>
+        <option value="Apparel">👕 Gym Apparel</option>
+        <option value="Equipment">🏋️ Equipment</option>
+        <option value="Other">📦 Other</option>
+      </select>
+      <input id="item_mrp" type="number" placeholder="MRP (₹)">
+    </div>
+    <div class="form-grid">
+      <input id="item_cost_price" type="number" placeholder="Cost Price (₹)">
+      <input id="item_selling_price" type="number" placeholder="Selling Price (₹)">
+    </div>
+    <button class="ok" onclick="saveItem()"><i class="fa fa-save"></i> Save Item</button>
+
+    <hr>
+    <h4>Saved Items / Products</h4>
+    <div id="itemsListLog" style="display:flex; flex-direction:column; gap:12px;">Loading items...</div>
+  </div>
+
+  <!-- ========== PAYMENT OUT TAB ========== -->
+  <div class="card hidden" id="paymentOutTab">
+    <h3>📤 Payment Out (To Suppliers)</h3>
+    <p class="small" style="margin-bottom: 18px;">Record payments made to suppliers/vendors for stock purchases or services.</p>
+
+    <div class="form-grid">
+      <select id="pout_party_select">
+        <option value="">Select Supplier</option>
+      </select>
+      <input id="pout_amount" type="number" placeholder="Amount Paid (₹)">
+    </div>
+    <div class="form-grid">
+      <input id="pout_date" type="date">
+      <select id="pout_mode">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+      </select>
+    </div>
+    <input id="pout_notes" placeholder="Notes / Description (Optional)">
+    <button class="ok" onclick="savePaymentOut()"><i class="fa fa-arrow-up-from-bracket"></i> Record Payment Out</button>
+
+    <hr>
+    <h4>Recent Payments Out</h4>
+    <div id="paymentOutLog" style="display:flex; flex-direction:column; gap:12px;">Loading payment outs...</div>
+  </div>
+
+  <!-- ========== PAYMENT IN TAB ========== -->
+  <div class="card hidden" id="paymentInTab">
+    <h3>📥 Payment In (From Clients)</h3>
+    <p class="small" style="margin-bottom: 18px;">Record client membership payments, plan renewals, and walk-in cash/GPay collections.</p>
+
+    <div class="form-grid">
+      <input id="pin_client_name" placeholder="Client / Member Name">
+      <input id="pin_client_phone" placeholder="Phone Number" oninput="validatePhone(this)">
+    </div>
+    <div class="form-grid">
+      <input id="pin_date" type="date">
+      <select id="pin_plan">
+        <option value="">Select Plan (Optional)</option>
+      </select>
+    </div>
+    <div class="form-grid">
+      <input id="pin_amount" type="number" placeholder="Amount Received (₹)">
+      <select id="pin_mode">
+        <option value="Cash">💵 Cash</option>
+        <option value="GPay">📱 GPay / UPI</option>
+        <option value="Bank Transfer">🏦 Bank Transfer</option>
+        <option value="Card">💳 Card</option>
+      </select>
+    </div>
+    <input id="pin_notes" placeholder="Notes / Remarks (Optional)">
+    <button class="ok" onclick="savePaymentIn()"><i class="fa fa-arrow-down"></i> Record Payment In</button>
+
+    <hr>
+    <h4>Recent Payments Received</h4>
+    <div id="paymentInLog" style="display:flex; flex-direction:column; gap:12px;">Loading payment ins...</div>
   </div>
 
   <!-- TRAINER SALARY MANAGEMENT -->
